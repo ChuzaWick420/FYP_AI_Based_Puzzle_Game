@@ -9,5 +9,8 @@
     <img src="../assets/Proj_FYP_Prim's_Algorithm.png">
 </div>
 
+## Side Notes
+- The starting and ending point will _always_ be connected. In other words, the possibility of dead ends with no possible winning route, is zero.
+
 ## References
 [^1]: [Wikipedia](https://en.wikipedia.org/wiki/Prim%27s_algorithm#Description)
