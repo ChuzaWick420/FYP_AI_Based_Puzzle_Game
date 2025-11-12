@@ -22,6 +22,13 @@ The basic issues that the SRS writer(s) shall address are the following:
 The SRS writer(s) should avoid placing either design or project requirements in the SRS.
 
 ## Environment of the SRS
+Since the SRS has a specific role to play in the software development process, SRS writer(s) should be careful not to go beyond the bounds of that role. This means the SRS
+- Should correctly define all of the software requirements. A software requirement may exist because of the nature of the task to be solved or because of a special characteristic of the project.
+- Should not describe any design or implementation details. These should be described in the design stage of the project.
+- Should not impose additional constraints on the software. These are properly specified in other documents such as a software quality assurance plan.
+
+Therefore, a properly written SRS limits the range of valid designs, but does not specify any particular design.
+
 ## Characteristics of a good SRS
 ## Joint preparation of the SRS
 ## SRS evolution

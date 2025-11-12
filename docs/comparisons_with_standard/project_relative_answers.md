@@ -62,3 +62,6 @@ The product will deliver all the functional requirements alongside necessary imp
 
 ##### Design Constraints imposed on an implementation
 - Implementation language will be `Python`.
+
+## Environment of the SRS
+The features marked as `(EXTRA)` should go into documents like software quality assurance plan instead of SRS document.
