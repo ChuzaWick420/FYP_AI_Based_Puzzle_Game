@@ -46,6 +46,14 @@ An SRS is correct if, and only if, every requirement stated therein is one that 
 There is no tool or procedure that assures correctness. The SRS should be compared with any applicable superior specification, such as a system requirements specification, with other project documentation, and with other applicable standards, to assure that it agrees. Alternatively the customer or user can determine if the SRS correctly reflects the actual needs. Traceability makes this procedure easier and less prone to error.
 
 ### Unambiguous
+
+An SRS is unambiguous if, and only if, every requirement stated therein has only one interpretation. As a minimum, this requires that each characteristic of the final product be described using a single unique term. In cases where a term used in a particular context could have multiple meanings, the term should be included in a glossary where its meaning is made more specific.
+
+The SRS should be unambiguous both to those who create it and to those who use it.
+
+#### Natural Language Pitfalls
+Requirements are often written in natural language (for example, English). Natural language is inherently ambiguous. A natural language SRS should be reviewed by an independent party to identify ambiguous use of language so that it can be corrected.
+
 ### Complete
 ### Consistent
 ### Ranked for importance and/or stability
