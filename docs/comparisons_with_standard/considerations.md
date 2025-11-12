@@ -57,7 +57,19 @@ Requirements are often written in natural language (for example, English). Natur
 #### Requirements specification languages
 One way to avoid the ambiguity inherent in natural language is to write the SRS in a particular requirements specification language. Its language processors automatically detect many lexical, syntactic, and semantic errors.
 
+#### Representation tools
+In general, requirements methods and languages and the tools that support them fall into three general categories
 
+##### Object
+Object-oriented approaches organize the requirements in terms of real-world objects, their attributes, and the services performed by those objects.
+
+##### Process
+Process-based approaches organize the requirements into hierarchies of functions that communicate via dataflows.
+
+##### Behavioral
+Behavioral approaches describe external behavior of the system in terms of some abstract notion (such as predicate calculus), mathematical functions, or state machines.
+
+When using any of these approaches it is best to retain the natural language descriptions. That way, customers unfamiliar with the notations can still understand the SRS.
 
 ### Complete
 ### Consistent
