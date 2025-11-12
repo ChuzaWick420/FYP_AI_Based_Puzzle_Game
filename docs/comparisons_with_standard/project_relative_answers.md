@@ -68,3 +68,14 @@ The features marked as `(EXTRA)` should go into documents like software quality 
 
 ### Correct
 Make sure whatever is mentioned in SRS, is satisfied by the product.
+
+### Unambigious
+- Use a combination of diagrams that are
+  - Object Oriented
+  - Functional
+  - Behavioral (machine diagrams)
+
+### Complete
+- Address all requirements
+- Definition of responses by software to both valid and invalid values
+- Label all figures and define all terms

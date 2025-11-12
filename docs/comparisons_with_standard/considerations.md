@@ -72,6 +72,12 @@ Behavioral approaches describe external behavior of the system in terms of some 
 When using any of these approaches it is best to retain the natural language descriptions. That way, customers unfamiliar with the notations can still understand the SRS.
 
 ### Complete
+An SRS is complete if, and only if, it includes the following elements:
+
+- All significant requirements, whether relating to functionality, performance, design constraints, attributes, or external interfaces. In particular any external requirements placed by a system specification should be acknowledged and treated.
+- Definition of the responses of the software to all realizable classes of input data in all realizable classes of situations. Note that it is important to specify the responses to both valid and invalid input values.
+- Full labels and references to all figures, tables, and diagrams in the SRS and definition of all terms and units of measure.
+
 ### Consistent
 ### Ranked for importance and/or stability
 ### Verifiable
