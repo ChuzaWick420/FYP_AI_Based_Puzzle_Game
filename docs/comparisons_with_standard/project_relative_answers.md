@@ -83,6 +83,10 @@ Make sure whatever is mentioned in SRS, is satisfied by the product.
   - have their causes listed
   - have their resolutionary conditions listed
 
+Existence of `FR9` is `to de determined` because .
+
 ### Consistent
 - Don't use different terms to describe the same object.
 - Logic, expected results or formats need to be consistent across different sections.
+
+### Ranked for importance and/or stability

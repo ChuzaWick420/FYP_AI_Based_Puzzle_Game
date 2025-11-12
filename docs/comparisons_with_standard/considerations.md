@@ -100,7 +100,29 @@ There are three types of likely conflicts in an SRS:
 - Two or more requirements may describe the same real-world object but use different terms for that object. For example, a program's request for a user input may be called a "prompt" in one requirement and a "cue" in another. The use of standard terminology and definitions promotes consistency.
 
 ### Ranked for importance and/or stability
+An SRS is ranked for importance and/or stability if each requirement in it has an identifier to indicate either the importance or stability of that particular requirement.
 
+Typically, all of the requirements that relate to a software product are not equally important. Some requirements may be essential, especially for life-critical applications, while others may be desirable.
+
+Identifying the requirements in the following manner helps:
+
+- Have customers give more careful consideration to each requirement, which often clarifies any hidden assumptions they may have.
+- Have developers make correct design decisions and devote appropriate levels of effort to the different parts of the software product.
+
+#### Degree of stability
+One method of identifying requirements uses the dimension of stability. Stability can be expressed in terms of the number of expected changes to any requirement based on experience or knowledge of forthcoming events that affect the organization, functions, and people supported by the software system.
+
+#### Degree of necessity
+Another way to rank requirements is to distinguish classes of requirements as essential, conditional, and optional.
+
+##### Essential.
+Implies that the software will not be acceptable unless these requirements are provided in an agreed manner.
+
+##### Conditional
+Implies that these are requirements that would enhance the software product, but would not make it unacceptable if they are absent.
+
+##### Optional
+Implies a class of functions that may or may not be worthwhile. This gives the supplier the opportunity to propose something that exceeds the SRS.
 
 ### Verifiable
 ### Modifiable
