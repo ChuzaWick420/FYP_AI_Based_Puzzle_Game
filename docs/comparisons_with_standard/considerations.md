@@ -85,6 +85,8 @@ Any SRS that uses the phrase to be determined (TBD) is not a complete SRS. The T
 - A description of what must be done to eliminate the TBD, who is responsible for its elimination, and by when it must be eliminated
 
 ### Consistent
+Consistency refers to internal consistency. If an SRS does not agree with some higher level document, such as a system requirements specification, then it is not correct.
+
 ### Ranked for importance and/or stability
 ### Verifiable
 ### Modifiable
