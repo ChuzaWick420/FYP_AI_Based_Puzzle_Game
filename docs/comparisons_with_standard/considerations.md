@@ -30,6 +30,25 @@ Since the SRS has a specific role to play in the software development process, S
 Therefore, a properly written SRS limits the range of valid designs, but does not specify any particular design.
 
 ## Characteristics of a good SRS
+An SRS should be
+- Correct
+- Unambiguous
+- Complete
+- Consistent
+- Ranked for importance and/or stability
+- Verifiable
+- Modifiable
+- Traceable
+
+### Correct
+### Unambiguous
+### Complete
+### Consistent
+### Ranked for importance and/or stability
+### Verifiable
+### Modifiable
+### Traceable
+
 ## Joint preparation of the SRS
 ## SRS evolution
 ## Prototyping
