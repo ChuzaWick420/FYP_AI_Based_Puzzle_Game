@@ -87,7 +87,21 @@ Any SRS that uses the phrase to be determined (TBD) is not a complete SRS. The T
 ### Consistent
 Consistency refers to internal consistency. If an SRS does not agree with some higher level document, such as a system requirements specification, then it is not correct.
 
+#### Internal consistency
+An SRS is internally consistent if, and only if, no subset of individual requirements described in it conflict.
+There are three types of likely conflicts in an SRS:
+
+- The specified characteristics of real-world objects may conflict. For example
+  - The format of an output report may be described in one requirement as tabular but in another as textual.
+  - One requirement may state that all lights shall be green while another states that all lights shall be blue.
+- There may be logical or temporal conflict between two specified actions. For example,
+  - One requirement may specify that the program will add two inputs and another may specify that the program will multiply them.
+  - One requirement may state that "A" must always follow "B," while another requires that "A and B" occur simultaneously.
+- Two or more requirements may describe the same real-world object but use different terms for that object. For example, a program's request for a user input may be called a "prompt" in one requirement and a "cue" in another. The use of standard terminology and definitions promotes consistency.
+
 ### Ranked for importance and/or stability
+
+
 ### Verifiable
 ### Modifiable
 ### Traceable

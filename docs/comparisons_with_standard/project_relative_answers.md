@@ -82,3 +82,7 @@ Make sure whatever is mentioned in SRS, is satisfied by the product.
 - Make sure `to be determined` 
   - have their causes listed
   - have their resolutionary conditions listed
+
+### Consistent
+- Don't use different terms to describe the same object.
+- Logic, expected results or formats need to be consistent across different sections.
