@@ -65,3 +65,6 @@ The product will deliver all the functional requirements alongside necessary imp
 
 ## Environment of the SRS
 The features marked as `(EXTRA)` should go into documents like software quality assurance plan instead of SRS document.
+
+### Correct
+Make sure whatever is mentioned in SRS, is satisfied by the product.

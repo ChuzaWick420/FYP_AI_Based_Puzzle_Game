@@ -41,6 +41,10 @@ An SRS should be
 - Traceable
 
 ### Correct
+An SRS is correct if, and only if, every requirement stated therein is one that the software shall meet.
+
+There is no tool or procedure that assures correctness. The SRS should be compared with any applicable superior specification, such as a system requirements specification, with other project documentation, and with other applicable standards, to assure that it agrees. Alternatively the customer or user can determine if the SRS correctly reflects the actual needs. Traceability makes this procedure easier and less prone to error.
+
 ### Unambiguous
 ### Complete
 ### Consistent
