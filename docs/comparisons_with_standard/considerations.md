@@ -54,6 +54,11 @@ The SRS should be unambiguous both to those who create it and to those who use i
 #### Natural Language Pitfalls
 Requirements are often written in natural language (for example, English). Natural language is inherently ambiguous. A natural language SRS should be reviewed by an independent party to identify ambiguous use of language so that it can be corrected.
 
+#### Requirements specification languages
+One way to avoid the ambiguity inherent in natural language is to write the SRS in a particular requirements specification language. Its language processors automatically detect many lexical, syntactic, and semantic errors.
+
+
+
 ### Complete
 ### Consistent
 ### Ranked for importance and/or stability
