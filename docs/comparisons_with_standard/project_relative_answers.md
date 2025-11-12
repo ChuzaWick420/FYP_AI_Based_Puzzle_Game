@@ -79,3 +79,6 @@ Make sure whatever is mentioned in SRS, is satisfied by the product.
 - Address all requirements
 - Definition of responses by software to both valid and invalid values
 - Label all figures and define all terms
+- Make sure `to be determined` 
+  - have their causes listed
+  - have their resolutionary conditions listed

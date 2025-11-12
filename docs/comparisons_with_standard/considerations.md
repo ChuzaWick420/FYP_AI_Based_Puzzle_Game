@@ -78,6 +78,12 @@ An SRS is complete if, and only if, it includes the following elements:
 - Definition of the responses of the software to all realizable classes of input data in all realizable classes of situations. Note that it is important to specify the responses to both valid and invalid input values.
 - Full labels and references to all figures, tables, and diagrams in the SRS and definition of all terms and units of measure.
 
+#### Use of TBDs
+Any SRS that uses the phrase to be determined (TBD) is not a complete SRS. The TBD is, however, occasionally necessary and should be accompanied by
+
+- A description of the conditions causing the TBD (for example, why an answer is not known) so that the situation can be resolved
+- A description of what must be done to eliminate the TBD, who is responsible for its elimination, and by when it must be eliminated
+
 ### Consistent
 ### Ranked for importance and/or stability
 ### Verifiable
