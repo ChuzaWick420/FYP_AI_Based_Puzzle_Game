@@ -99,3 +99,5 @@ Existence of `FR9` is `to de determined` because .
 
 ### Traceable
 
+## Joint preparation of the SRS
+I am given the `FR` list so I am on my own from here. I will contact supervisor if I need help.

@@ -144,6 +144,13 @@ An SRS is traceable if the origin of each of its requirements is clear and if it
 - Forward traceability (that is, to all documents spawned by the SRS). This depends upon each requirement in the SRS having a unique name or reference number.
 
 ## Joint preparation of the SRS
+The software development process should begin with supplier and customer agreement on what the completed software must do. This agreement, in the form of an SRS, should be jointly prepared. This is important because usually neither the customer nor the supplier is qualified to write a good SRS alone.
+
+- Customers usually do not understand the software design and development process well enough to write a usable SRS.
+- Suppliers usually do not understand the customer's problem and field of endeavor well enough to specify requirements for a satisfactory system.
+
+Therefore, the customer and the supplier should work together to produce a well-written and completely understood SRS.
+
 ## SRS evolution
 ## Prototyping
 ## Embedding design in the SRS
