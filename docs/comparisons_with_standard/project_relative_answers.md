@@ -107,3 +107,6 @@ Just use the `Github` platform.
 
 ## Prototyping
 _Maybe_ develop prototypes of different components and then in the end, integrate them.
+
+## Embedding design in the SRS
+

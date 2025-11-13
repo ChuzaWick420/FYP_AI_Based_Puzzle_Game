@@ -167,4 +167,19 @@ Prototypes are useful for three reasons:
 - An SRS based on a prototype tends to undergo less change during development, thus shortening development time.
 
 ## Embedding design in the SRS
+The SRS should specify what functions are to be performed on what data to produce what results at what location for whom. The SRS should focus on the services to be performed. The SRS should _not_ normally specify design items such as the following:
+- Partitioning the software into modules
+- Allocating functions to the modules
+- Describing the flow of information or between modules
+- Choosing data structures
+
+### Necessary design requirements
+In special cases some requirements may severely restrict the design. For example, security or safety requirements may reflect directly into design such as the need to
+
+- Keep certain functions in separate modules
+- Permit only limited communication between some areas of the program
+- Check data integrity for critical variables
+
+Therefore, the requirements should be stated from a pure external viewpoint. When using models to illustrate the requirements, remember that the model just indicates the external behavior, and does not specify a design.
+
 ## Embedding project requirements in the SRS
