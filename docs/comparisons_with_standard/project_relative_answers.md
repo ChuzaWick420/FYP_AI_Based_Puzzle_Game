@@ -90,3 +90,9 @@ Existence of `FR9` is `to de determined` because .
 - Logic, expected results or formats need to be consistent across different sections.
 
 ### Ranked for importance and/or stability
+#### Degree of necessity
+- `FR9` is conditional, ignore it completely.
+
+### Modifiable
+- Requirements have to be atomic
+- Use explicit cross referencing

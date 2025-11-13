@@ -125,7 +125,18 @@ Implies that these are requirements that would enhance the software product, but
 Implies a class of functions that may or may not be worthwhile. This gives the supplier the opportunity to propose something that exceeds the SRS.
 
 ### Verifiable
+An SRS is verifiable if, and only if, every requirement stated therein is verifiable. A requirement is verifiable if, and only if, there exists some finite cost-effective process with which a person or machine can check that the software product meets the requirement. In general any ambiguous requirement is not verifiable.
+
+Nonverifiable requirements include statements such as "works well," "good human interface," and "shall usually happen." These requirements cannot be verified because it is impossible to define the terms "good," "well," or 'hisually." The statement that 'the program shall never enter an infinite loop" is nonverifiable because the testing of this quality is theoretically impossible.
+
 ### Modifiable
+An SRS is modifiable if, and only if, its structure and style are such that any changes to the requirements can be made easily, completely, and consistently while retaining the structure and style. Modifiability generally requires an SRS to 
+- Have a coherent and easy-to-use organization with a table of contents, an index, and explicit cross-referencing.
+- Not be redundant; that is, the same requirement should not appear in more than one place in the SRS.
+- Express each requirement separately, rather than intermixed with other requirements.
+
+Redundancy itself is not an error, but it can easily lead to errors. Redundancy can occasionally help to make an SRS more readable, but a problem can arise when the redundant document is updated. For instance, a requirement may be altered in only one of the places where it appears. The SRS then becomes inconsistent. Whenever redundancy is necessary, the SRS should include explicit cross-references to make it modifiable.
+
 ### Traceable
 
 ## Joint preparation of the SRS
