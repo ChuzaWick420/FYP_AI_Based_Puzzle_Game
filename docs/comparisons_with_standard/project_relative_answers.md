@@ -94,5 +94,8 @@ Existence of `FR9` is `to de determined` because .
 - `FR9` is conditional, ignore it completely.
 
 ### Modifiable
-- Requirements have to be atomic
-- Use explicit cross referencing
+- Requirements have to be atomic.
+- Use explicit cross-referencing.
+
+### Traceable
+

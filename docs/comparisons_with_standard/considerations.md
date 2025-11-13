@@ -138,6 +138,10 @@ An SRS is modifiable if, and only if, its structure and style are such that any 
 Redundancy itself is not an error, but it can easily lead to errors. Redundancy can occasionally help to make an SRS more readable, but a problem can arise when the redundant document is updated. For instance, a requirement may be altered in only one of the places where it appears. The SRS then becomes inconsistent. Whenever redundancy is necessary, the SRS should include explicit cross-references to make it modifiable.
 
 ### Traceable
+An SRS is traceable if the origin of each of its requirements is clear and if it facilitates the referencing of each requirement in future development or enhancement documentation. Two types of traceability are recommended.
+
+- Backward traceability (that is, to previous stages of development). This depends upon each requirement explicitly referencing its source in earlier documents.
+- Forward traceability (that is, to all documents spawned by the SRS). This depends upon each requirement in the SRS having a unique name or reference number.
 
 ## Joint preparation of the SRS
 ## SRS evolution
