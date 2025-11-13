@@ -183,3 +183,15 @@ In special cases some requirements may severely restrict the design. For example
 Therefore, the requirements should be stated from a pure external viewpoint. When using models to illustrate the requirements, remember that the model just indicates the external behavior, and does not specify a design.
 
 ## Embedding project requirements in the SRS
+The SRS should address the software product, not the process of producing the software product.
+
+Project requirements represent an understanding between customer and supplier about contractual matters pertaining to production of software and thus should not be included in the SRS. These normally include such items as
+- Cost
+- Delivery schedules
+- Reporting procedures
+- Software development methods
+- Quality assurance
+- Validation and verification criteria
+- Acceptance procedures
+
+Project requirements are specified in other documents, typically in a software development plan, a software quality assurance plan, or a statement of work.

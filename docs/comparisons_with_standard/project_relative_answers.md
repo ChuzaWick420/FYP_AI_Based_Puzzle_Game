@@ -83,7 +83,7 @@ Make sure whatever is mentioned in SRS, is satisfied by the product.
   - have their causes listed
   - have their resolutionary conditions listed
 
-Existence of `FR9` is `to de determined` because .
+Existence of `FR9` is `to de determined` because I think it is "conditional" and I am waiting for supervisor to tell me if it _is_ "conditional" or "essential".
 
 ### Consistent
 - Don't use different terms to describe the same object.
@@ -97,8 +97,6 @@ Existence of `FR9` is `to de determined` because .
 - Requirements have to be atomic.
 - Use explicit cross-referencing.
 
-### Traceable
-
 ## Joint preparation of the SRS
 I am given the `FR` list so I am on my own from here. I will contact supervisor if I need help.
 
@@ -107,6 +105,4 @@ Just use the `Github` platform.
 
 ## Prototyping
 _Maybe_ develop prototypes of different components and then in the end, integrate them.
-
-## Embedding design in the SRS
 
