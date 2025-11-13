@@ -104,3 +104,6 @@ I am given the `FR` list so I am on my own from here. I will contact supervisor 
 
 ## SRS evolution
 Just use the `Github` platform.
+
+## Prototyping
+_Maybe_ develop prototypes of different components and then in the end, integrate them.

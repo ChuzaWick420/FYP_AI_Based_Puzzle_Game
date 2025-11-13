@@ -160,5 +160,11 @@ Two major considerations in this process are the following:
   - Permit the review of current and superseded portions of the SRS.
 
 ## Prototyping
+Prototypes are useful for three reasons:
+
+- The customer may be more likely to view the prototype and react to it than to read the SRS and react to it. Thus, the prototype provides quick feedback.
+- The prototype displays unanticipated aspects of the systems behavior. Thus, it produces not only answers but also new questions. This helps reach closure on the SRS.
+- An SRS based on a prototype tends to undergo less change during development, thus shortening development time.
+
 ## Embedding design in the SRS
 ## Embedding project requirements in the SRS
