@@ -152,6 +152,13 @@ The software development process should begin with supplier and customer agreeme
 Therefore, the customer and the supplier should work together to produce a well-written and completely understood SRS.
 
 ## SRS evolution
+Two major considerations in this process are the following:
+
+- Requirements should be specified as completely and thoroughly as is known at the time, even if evolutionary revisions can be foreseen as inevitable.The fact that they are incomplete should be noted.
+- A formal change process should be initiated to identify, control, track, and report project changes. Approved changes in requirements should be incorporated in the SRS in such a way as to
+  - Provide an accurate and complete audit frail of changes.
+  - Permit the review of current and superseded portions of the SRS.
+
 ## Prototyping
 ## Embedding design in the SRS
 ## Embedding project requirements in the SRS
