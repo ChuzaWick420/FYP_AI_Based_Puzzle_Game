@@ -1,13 +1,34 @@
 # Considerations for producing a good SRS
 The following document is a skimmed version of `IEEE830-1993`. The ideal document was skimmed to answer the questions relative to this project (i.e. Final Year Project).
 
+# Table of contents
+
 - [Nature of the SRS](#nature-of-the-srs)
 - [Environment of the SRS](#environment-of-the-srs)
 - [Characteristics of a good SRS](#characteristics-of-a-good-srs)
+  - [Correct](#correct)
+  - [Unambiguous](#unambiguous)
+    - [Natural Language pitfalls](#natural-language-pitfalls)
+    - [Requirements specification languages](#requirements-specification-languages)
+    - [Representation tools](#representation-tools)
+      - [Object](#object)
+      - [Process](#process)
+      - [Behavioral](#behavioral)
+  - [Complete](#complete)
+    - [Use of TBDs](#use-of-tbds)
+  - [Consistent](#consistent)
+    - [Internal consistency](#internal-consistency)
+  - [Ranked for importance and/or stability](#ranked-for-importance-and%2For-stability)
+    - [Degree of stability](#degree-of-stability)
+    - [Degree of necessity](#degree-of-necessity)
+  - [Verifiable](#verifiable)
+  - [Modifiable](#modifiable)
+  - [Traceable](#traceable)
 - [Joint preparation of the SRS](#joint-preparation-of-the-srs)
 - [SRS evolution](#srs-evolution)
 - [Prototyping](#prototyping)
 - [Embedding design in the SRS](#embedding-design-in-the-srs)
+  - [Necessary design requirements](#necessary-design-requirements)
 - [Embedding project requirements in the SRS](#embedding-project-requirements-in-the-srs)
 
 ## Nature of the SRS
