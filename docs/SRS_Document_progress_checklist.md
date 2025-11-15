@@ -1,0 +1,38 @@
+# Checklist
+- [x] Table of contents
+- <span style="color: green;">Introduction</span>
+  - [x] Overview of entire SRS Doc
+  - <span style="color: red;">Purpose</span>
+    - [x] Delineate the purpose
+    - [x] Specify the intended audience
+  - <span style="color: red;">Scope</span>
+    - [ ] Identify product's name
+    - [ ] Explain what product will, and, if necessary, will not do
+    - Describe
+      - [ ] Application
+      - [ ] Benefits
+      - [ ] Objectives
+      - [ ] Goals
+    - [ ] Consistency in similar statements
+  - <span style="color: red;">Definitions, acronyms and abbreviations</span>
+    - Define 
+        - [ ] Terms
+        - [ ] Acronyms
+        - [ ] Abbreviations
+  - <span style="color: red;">Reference</span>
+  - <span style="color: red;">Overview</span>
+- <span style="color: red;">Overall description</span>
+  - <span style="color: red;">Product perspective</span>
+    - <span style="color: red;">System interfaces</span>
+    - <span style="color: red;">User interfaces</span>
+    - <span style="color: red;">Hardware interfaces</span>
+    - <span style="color: red;">Software interfaces</span>
+    - <span style="color: red;">Communications interfaces</span>
+    - <span style="color: red;">Memory constraints</span>
+    - <span style="color: red;">Operations</span>
+    - <span style="color: red;">Site adaptation requirements</span>
+  - <span style="color: red;">Product functions</span>
+  - <span style="color: red;">User characteristics</span>
+  - <span style="color: red;">Constraints</span>
+  - <span style="color: red;">Assumptions and dependencies</span>
+  - <span style="color: red;">Apporting of Requirements</span>
