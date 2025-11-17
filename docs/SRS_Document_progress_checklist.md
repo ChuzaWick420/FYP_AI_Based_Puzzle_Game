@@ -19,13 +19,13 @@
         - [ ] Terms
         - [ ] Acronyms
         - [ ] Abbreviations
-  - <span style="color: red;">Reference</span>
+  - <span style="color: green;">Reference</span>
     - List all referenced documents
-        - [ ] Title
+        - [x] Title
         - [ ] Report number (if applicable)
-        - [ ] Date
-        - [ ] Publishing Organization
-        - [ ] Source
+        - [x] Date
+        - [x] Publishing Organization
+        - [x] Source
   - <span style="color: red;">Overview</span>
     - [ ] Describe rest of the document
     - [ ] Explain how's SRS Organized
@@ -40,6 +40,6 @@
         - [ ] Experience
         - [ ] Technical Expertise
         - [ ] Use the above as _reasons_ behind certain requirements (could use refers within document)
-  - <span style="color: red;">Constraints</span>
-  - <span style="color: red;">Assumptions and dependencies</span>
-  - <span style="color: red;">Apporting of Requirements</span>
+  - <span style="color: green;">Constraints</span>
+  - <span style="color: green;">Assumptions and dependencies</span>
+  - <span style="color: green;">Apporting of Requirements</span>
