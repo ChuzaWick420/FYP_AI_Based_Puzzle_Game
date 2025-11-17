@@ -2,7 +2,7 @@
 - [x] Table of contents
 - <span style="color: green;">Introduction</span>
   - [x] Overview of entire SRS Doc
-  - <span style="color: red;">Purpose</span>
+  - <span style="color: green;">Purpose</span>
     - [x] Delineate the purpose
     - [x] Specify the intended audience
   - <span style="color: red;">Scope</span>
@@ -20,19 +20,26 @@
         - [ ] Acronyms
         - [ ] Abbreviations
   - <span style="color: red;">Reference</span>
+    - List all referenced documents
+        - [ ] Title
+        - [ ] Report number (if applicable)
+        - [ ] Date
+        - [ ] Publishing Organization
+        - [ ] Source
   - <span style="color: red;">Overview</span>
+    - [ ] Describe rest of the document
+    - [ ] Explain how's SRS Organized
 - <span style="color: red;">Overall description</span>
-  - <span style="color: red;">Product perspective</span>
-    - <span style="color: red;">System interfaces</span>
-    - <span style="color: red;">User interfaces</span>
-    - <span style="color: red;">Hardware interfaces</span>
-    - <span style="color: red;">Software interfaces</span>
-    - <span style="color: red;">Communications interfaces</span>
-    - <span style="color: red;">Memory constraints</span>
-    - <span style="color: red;">Operations</span>
-    - <span style="color: red;">Site adaptation requirements</span>
+  - <span style="color: green;">Product perspective</span>
   - <span style="color: red;">Product functions</span>
+    - [ ] List major functions
+    - [ ] (Optional) Use diagrams of function relationships
   - <span style="color: red;">User characteristics</span>
+    - Describe users'
+        - [ ] Educational level
+        - [ ] Experience
+        - [ ] Technical Expertise
+        - [ ] Use the above as _reasons_ behind certain requirements (could use refers within document)
   - <span style="color: red;">Constraints</span>
   - <span style="color: red;">Assumptions and dependencies</span>
   - <span style="color: red;">Apporting of Requirements</span>
