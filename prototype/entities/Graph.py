@@ -1,7 +1,5 @@
 # Implementation Source: https://www.w3schools.com/dsa/dsa_algo_mst_prim.php
 
-import random
-
 class Graph:
     def __init__(self, size):
         self.adj_matrix = [[0] * size for _ in range(size)]
