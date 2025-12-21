@@ -1,3 +1,1 @@
-from .prims_algo import Graph
-
-
+from .prims_algo import prims_algorithm

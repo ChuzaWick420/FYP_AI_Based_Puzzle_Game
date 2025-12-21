@@ -16,7 +16,7 @@ def prims_algorithm(graph):
         if parents[u] != -1:  # Skip printing for the first vertex since it has no parent
             print(f"{graph.vertex_data[parents[u]]}-{graph.vertex_data[u]} \t{graph.adj_matrix[u][parents[u]]}")
 
-            for v in range(graph.size):
-                if 0 < graph.adj_matrix[u][v] < key_values[v] and not in_mst[v]:
-                    key_values[v] = graph.adj_matrix[u][v]
-                    parents[v] = u
+        for v in range(graph.size):
+            if 0 < graph.adj_matrix[u][v] < key_values[v] and not in_mst[v]:
+                key_values[v] = graph.adj_matrix[u][v]
+                parents[v] = u
