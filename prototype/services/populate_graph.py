@@ -1,4 +1,3 @@
-from entities import Graph
 import random
 import math
 
@@ -18,39 +17,32 @@ def populate_graph(graph, size):
 
     one_dimensional_size = int(math.sqrt(size))
 
-    # Debug
-    # print("1D size: ", one_dimensional_size)
-
     for i in range(0, size):
         graph.add_vertex_data(i, str(i))
 
     for i in range(0, size):
-        # TODO: Add edge population algorithm
         left_boundary =  int((i % one_dimensional_size)) == 0
         right_boundary = int((i + 1) % one_dimensional_size) == 0
         upper_boundary = int((i / one_dimensional_size)) < 1
-        lower_boundary = int((i / one_dimensional_size) + 1) == size
+        lower_boundary = int((i / one_dimensional_size) + 1) == one_dimensional_size
 
         max = 9
         min = 1
-
-        weight = min + int(random.random() * 10) % (max - min + 1)
 
         coords = index_1d_to_2d(i, one_dimensional_size)
 
         x = coords[0]
         y = coords[1]
 
-        # Debug Info
-        # print("Weight: ", weight)
-        # print("x: ", x)
-        # print("y: ", y)
-
-        if (not left_boundary and graph.adj_matrix[x - 1][y] == 0):
+        if (not left_boundary):
+            weight = min + int(random.random() * 10) % (max - min + 1)
             graph.add_edge(i, i - 1, weight)
-        if (not right_boundary and graph.adj_matrix[x + 1][y] == 0):
+        if (not right_boundary):
+            weight = min + int(random.random() * 10) % (max - min + 1)
             graph.add_edge(i, i + 1, weight)
-        if (not upper_boundary and graph.adj_matrix[x][y - 1] == 0):
+        if (not upper_boundary):
+            weight = min + int(random.random() * 10) % (max - min + 1)
             graph.add_edge(i, index_2d_to_1d(x, y - 1, size), weight)
-        if (not lower_boundary and graph.adj_matrix[x][y + 1] == 0):
+        if (not lower_boundary):
+            weight = min + int(random.random() * 10) % (max - min + 1)
             graph.add_edge(i, index_2d_to_1d(x, y + 1, size), weight)

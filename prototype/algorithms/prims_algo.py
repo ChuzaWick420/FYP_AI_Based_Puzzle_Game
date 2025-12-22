@@ -7,16 +7,40 @@ def prims_algorithm(graph):
 
     key_values[0] = 0  # Starting vertex
 
-    print("Edge \tWeight")
+    # print("Edge \tWeight")
+
     for _ in range(graph.size):
-        u = min((v for v in range(graph.size) if not in_mst[v]), key=lambda v: key_values[v])
+        u = min(
+            (v for v in range(graph.size) if not in_mst[v]),
+            key=lambda v: key_values[v]
+        )
 
         in_mst[u] = True
 
-        if parents[u] != -1:  # Skip printing for the first vertex since it has no parent
-            print(f"{graph.vertex_data[parents[u]]}-{graph.vertex_data[u]} \t{graph.adj_matrix[u][parents[u]]}")
+        # if parents[u] != -1:
+        #     print(
+        #         f"{graph.vertex_data[parents[u]]}-"
+        #         f"{graph.vertex_data[u]} \t"
+        #         f"{graph.adj_matrix[u][parents[u]]}"
+        #     )
 
         for v in range(graph.size):
-            if 0 < graph.adj_matrix[u][v] < key_values[v] and not in_mst[v]:
+            if (
+                0 < graph.adj_matrix[u][v] < key_values[v]
+                and not in_mst[v]
+            ):
                 key_values[v] = graph.adj_matrix[u][v]
                 parents[v] = u
+
+    new_adj_matrix = [
+        [0] * graph.size for _ in range(graph.size)
+    ]
+
+    for v in range(1, graph.size):
+        u = parents[v]
+        w = graph.adj_matrix[u][v]
+        new_adj_matrix[u][v] = w
+        new_adj_matrix[v][u] = w  # undirected
+
+    graph.adj_matrix = new_adj_matrix
+
