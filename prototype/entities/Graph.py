@@ -2,11 +2,13 @@
 
 class Graph:
     def __init__(self, size):
+        # NOTE: size is 2D (s = l * l)
         self.adj_matrix = [[0] * size for _ in range(size)]
         self.size = size
         self.vertex_data = [''] * size
 
-    def add_edge(self, u, v, weight):
+    def add_edge(self, u, v, weight): 
+        # WARNING: If a request to overwrite an edge is made, it will be carried out.
         if 0 <= u < self.size and 0 <= v < self.size:
             self.adj_matrix[u][v] = weight
             self.adj_matrix[v][u] = weight  # For undirected graph
