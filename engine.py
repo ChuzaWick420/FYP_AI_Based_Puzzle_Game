@@ -1,6 +1,7 @@
 import pygame
 from prototype.data.GameStates import GameStates
 from prototype.data.SystemEvents import SystemEvents
+from prototype.menus.difficulty_menu import DifficultyMenu
 from prototype.menus.main_menu import MainMenu
 from prototype.presentation_layer.InputHandler import InputHandler
 from prototype.services.GetNextState import getNextState
@@ -11,7 +12,10 @@ class Engine:
         self.resolution = window_dimensions
         self.input_handler = InputHandler()
         self.main_menu = MainMenu()
-        self.current_meny = self.main_menu
+        self.difficulty_menu = DifficultyMenu()
+
+        # States
+        self.current_menu = self.main_menu
         self.current_state = GameStates.MAINMENU
         self.next_state = GameStates.PLAY
 
@@ -20,26 +24,27 @@ class Engine:
 
     def start(self):
         screen = pygame.display.set_mode(self.resolution)
-        isRunning = True
+        self.isRunning = True
 
-        while isRunning:
+        while self.isRunning:
             events = self.input_handler.processEvents()
 
             for event in events:
                 if event == SystemEvents.TERMINATE_GAME:
-                    isRunning = False
+                    self.isRunning = False
 
                 if event == SystemEvents.MOUSE_CLICK:
-                    for button in self.main_menu.buttons:
+                    for button in self.current_menu.buttons:
                         if (button.isClicked()):
                             self.next_state = getNextState(button.name, self.current_state)
                             self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
 
                 if event == SystemEvents.STATE_TRANSITION:
+                    self.manageState()
                     self.current_state = self.next_state
 
             screen.fill("purple")
-            self.main_menu.render(screen)
+            self.current_menu.render(screen)
             pygame.display.flip()
 
             # empty the event buffer
@@ -49,3 +54,13 @@ class Engine:
 
     def save(self):
         return
+
+    def manageState(self):
+        if self.next_state == GameStates.EXIT:
+            self.isRunning = False
+
+        if self.next_state == GameStates.DIFFICULTY_SELECTION:
+            self.current_menu = self.difficulty_menu
+
+        if self.next_state == GameStates.MAINMENU:
+            self.current_menu = self.main_menu

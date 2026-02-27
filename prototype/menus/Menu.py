@@ -7,3 +7,9 @@ class Menu:
         pos = (450, 100)
         self.text = TextElement("Menu", color, pos)
         self.buttons = []
+
+    def render(self, display):
+        display.blit(self.text.text, self.text.textRect)
+
+        for button in self.buttons:
+            button.render(display)
