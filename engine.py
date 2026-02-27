@@ -1,5 +1,6 @@
 import pygame
 from prototype.data.SystemEvents import SystemEvents
+from prototype.menus.main_menu import MainMenu
 from prototype.presentation_layer.InputHandler import InputHandler
 
 class Engine:
@@ -7,6 +8,7 @@ class Engine:
         pygame.init()
         self.resolution = window_dimensions
         self.input_handler = InputHandler()
+        self.menu = MainMenu()
 
     def load(self):
         return
@@ -22,10 +24,13 @@ class Engine:
                 if event == SystemEvents.TERMINATE_GAME:
                     isRunning = False
 
-                # if event == SystemEvents.MOUSE_CLICK:
-                #
+                if event == SystemEvents.MOUSE_CLICK:
+                    for button in self.menu.buttons:
+                        if (button.isClicked()):
+                            print("Button Clicked")
 
             screen.fill("purple")
+            self.menu.render(screen)
             pygame.display.flip()
 
         pygame.quit()
