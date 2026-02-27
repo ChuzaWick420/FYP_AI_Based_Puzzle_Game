@@ -4,9 +4,9 @@ from prototype.presentation_layer.InputHandler import InputHandler
 
 class Engine:
     def __init__(self, window_dimensions):
+        pygame.init()
         self.resolution = window_dimensions
         self.input_handler = InputHandler()
-        pygame.init()
 
     def load(self):
         return
