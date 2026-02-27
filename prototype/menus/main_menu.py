@@ -1,20 +1,20 @@
 from prototype.entities.Button import Button
 from prototype.entities.TextElement import TextElement
+from prototype.menus.Menu import Menu
 
-class MainMenu:
+class MainMenu(Menu):
     def __init__(self):
-        color = (200, 40, 70)
-        pos = (450, 100)
-        self.text = TextElement("Main Menu", color, pos)
+
+        # NOTE: defining a constructor in child override the parent constructor so we are manually calling the parent's constructor
+        Menu.__init__(self) 
 
         # Buttons
         self.testButton1 = Button("Play", (450, 250))
         self.testButton2 = Button("Quit", (450, 350))
 
-        self.buttons = [
-            self.testButton1,
-            self.testButton2
-        ]
+        self.text.updateText("Main Menu")
+        self.buttons.append(self.testButton1)
+        self.buttons.append(self.testButton2)
 
 
     def render(self, display):

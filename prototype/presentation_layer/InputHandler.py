@@ -3,16 +3,21 @@ import pygame
 
 class InputHandler:
     def __init__(self):
+        self.system_events = []
         return
 
     def processEvents(self):
-        system_events = []
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                system_events.append(SystemEvents.TERMINATE_GAME)
+                self.system_events.append(SystemEvents.TERMINATE_GAME)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                system_events.append(SystemEvents.MOUSE_CLICK)
+                self.system_events.append(SystemEvents.MOUSE_CLICK)
 
-        return system_events
+        return self.system_events
+
+    def reset(self):
+        self.system_events = []
+
+    def createEvent(self, event):
+        self.system_events.append(event)
