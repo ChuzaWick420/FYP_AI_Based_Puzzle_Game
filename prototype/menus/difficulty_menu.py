@@ -1,15 +1,19 @@
 from prototype.entities.Button import Button
 from prototype.menus.Menu import Menu
+from prototype.data import Global
 
 class DifficultyMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        self.text.updateText("Difficulty Menu")
-        self.easy_button = Button("Easy", (450, 300))
-        self.medium_button = Button("Medium", (450, 350))
-        self.hard_button = Button("Hard", (450, 400))
+        starting_offset = 200
+        gap = 50
 
-        self.buttons.append(self.easy_button)
-        self.buttons.append(self.medium_button)
-        self.buttons.append(self.hard_button)
+        pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
+
+        self.text.updateText("Difficulty Menu")
+        self.text.setPosition((pos[0], pos[1] - 2 * gap))
+
+        self.buttons.append(Button("Easy",    (pos[0], pos[1] + 0 * gap)))
+        self.buttons.append(Button("Medium",  (pos[0], pos[1] + 1 * gap)))
+        self.buttons.append(Button("Hard",    (pos[0], pos[1] + 2 * gap)))

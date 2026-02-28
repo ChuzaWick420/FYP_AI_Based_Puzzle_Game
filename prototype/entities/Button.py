@@ -10,8 +10,8 @@ class Button:
 
     def updatePosition(self, pos):
         self.position = pos
-        self.text.position = pos
-        self.text.textRect.center = self.position
+        self.text.setPosition(pos)
+
 
     def isClicked(self):
         flag = False

@@ -11,3 +11,13 @@ class TextElement:
 
     def updateText(self, string):
         self.text = self.font.render(string, True, self.color)
+        self.setPosition(self.position)
+
+    def setSize(self, size):
+        self.font = pygame.font.Font(None, size)
+        self.setPosition(self.position)
+
+    def setPosition(self, pos):
+        self.textRect = self.text.get_rect()
+        self.position = pos
+        self.textRect.center = pos
