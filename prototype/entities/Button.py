@@ -4,7 +4,7 @@ from prototype.entities.TextElement import TextElement
 class Button:
     def __init__(self, name, pos):
         self.name = name
-        color = (255, 100, 100)
+        color = (33, 128, 24)
         self.text = TextElement(name, color, pos)
         self.position = pos
 

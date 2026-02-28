@@ -58,7 +58,7 @@ class Engine:
                     self.manageState()
                     self.current_state = self.next_state
 
-            screen.fill("purple")
+            screen.fill("black")
 
             if self.current_state == GameStates.PLAY:
                 self.playing_screen.render(screen)

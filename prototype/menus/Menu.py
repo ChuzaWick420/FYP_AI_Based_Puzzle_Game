@@ -3,7 +3,7 @@ from prototype.entities.TextElement import TextElement
 
 class Menu:
     def __init__(self):
-        color = (200, 40, 70)
+        color = (254, 197, 43)
         pos = (450, 100)
         self.text = TextElement("Menu", color, pos)
         self.buttons = []
