@@ -1,6 +1,6 @@
-from prototype.Domain_Logic_Layer.entities.Button import Button
 from prototype.Presentation_Layer.menus.Menu import Menu
 from prototype.Data_Layer import Global
+from prototype.Presentation_Layer.Button import Button
 
 class ScoreBoardMenu(Menu):
     def __init__(self):

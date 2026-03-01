@@ -1,5 +1,5 @@
 import pygame
-from prototype.Domain_Logic_Layer.entities.TextElement import TextElement
+from prototype.Presentation_Layer.TextElement import TextElement
 
 class Button:
     def __init__(self, name, pos):
