@@ -1,7 +1,7 @@
-from prototype.entities.Button import Button
-from prototype.entities.TextElement import TextElement
-from prototype.menus.Menu import Menu
-from prototype.data import Global
+from prototype.Domain_Logic_Layer.entities.Button import Button
+from prototype.Domain_Logic_Layer.entities.TextElement import TextElement
+from prototype.Presentation_Layer.menus.Menu import Menu
+from prototype.Data_Layer import Global
 
 class ResultMenu(Menu):
     def __init__(self):

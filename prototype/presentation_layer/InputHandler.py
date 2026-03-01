@@ -1,4 +1,4 @@
-from prototype.data.SystemEvents import SystemEvents
+from prototype.Data_Layer.SystemEvents import SystemEvents
 import pygame
 
 class InputHandler:

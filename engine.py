@@ -1,14 +1,14 @@
 import pygame
-from prototype.data.GameStates import GameStates
-from prototype.data.SystemEvents import SystemEvents
-from prototype.menus.difficulty_menu import DifficultyMenu
-from prototype.menus.main_menu import MainMenu
-from prototype.menus.pause_menu import PauseMenu
-from prototype.menus.result_menu import ResultMenu
-from prototype.menus.scoreboard_menu import ScoreBoardMenu
-from prototype.presentation_layer.InputHandler import InputHandler
-from prototype.presentation_layer.PlayingScreen import PlayingScreen
-from prototype.services.GetNextState import getNextState
+from prototype.Data_Layer.GameStates import GameStates
+from prototype.Data_Layer.SystemEvents import SystemEvents
+from prototype.Presentation_Layer.menus.difficulty_menu import DifficultyMenu
+from prototype.Presentation_Layer.menus.main_menu import MainMenu
+from prototype.Presentation_Layer.menus.pause_menu import PauseMenu
+from prototype.Presentation_Layer.menus.result_menu import ResultMenu
+from prototype.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
+from prototype.Presentation_Layer.InputHandler import InputHandler
+from prototype.Presentation_Layer.PlayingScreen import PlayingScreen
+from prototype.Service_Layer.GetNextState import getNextState
 
 class Engine:
     def __init__(self, window_dimensions):

@@ -1,4 +1,4 @@
-from prototype.data.GameStates import GameStates
+from prototype.Data_Layer.GameStates import GameStates
 
 def getNextState(button_id, current_state):
 
