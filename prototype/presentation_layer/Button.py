@@ -8,10 +8,9 @@ class Button:
         self.text = TextElement(name, color, pos)
         self.position = pos
 
-    def updatePosition(self, pos):
+    def setPosition(self, pos):
         self.position = pos
         self.text.setPosition(pos)
-
 
     def isClicked(self):
         flag = False
