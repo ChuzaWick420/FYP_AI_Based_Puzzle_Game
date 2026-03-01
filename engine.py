@@ -15,6 +15,7 @@ class Engine:
         pygame.init()
         self.resolution = window_dimensions
         self.input_handler = InputHandler()
+        self.elapsed_time = 0
 
         # Menus
         self.main_menu = MainMenu()
@@ -36,6 +37,7 @@ class Engine:
     def start(self):
         screen = pygame.display.set_mode(self.resolution)
         self.isRunning = True
+        ticks = pygame.time.get_ticks()
 
         while self.isRunning:
             events = self.input_handler.processEvents()
@@ -58,14 +60,24 @@ class Engine:
                     self.manageState()
                     self.current_state = self.next_state
 
-            screen.fill("black")
+            screen.fill("black") # Screen Background
+
+            # NOTE: Gameplay Logic Start
+
+            if self.current_state == GameStates.RESULTS:
+                self.result_menu.setTimer("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
 
             if self.current_state == GameStates.PLAY:
+                self.elapsed_time = (pygame.time.get_ticks() - ticks) // 1000
+                self.playing_screen.timer.updateText("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
                 self.playing_screen.render(screen)
             else:
+                ticks = pygame.time.get_ticks()
                 self.current_menu.render(screen)
 
-            pygame.display.flip()
+            # NOTE: Gameplay Logic End
+
+            pygame.display.flip() # Display
 
             # empty the event buffer
             self.input_handler.reset()

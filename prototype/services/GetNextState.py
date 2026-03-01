@@ -30,7 +30,7 @@ def getNextState(button_id, current_state):
             return GameStates.MAINMENU
 
     if current_state == GameStates.RESULTS:
-        if button_id == "Next Level":
+        if button_id == "Restart Level":
             return GameStates.PLAY
 
         if button_id == "Scoreboard":

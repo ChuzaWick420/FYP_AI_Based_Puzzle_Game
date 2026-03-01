@@ -8,7 +8,6 @@ class PlayingScreen:
         color = (89, 255, 60)
         self.timer = TextElement("Timer: 00:00", color, (100, 50))
         self.scores = TextElement("Scores: 100", color, (100, 100))
-        # self.maze = pygame.image.load("G:/Projects/FYP_AI_Based_Puzzle_Game/assets/maze.png")
         self.maze = pygame.image.load("assets/maze.png")
         self.mazeRect = self.maze.get_rect()
         self.mazeRect.center = (Global.WINDOW_RESOLUTION[0] // 2, Global.WINDOW_RESOLUTION[1] // 2)
