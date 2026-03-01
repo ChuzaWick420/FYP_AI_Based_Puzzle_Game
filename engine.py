@@ -35,49 +35,15 @@ class Engine:
         return
 
     def start(self):
-        screen = pygame.display.set_mode(self.resolution)
+        self.screen = pygame.display.set_mode(self.resolution)
         self.isRunning = True
-        ticks = pygame.time.get_ticks()
+        self.ticks = pygame.time.get_ticks()
 
         while self.isRunning:
             events = self.input_handler.processEvents()
 
-            for event in events:
-                if event == SystemEvents.TERMINATE_GAME:
-                    self.isRunning = False
-
-                if event == SystemEvents.MOUSE_CLICK:
-                    if self.current_state == GameStates.PLAY:
-                        self.next_state = getNextState(None, self.current_state)
-                        self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
-                    else:
-                        for button in self.current_menu.buttons:
-                            if (button.isClicked()):
-                                self.next_state = getNextState(button.name, self.current_state)
-                                self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
-
-                if event == SystemEvents.STATE_TRANSITION:
-                    self.manageState()
-                    self.current_state = self.next_state
-
-            screen.fill("black") # Screen Background
-
-            # NOTE: Gameplay Logic Start
-
-            if self.current_state == GameStates.RESULTS:
-                self.result_menu.setTimer("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
-
-            if self.current_state == GameStates.PLAY:
-                self.elapsed_time = (pygame.time.get_ticks() - ticks) // 1000
-                self.playing_screen.timer.updateText("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
-                self.playing_screen.render(screen)
-            else:
-                ticks = pygame.time.get_ticks()
-                self.current_menu.render(screen)
-
-            # NOTE: Gameplay Logic End
-
-            pygame.display.flip() # Display
+            self.handleEvents(events)
+            self.render()
 
             # empty the event buffer
             self.input_handler.reset()
@@ -87,7 +53,7 @@ class Engine:
     def save(self):
         return
 
-    def manageState(self):
+    def manageStateTransition(self):
         if self.next_state == GameStates.EXIT:
             self.isRunning = False
 
@@ -105,3 +71,41 @@ class Engine:
 
         if self.next_state == GameStates.SCORE_BOARD:
             self.current_menu = self.scoreboard_menu
+
+    def handleEvents(self, events):
+        for event in events:
+            if event == SystemEvents.TERMINATE_GAME:
+                self.isRunning = False
+
+            if event == SystemEvents.MOUSE_CLICK:
+                if self.current_state == GameStates.PLAY:
+                    self.next_state = getNextState(None, self.current_state)
+                    self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+                else:
+                    for button in self.current_menu.buttons:
+                        if (button.isClicked()):
+                            self.next_state = getNextState(button.name, self.current_state)
+                            self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+
+            if event == SystemEvents.STATE_TRANSITION:
+                self.manageStateTransition()
+                self.current_state = self.next_state
+
+    def render(self):
+        self.screen.fill("black") # Screen Background
+
+        # NOTE: Gameplay Logic Start
+
+        if self.current_state == GameStates.RESULTS:
+            self.result_menu.setTimer("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
+
+        if self.current_state == GameStates.PLAY:
+            self.elapsed_time = (pygame.time.get_ticks() - self.ticks) // 1000
+            self.playing_screen.timer.updateText("Timer: {0:02}:{1:02}".format(self.elapsed_time // 60, self.elapsed_time % 60))
+            self.playing_screen.render(self.screen)
+        else:
+            self.ticks = pygame.time.get_ticks()
+            self.current_menu.render(self.screen)
+
+        pygame.display.flip() # Display
+        # NOTE: Gameplay Logic End
