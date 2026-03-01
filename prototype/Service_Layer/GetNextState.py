@@ -9,7 +9,7 @@ def getNextState(button_id, current_state):
         if button_id == "Select Difficulty":
             return GameStates.DIFFICULTY_SELECTION
 
-        if button_id == "Score Board":
+        if button_id == "Scoreboard":
             return GameStates.SCORE_BOARD
 
         if button_id == "Quit":

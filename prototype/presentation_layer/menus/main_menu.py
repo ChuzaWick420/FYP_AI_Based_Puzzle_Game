@@ -18,5 +18,5 @@ class MainMenu(Menu):
         # Buttons
         self.buttons.append(Button("Play",              (pos[0], pos[1] + 0 * gap)))
         self.buttons.append(Button("Select Difficulty", (pos[0], pos[1] + 1 * gap)))
-        self.buttons.append(Button("Score Board",       (pos[0], pos[1] + 2 * gap)))
+        self.buttons.append(Button("Scoreboard",       (pos[0], pos[1] + 2 * gap)))
         self.buttons.append(Button("Quit",              (pos[0], pos[1] + 3 * gap)))
