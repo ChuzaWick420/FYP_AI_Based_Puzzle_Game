@@ -1,5 +1,4 @@
-import engine
-from prototype.Data_Layer import Global
+from engine import Engine
 
-game_engine = engine.Engine(Global.WINDOW_RESOLUTION)
+game_engine = Engine()
 game_engine.start()

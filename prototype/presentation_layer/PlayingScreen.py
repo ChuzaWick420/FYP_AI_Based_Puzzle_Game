@@ -12,6 +12,9 @@ class PlayingScreen:
         self.mazeRect = self.maze.get_rect()
         self.mazeRect.center = (Global.WINDOW_RESOLUTION[0] // 2, Global.WINDOW_RESOLUTION[1] // 2)
 
+    def setTimer(self, minutes, seconds):
+        self.timer.updateText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
+
     def render(self, display):
         display.blit(self.timer.text, self.timer.textRect)
         display.blit(self.scores.text, self.scores.textRect)
