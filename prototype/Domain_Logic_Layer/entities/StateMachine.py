@@ -1,49 +1,50 @@
 from prototype.Domain_Logic_Layer.GameStates import GameStates
 class StateMachine:
     def __init__(self):
-        return
+        self.current_state = GameStates.MAINMENU
+        self.next_state = GameStates.PLAY
 
-    def getNextState(self, button_id, current_state):
-        if current_state == GameStates.MAINMENU:
+    def stepState(self, button_id):
+        if self.current_state == GameStates.MAINMENU:
             if button_id == "Play":
-                return GameStates.PLAY
+                self.next_state = GameStates.PLAY
 
             if button_id == "Select Difficulty":
-                return GameStates.DIFFICULTY_SELECTION
+                self.next_state = GameStates.DIFFICULTY_SELECTION
 
             if button_id == "Scoreboard":
-                return GameStates.SCORE_BOARD
+                self.next_state = GameStates.SCORE_BOARD
 
             if button_id == "Quit":
-                return GameStates.EXIT
+                self.next_state = GameStates.EXIT
 
-        if current_state == GameStates.DIFFICULTY_SELECTION:
+        if self.current_state == GameStates.DIFFICULTY_SELECTION:
             if button_id == "Easy" or button_id == "Medium" or button_id == "Hard":
-                return GameStates.MAINMENU
+                self.next_state = GameStates.MAINMENU
 
-        if current_state == GameStates.PAUSE:
+        if self.current_state == GameStates.PAUSE:
             if button_id == "Resume":
-                return GameStates.PLAY
+                self.next_state = GameStates.PLAY
 
             if button_id == "Restart":
-                return GameStates.PLAY
+                self.next_state = GameStates.PLAY
 
             if button_id == "Quit":
-                return GameStates.MAINMENU
+                self.next_state = GameStates.MAINMENU
 
-        if current_state == GameStates.RESULTS:
+        if self.current_state == GameStates.RESULTS:
             if button_id == "Restart Level":
-                return GameStates.PLAY
+                self.next_state = GameStates.PLAY
 
             if button_id == "Scoreboard":
-                return GameStates.SCORE_BOARD
+                self.next_state = GameStates.SCORE_BOARD
 
             if button_id == "Home":
-                return GameStates.MAINMENU
+                self.next_state = GameStates.MAINMENU
 
-        if current_state == GameStates.SCORE_BOARD:
+        if self.current_state == GameStates.SCORE_BOARD:
             if button_id == "Home":
-                return GameStates.MAINMENU
+                self.next_state = GameStates.MAINMENU
 
-        if current_state == GameStates.PLAY:
-            return GameStates.RESULTS
+        if self.current_state == GameStates.PLAY:
+            self.next_state = GameStates.RESULTS

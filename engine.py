@@ -30,8 +30,6 @@ class Engine:
 
         # States
         self.current_menu = self.main_menu
-        self.current_state = GameStates.MAINMENU
-        self.next_state = GameStates.PLAY
         self.isRunning = True
 
     def load(self):
@@ -54,26 +52,26 @@ class Engine:
     def save(self):
         pygame.quit()
 
-    def manageStateTransition(self):
-        if self.next_state == GameStates.EXIT:
+    def manageMenuTransition(self):
+        if self.stateMachine.next_state == GameStates.EXIT:
             self.isRunning = False
 
-        if self.next_state == GameStates.DIFFICULTY_SELECTION:
+        if self.stateMachine.next_state == GameStates.DIFFICULTY_SELECTION:
             self.current_menu = self.difficulty_menu
 
-        if self.next_state == GameStates.MAINMENU:
+        if self.stateMachine.next_state == GameStates.MAINMENU:
             self.current_menu = self.main_menu
 
-        if self.next_state == GameStates.RESULTS:
+        if self.stateMachine.next_state == GameStates.RESULTS:
             self.current_menu = self.result_menu
 
-        if self.next_state == GameStates.PAUSE:
+        if self.stateMachine.next_state == GameStates.PAUSE:
             self.current_menu = self.pause_menu
 
-        if self.next_state == GameStates.SCORE_BOARD:
+        if self.stateMachine.next_state == GameStates.SCORE_BOARD:
             self.current_menu = self.scoreboard_menu
 
-        self.current_state = self.next_state
+        self.stateMachine.current_state = self.stateMachine.next_state
 
     def handleEvents(self, events):
         for event in events:
@@ -81,27 +79,27 @@ class Engine:
                 self.isRunning = False
 
             if event == SystemEvents.MOUSE_CLICK:
-                if self.current_state == GameStates.PLAY:
-                    self.next_state = self.stateMachine.getNextState(None, self.current_state)
+                if self.stateMachine.current_state == GameStates.PLAY:
+                    self.stateMachine.stepState(None)
                     self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
                 else:
                     for button in self.current_menu.buttons:
                         if (button.isClicked()):
-                            self.next_state = self.stateMachine.getNextState(button.name, self.current_state)
+                            self.stateMachine.stepState(button.name)
                             self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
 
             if event == SystemEvents.STATE_TRANSITION:
-                self.manageStateTransition()
+                self.manageMenuTransition()
 
     def render(self):
         self.screen.fill("black") # Screen Background
 
-        if self.current_state == GameStates.RESULTS:
+        if self.stateMachine.current_state == GameStates.RESULTS:
             minutes = self.elapsed_time // 60
             seconds = self.elapsed_time % 60
             self.result_menu.setTimer(minutes, seconds)
 
-        if self.current_state == GameStates.PLAY:
+        if self.stateMachine.current_state == GameStates.PLAY:
             self.elapsed_time = (pygame.time.get_ticks() - self.ticks) // 1000
             minutes = self.elapsed_time // 60
             seconds = self.elapsed_time % 60
