@@ -11,7 +11,7 @@ class MainMenu(Menu):
 
         pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
 
-        self.text.updateText("Main Menu")
+        self.text.setText("Main Menu")
 
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 

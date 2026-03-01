@@ -11,7 +11,7 @@ class ScoreBoardMenu(Menu):
 
         pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
 
-        self.text.updateText("Score Board Menu")
+        self.text.setText("Score Board Menu")
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 
         self.buttons.append(Button("Home",  (pos[0], pos[1] + 0 * gap)))

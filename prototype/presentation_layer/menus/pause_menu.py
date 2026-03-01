@@ -11,7 +11,7 @@ class PauseMenu(Menu):
 
         pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
 
-        self.text.updateText("Pause Menu")
+        self.text.setText("Pause Menu")
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 
         self.buttons.append(Button("Resume",  (pos[0], pos[1] + 0 * gap)))

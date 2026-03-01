@@ -11,7 +11,7 @@ class DifficultyMenu(Menu):
 
         pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
 
-        self.text.updateText("Difficulty Menu")
+        self.text.setText("Difficulty Menu")
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 
         self.buttons.append(Button("Easy",    (pos[0], pos[1] + 0 * gap)))

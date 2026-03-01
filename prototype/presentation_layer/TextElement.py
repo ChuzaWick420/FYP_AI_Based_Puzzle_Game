@@ -9,7 +9,7 @@ class TextElement:
         self.textRect.center = pos
         self.position = pos
 
-    def updateText(self, string):
+    def setText(self, string):
         self.text = self.font.render(string, True, self.color)
         self.setPosition(self.position)
 

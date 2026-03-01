@@ -12,7 +12,7 @@ class ResultMenu(Menu):
 
         pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
 
-        self.text.updateText("Result Menu")
+        self.text.setText("Result Menu")
         self.text.setPosition((pos[0], pos[1] - 3 * gap))
 
         # Extras
@@ -33,4 +33,4 @@ class ResultMenu(Menu):
             button.render(display)
 
     def setTimer(self, minutes, seconds):
-        self.completion_time.updateText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
+        self.completion_time.setText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
