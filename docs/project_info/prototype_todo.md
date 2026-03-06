@@ -1,26 +1,26 @@
 # Todo List for Prototype
 ## Main Menu Screen
 
-- [ ] Start Game Button
-- [ ] Choose Difficulty
-- [ ] Exit Button
+- [x] Start Game Button
+- [x] Choose Difficulty
+- [x] Exit Button
 
 ## Game Screen (Maze View)
 
-- [ ] Maze Grid (static)
-- [ ] Player icon
-- [ ] AI rival icon
-- [ ] Timer Display
-- [ ] Score Display
-- [ ] Power Up Indicator
+- [x] Maze Grid (static)
+- [x] Player icon
+- [x] AI rival icon
+- [x] Timer Display
+- [x] Score Display
+- [x] Power Up Indicator
 
 ## Score board Screen
 
-- [ ] Winner Information (Player / AI)
-- [ ] Completion Time
-- [ ] Restart Game Button
-- [ ] Exit to Main Menu Button
+- [x] Winner Information (Player / AI)
+- [x] Completion Time
+- [x] Restart Game Button
+- [x] Exit to Main Menu Button
 
 ## Navigation Flow
 
-- [ ] Main Menu -> Game Screen -> Result Screen
+- [x] Main Menu -> Game Screen -> Result Screen
