@@ -2,7 +2,7 @@ from prototype.Presentation_Layer.TextElement import TextElement
 
 class Menu:
     def __init__(self):
-        color = (254, 197, 43)
+        color = (255, 255, 255)
         self.text = TextElement("Menu", color, (0, 0))
         self.text.setSize(48)
         self.buttons = []

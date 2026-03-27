@@ -1,12 +1,17 @@
 import pygame
 from prototype.Presentation_Layer.TextElement import TextElement
+from prototype.Presentation_Layer.Border import Border
 
 class Button:
     def __init__(self, name, pos):
         self.name = name
-        color = (33, 128, 24)
+        color = (255, 255, 255)
         self.text = TextElement(name, color, pos)
         self.position = pos
+        self.text.setSize(28) # NOTE: Won't update unless setText is set
+        self.text.setText(name)
+
+        self.border = Border(self.text.textRect.copy())
 
     def setPosition(self, pos):
         self.position = pos
@@ -17,15 +22,11 @@ class Button:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        horizontal_left  = mouse_pos[0] >= self.position[0] - self.text.textRect.width // 2
-        horizontal_right = mouse_pos[0] <= self.position[0] + self.text.textRect.width // 2
-        vertical_up      = mouse_pos[1] >= self.position[1] - self.text.textRect.height // 2
-        vertical_down    = mouse_pos[1] <= self.position[1] + self.text.textRect.height // 2
-
-        if (horizontal_left and horizontal_right and vertical_up and vertical_down):
+        if self.border.rect.collidepoint(mouse_pos):
             flag = True
 
         return flag
 
     def render(self, display):
+        self.border.render(display)
         display.blit(self.text.text, self.text.textRect)

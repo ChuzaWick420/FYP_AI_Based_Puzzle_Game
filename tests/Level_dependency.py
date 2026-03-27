@@ -1,6 +1,6 @@
-from prototype.algorithms.prims_algo import prims_algorithm
-from prototype.services.populate_graph import populate_graph
-from prototype.services.level_to_graph import level_to_graph
+from prototype.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
+from prototype.Service_Layer.populate_graph import populate_graph
+from prototype.Service_Layer.level_to_graph import level_to_graph
 import math
 
 level = 1

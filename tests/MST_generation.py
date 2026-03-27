@@ -1,6 +1,6 @@
-from prototype.algorithms.prims_algo import prims_algorithm
-from prototype.services.populate_graph import populate_graph
-from prototype.entities.Graph import Graph
+from prototype.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
+from prototype.Service_Layer.populate_graph import populate_graph
+from prototype.Domain_Logic_Layer.entities.Graph import Graph
 
 size = 2 * 2
 
