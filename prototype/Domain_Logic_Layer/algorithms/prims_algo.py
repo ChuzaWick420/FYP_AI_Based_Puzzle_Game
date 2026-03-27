@@ -42,5 +42,5 @@ def prims_algorithm(graph):
         new_adj_matrix[u][v] = w
         new_adj_matrix[v][u] = w  # undirected
 
-    graph.adj_matrix = new_adj_matrix
+    return new_adj_matrix
 
