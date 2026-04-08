@@ -22,9 +22,9 @@ def is_unblocked(grid, row, col):
 def is_destination(row, col, dest):
     return row == dest[0] and col == dest[1]
 
-# Calculate the heuristic value of a cell (Euclidean distance to destination)
+# Calculate the heuristic value of a cell (Manhattan Distance to destination)
 def calculate_h_value(row, col, dest):
-    return ((row - dest[0]) ** 2 + (col - dest[1]) ** 2) ** 0.5
+    return (abs(row - dest[0]) + abs(col - dest[1]))
 
 # Trace the path from source to destination
 def trace_path(cell_details, dest):
@@ -104,7 +104,10 @@ def a_star_search(grid, src, dest, graph_width):
         closed_list[i][j] = True
 
         # For each direction, check the successors
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [
+            (0, 1), (0, -1), (1, 0), (-1, 0)    # NOTE: Cardinal directions
+            # ,(1, 1), (1, -1), (-1, 1), (-1, -1) # NOTE: Diagonal directions
+        ]
         for dir in directions:
             new_i = i + dir[0]
             new_j = j + dir[1]
