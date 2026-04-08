@@ -3,6 +3,11 @@
 import random
 import math
 
+def getRandom():
+    max = 9
+    min = 1
+    weight = min + int(random.random() * 10) % (max - min + 1)
+    return weight
 
 class Graph:
     def __init__(self, size):
@@ -22,12 +27,12 @@ class Graph:
         if 0 <= vertex < self.size:
             self.vertex_data[vertex] = data
 
-    def index_1d_to_2d(self, index, size):
+    def index_1d_to_2d(self, index, width):
         # WARNING: 
         # Assumption:
         # index starts from 0 and first row and column are 0, not 1
-        y = index // size
-        x = index % size
+        y = index // width
+        x = index % width 
         return x, y
 
     def index_2d_to_1d(self, x, y, size):
@@ -37,31 +42,29 @@ class Graph:
         one_dimensional_size = int(math.sqrt(self.size))
 
         for i in range(0, self.size):
-            self.add_vertex_data(i, str(i))
+            self.add_vertex_data(i, i)
 
         for i in range(0, self.size):
-            left_boundary =  int((i % one_dimensional_size)) == 0
-            right_boundary = int((i + 1) % one_dimensional_size) == 0
-            upper_boundary = int((i / one_dimensional_size)) < 1
-            lower_boundary = int((i / one_dimensional_size) + 1) == one_dimensional_size
-
-            max = 9
-            min = 1
+            # left_boundary =  int((i % one_dimensional_size)) == 0
+            # right_boundary = int((i + 1) % one_dimensional_size) == 0
+            # upper_boundary = int((i / one_dimensional_size)) < 1
+            # lower_boundary = int((i / one_dimensional_size) + 1) == one_dimensional_size
 
             coords = self.index_1d_to_2d(i, one_dimensional_size)
 
             x = coords[0]
             y = coords[1]
 
+            left_boundary =  x - 1 < 0
+            right_boundary = x + 1 >= one_dimensional_size
+            upper_boundary = y - 1 < 0
+            lower_boundary = y + 1 >= one_dimensional_size
+
             if (not left_boundary):
-                weight = min + int(random.random() * 10) % (max - min + 1)
-                self.add_edge(i, i - 1, weight)
+                self.add_edge(i, self.index_2d_to_1d(x - 1, y, self.size), getRandom())
             if (not right_boundary):
-                weight = min + int(random.random() * 10) % (max - min + 1)
-                self.add_edge(i, i + 1, weight)
+                self.add_edge(i, self.index_2d_to_1d(x + 1, y, self.size), getRandom())
             if (not upper_boundary):
-                weight = min + int(random.random() * 10) % (max - min + 1)
-                self.add_edge(i, self.index_2d_to_1d(x, y - 1, self.size), weight)
+                self.add_edge(i, self.index_2d_to_1d(x, y - 1, self.size), getRandom())
             if (not lower_boundary):
-                weight = min + int(random.random() * 10) % (max - min + 1)
-                self.add_edge(i, self.index_2d_to_1d(x, y + 1, self.size), weight)
+                self.add_edge(i, self.index_2d_to_1d(x, y + 1, self.size), getRandom())
