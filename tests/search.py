@@ -21,7 +21,8 @@ grid = mst_to_presentation_grid(graph)
 # NOTE: Debug
 print("Presentation Grid: ", grid)
 
-src = []
-dest = []
+# NOTE: Format: (y, x)
+src = [0, 0]
+dest = [2, 2]
 
-a_star_search(grid, src, dest)
+a_star_search(grid, src, dest, graph.width)

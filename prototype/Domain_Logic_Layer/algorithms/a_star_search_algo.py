@@ -10,13 +10,9 @@ class Cell:
         self.g = float('inf')  # Cost from start to this cell
         self.h = 0  # Heuristic cost from this cell to destination
 
-# Define the size of the grid
-ROW = 9
-COL = 10
-
 # Check if a cell is valid (within the grid)
-def is_valid(row, col):
-    return (row >= 0) and (row < ROW) and (col >= 0) and (col < COL)
+def is_valid(row, col, rows, columns):
+    return (row >= 0) and (row < rows) and (col >= 0) and (col < columns)
 
 # Check if a cell is unblocked
 def is_unblocked(grid, row, col):
@@ -56,9 +52,13 @@ def trace_path(cell_details, dest):
     print()
 
 # Implement the A* search algorithm
-def a_star_search(grid, src, dest):
+def a_star_search(grid, src, dest, graph_width):
+
+    columns = graph_width
+    rows = columns
+
     # Check if the source and destination are valid
-    if not is_valid(src[0], src[1]) or not is_valid(dest[0], dest[1]):
+    if not is_valid(src[0], src[1], rows, columns) or not is_valid(dest[0], dest[1], rows, columns):
         print("Source or destination is invalid")
         return
 
@@ -73,9 +73,9 @@ def a_star_search(grid, src, dest):
         return
 
     # Initialize the closed list (visited cells)
-    closed_list = [[False for _ in range(COL)] for _ in range(ROW)]
+    closed_list = [[False for _ in range(columns)] for _ in range(rows)]
     # Initialize the details of each cell
-    cell_details = [[Cell() for _ in range(COL)] for _ in range(ROW)]
+    cell_details = [[Cell() for _ in range(columns)] for _ in range(rows)]
 
     # Initialize the start cell details
     i = src[0]
@@ -110,7 +110,7 @@ def a_star_search(grid, src, dest):
             new_j = j + dir[1]
 
             # If the successor is valid, unblocked, and not visited
-            if is_valid(new_i, new_j) and is_unblocked(grid, new_i, new_j) and not closed_list[new_i][new_j]:
+            if is_valid(new_i, new_j, rows, columns) and is_unblocked(grid, new_i, new_j) and not closed_list[new_i][new_j]:
                 # If the successor is the destination
                 if is_destination(new_i, new_j, dest):
                     # Set the parent of the destination cell
@@ -141,27 +141,3 @@ def a_star_search(grid, src, dest):
     # If the destination is not found after visiting all cells
     if not found_dest:
         print("Failed to find the destination cell")
-
-def main():
-    # Define the grid (1 for unblocked, 0 for blocked)
-    grid = [
-        [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-        [1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
-        [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-        [1, 1, 1, 0, 1, 1, 1, 0, 1, 0],
-        [1, 0, 1, 1, 1, 1, 0, 1, 0, 0],
-        [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [1, 1, 1, 0, 0, 0, 1, 0, 0, 1]
-    ]
-
-    # Define the source and destination
-    src = [8, 0]
-    dest = [0, 0]
-
-    # Run the A* search algorithm
-    a_star_search(grid, src, dest)
-
-if __name__ == "__main__":
-    main()
