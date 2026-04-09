@@ -7,8 +7,6 @@ def prims_algorithm(graph):
 
     key_values[0] = 0  # Starting vertex
 
-    # print("Edge \tWeight")
-
     for _ in range(graph.total_nodes):
         u = min(
             (v for v in range(graph.total_nodes) if not in_mst[v]),
@@ -16,13 +14,6 @@ def prims_algorithm(graph):
         )
 
         in_mst[u] = True
-
-        # if parents[u] != -1:
-        #     print(
-        #         f"{graph.vertex_data[parents[u]]}-"
-        #         f"{graph.vertex_data[u]} \t"
-        #         f"{graph.adj_matrix[u][parents[u]]}"
-        #     )
 
         for v in range(graph.total_nodes):
             if (

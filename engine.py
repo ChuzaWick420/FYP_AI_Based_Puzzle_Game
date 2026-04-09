@@ -20,10 +20,10 @@ class Engine:
         self.stateMachine = StateMachine()
 
         # Menus
-        self.main_menu = MainMenu()
+        self.main_menu       = MainMenu()
         self.difficulty_menu = DifficultyMenu()
-        self.pause_menu = PauseMenu()
-        self.result_menu = ResultMenu()
+        self.pause_menu      = PauseMenu()
+        self.result_menu     = ResultMenu()
         self.scoreboard_menu = ScoreBoardMenu()
 
         self.playing_screen = PlayingScreen()
@@ -48,6 +48,26 @@ class Engine:
             self.input_handler.reset()
 
         self.save()
+
+    def render(self):
+        self.screen.fill("black") # Screen Background
+
+        if self.stateMachine.current_state == GameStates.RESULTS:
+            minutes = self.elapsed_time // 60
+            seconds = self.elapsed_time % 60
+            self.result_menu.setTimer(minutes, seconds)
+
+        if self.stateMachine.current_state == GameStates.PLAY:
+            self.elapsed_time = (pygame.time.get_ticks() - self.ticks) // 1000
+            minutes = self.elapsed_time // 60
+            seconds = self.elapsed_time % 60
+            self.playing_screen.setTimer(minutes, seconds)
+            self.playing_screen.render(self.screen)
+        else:
+            self.ticks = pygame.time.get_ticks()
+            self.current_menu.render(self.screen)
+
+        pygame.display.flip() # Display
 
     def save(self):
         pygame.quit()
@@ -90,23 +110,3 @@ class Engine:
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
-
-    def render(self):
-        self.screen.fill("black") # Screen Background
-
-        if self.stateMachine.current_state == GameStates.RESULTS:
-            minutes = self.elapsed_time // 60
-            seconds = self.elapsed_time % 60
-            self.result_menu.setTimer(minutes, seconds)
-
-        if self.stateMachine.current_state == GameStates.PLAY:
-            self.elapsed_time = (pygame.time.get_ticks() - self.ticks) // 1000
-            minutes = self.elapsed_time // 60
-            seconds = self.elapsed_time % 60
-            self.playing_screen.setTimer(minutes, seconds)
-            self.playing_screen.render(self.screen)
-        else:
-            self.ticks = pygame.time.get_ticks()
-            self.current_menu.render(self.screen)
-
-        pygame.display.flip() # Display

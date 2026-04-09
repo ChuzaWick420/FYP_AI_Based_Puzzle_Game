@@ -19,15 +19,15 @@ class Graph:
         # WARNING: can be overwriten
         if 0 <= u < self.total_nodes and 0 <= v < self.total_nodes:
             self.adj_matrix[u][v] = weight
-            self.adj_matrix[v][u] = weight  # For undirected graph
+            self.adj_matrix[v][u] = weight  # NOTE: For undirected graph
 
     def add_vertex_data(self, vertex, data):
         if 0 <= vertex < self.total_nodes:
             self.vertex_data[vertex] = data
 
     def index_to_coordinates(self, index):
-        y = index // self.width
-        x = index % self.width 
+        y = index // self.width # NOTE: Row number
+        x = index % self.width  # NOTE: Column number
         return x, y
 
     def coordinates_to_index(self, x, y):
