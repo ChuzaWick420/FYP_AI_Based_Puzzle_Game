@@ -11,4 +11,4 @@ def getMaze(size):
     grid = mst_to_presentation_grid(graph)
     maze_visual = generate_maze(grid)
 
-    return maze_visual
+    return (graph, grid, maze_visual)
