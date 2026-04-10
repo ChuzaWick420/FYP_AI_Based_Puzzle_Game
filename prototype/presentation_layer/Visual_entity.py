@@ -31,9 +31,32 @@ class VisualEntity:
 
         while grid[pos[1]][pos[0]] != 1:
             pos = (
-                get_random_int(1, width - 1),
-                get_random_int(1, width - 1)
+                get_random_int(1, width - 2),
+                get_random_int(1, width - 2)
             )
 
-        self.updatePosition((pos[0] + 269, pos[1] + 36))
+        # TODO: Calculate offsets
+        cell_size = 16
+
+        offsets = (
+            (Global.WINDOW_RESOLUTION[0] - 16 * width) // 2,
+            (Global.WINDOW_RESOLUTION[1] - 16 * width) // 2
+        )
+
+        print("Grid Width: ", width)
+        print("In grid : ", pos)
+
+        # new_pos = (pos[0] * cell_size + offsets[0], pos[1] * cell_size + offsets[1])
+
+        # new_pos = (
+        #     Global.WINDOW_RESOLUTION[0] // 2,
+        #     Global.WINDOW_RESOLUTION[1] // 2
+        # )
+
+        new_pos = (54, 60)
+
+        print("In screen : ", new_pos)
+
+        self.updatePosition(new_pos)
+        # self.updatePosition(pos)
 
