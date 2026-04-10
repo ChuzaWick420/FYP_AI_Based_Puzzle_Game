@@ -1,4 +1,5 @@
 import pygame
+import time
 from prototype.Data_Layer import Global
 from prototype.Domain_Logic_Layer.GameStates import GameStates
 from prototype.Data_Layer.SystemEvents import SystemEvents
@@ -14,9 +15,19 @@ from prototype.Presentation_Layer.PlayingScreen import PlayingScreen
 class Engine:
     def __init__(self):
         pygame.init()
+
+        # Configuration
         self.resolution = Global.WINDOW_RESOLUTION
-        self.input_handler = InputHandler()
         self.elapsed_time = 0
+        self.frame_rate = 60
+        self.PHYSICS_TIME_UNIT = 1.0 / 120.0 
+        self.physics_accumulator = 0.0
+
+        # Derived Configuration
+        self.frame_time = 1.0 / self.frame_rate
+
+        # Objects
+        self.input_handler = InputHandler()
         self.stateMachine = StateMachine()
 
         # Menus
@@ -32,22 +43,59 @@ class Engine:
         self.current_menu = self.main_menu
         self.isRunning = True
 
+    def start(self):
+        self.load()
+        self.execute()
+        self.cleanup()
+
     def load(self):
         return
 
-    def start(self):
+    def handlePhysics(self, current, last):
+        dt = current - last
+        dt = min(dt, 0.25) # NOTE: Clamp dt to avoid spiral of death
+
+        self.physics_accumulator += dt
+        while self.physics_accumulator >= self.PHYSICS_TIME_UNIT:
+            # TODO: Update Physics here
+            self.physics_accumulator -= self.PHYSICS_TIME_UNIT
+
+    def handleProcesses(self, frame_start):
+       frame_end = time.perf_counter()
+       elapsed = frame_end - frame_start
+
+       remaining_time = self.frame_time - elapsed
+
+       if remaining_time > 0:
+           bg_start = time.perf_counter()
+
+           while (time.perf_counter() - bg_start) < remaining_time:
+               events = self.input_handler.processEvents()
+               self.handleEvents(events)
+               self.input_handler.reset()  # NOTE: empty the event buffer
+
+    def execute(self):
+
         self.screen = pygame.display.set_mode(self.resolution)
         self.ticks = pygame.time.get_ticks()
 
+        last_time = time.perf_counter()
+
         while self.isRunning:
-            events = self.input_handler.processEvents()
-            self.handleEvents(events)
+
+            # NOTE: Time Slice execution time into
+            # 1. Rendering (30 or 60 Frames per second)
+            # 2. Physics (time units)
+            # 3. Background computations
+
+            frame_start = time.perf_counter()
+            current_time = time.perf_counter()
+
+            self.handlePhysics(current_time, last_time)
             self.render()
+            self.handleProcesses(frame_start)
 
-            # empty the event buffer
-            self.input_handler.reset()
-
-        self.save()
+            last_time = current_time
 
     def render(self):
         self.screen.fill("black") # Screen Background
@@ -69,7 +117,7 @@ class Engine:
 
         pygame.display.flip() # Display
 
-    def save(self):
+    def cleanup(self):
         pygame.quit()
 
     def manageMenuTransition(self):
