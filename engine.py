@@ -3,6 +3,8 @@ import time
 from prototype.Data_Layer import Global
 from prototype.Domain_Logic_Layer.GameStates import GameStates
 from prototype.Data_Layer.SystemEvents import SystemEvents
+from prototype.Domain_Logic_Layer.entities.Ai import Ai
+from prototype.Domain_Logic_Layer.entities.Player import Player
 from prototype.Domain_Logic_Layer.entities.StateMachine import StateMachine
 from prototype.Presentation_Layer.menus.difficulty_menu import DifficultyMenu
 from prototype.Presentation_Layer.menus.main_menu import MainMenu
@@ -11,6 +13,7 @@ from prototype.Presentation_Layer.menus.result_menu import ResultMenu
 from prototype.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
 from prototype.Presentation_Layer.InputHandler import InputHandler
 from prototype.Presentation_Layer.PlayingScreen import PlayingScreen
+from prototype.Service_Layer.Maze_Manager import Maze_Manager
 
 class Engine:
     def __init__(self):
@@ -30,6 +33,9 @@ class Engine:
         # Objects
         self.input_handler = InputHandler()
         self.stateMachine = StateMachine()
+        self.maze_manager = Maze_Manager()
+        self.player = Player(self.maze_manager.maze_map)
+        self.ai = Ai(self.maze_manager.maze_map, self.maze_manager.path)
 
         # Menus
         self.main_menu       = MainMenu()
@@ -38,11 +44,12 @@ class Engine:
         self.result_menu     = ResultMenu()
         self.scoreboard_menu = ScoreBoardMenu()
 
-        self.playing_screen = PlayingScreen()
+        self.playing_screen = PlayingScreen(self.maze_manager.get_render_data())
 
         # States
         self.current_menu = self.main_menu
         self.isRunning = True
+        self.isKeyUp = True
 
     def start(self):
         self.load()
@@ -144,9 +151,32 @@ class Engine:
 
     def handleEvents(self, events):
         for event in events:
+
+            # NOTE: Termination
             if event == SystemEvents.TERMINATE_GAME:
                 self.isRunning = False
 
+            # NOTE: Keyboard handling
+            if event == SystemEvents.KEY_RELEASE:
+                self.isKeyUp = True
+
+            if self.isKeyUp == True:
+                if event == SystemEvents.UP_PRESSED:
+                    self.player.move_up()
+                    self.isKeyUp = False
+                if event == SystemEvents.DOWN_PRESSED:
+                    self.player.move_down()
+                    self.isKeyUp = False
+                if event == SystemEvents.LEFT_PRESSED:
+                    self.player.move_left()
+                    self.isKeyUp = False
+                if event == SystemEvents.RIGHT_PRESSED:
+                    self.player.move_right()
+                    self.isKeyUp = False
+
+                self.playing_screen.update_maze(self.maze_manager.get_render_data())
+
+            # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:
                 if self.stateMachine.current_state == GameStates.PLAY:
                     self.stateMachine.stepState(None)

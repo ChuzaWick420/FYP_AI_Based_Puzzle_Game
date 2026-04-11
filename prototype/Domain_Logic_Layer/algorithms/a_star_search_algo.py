@@ -29,7 +29,7 @@ def calculate_h_value(row, col, dest):
 
 # Trace the path from source to destination
 def trace_path(cell_details, dest):
-    print("The Path is ")
+    # print("The Path is ")
     path = []
     row = dest[0]
     col = dest[1]
@@ -48,14 +48,17 @@ def trace_path(cell_details, dest):
     path.reverse()
 
     # Print the path
-    for i in path:
-        print("->", i, end=" ")
-    print()
+    # for i in path:
+    #     print("->", i, end=" ")
+    # print()
+
+    return path
+
 
 # Implement the A* search algorithm
-def a_star_search(grid, src, dest, graph_width):
+def a_star_search(grid, src, dest, grid_width):
 
-    columns = graph_width
+    columns = grid_width
     rows = columns
 
     # Check if the source and destination are valid
@@ -122,9 +125,9 @@ def a_star_search(grid, src, dest, graph_width):
                     cell_details[new_i][new_j].parent_j = j
                     print("The destination cell is found")
                     # Trace and print the path from source to destination
-                    trace_path(cell_details, dest)
+                    found_path = trace_path(cell_details, dest)
                     found_dest = True
-                    return
+                    return found_path
                 else:
                     # Calculate the new f, g, and h values
                     g_new = cell_details[i][j].g + 1.0

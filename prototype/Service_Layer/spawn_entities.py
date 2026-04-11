@@ -11,4 +11,4 @@ def spawn_entities(grid):
     #         if grid[j][i] == CellTypes.PATH:
     #
 
-    grid[1][1] = CellTypes.PLAYER_AND_AI.value
+    grid[1][0] = CellTypes.PLAYER_AND_AI.value
