@@ -22,6 +22,7 @@ class Engine:
         self.frame_rate = 60
         self.PHYSICS_TIME_UNIT = 1.0 / 120.0 
         self.physics_accumulator = 0.0
+        self.window_background = "black"
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
@@ -98,7 +99,7 @@ class Engine:
             last_time = current_time
 
     def render(self):
-        self.screen.fill("black") # Screen Background
+        self.screen.fill(self.window_background) # Screen Background
 
         if self.stateMachine.current_state == GameStates.RESULTS:
             minutes = self.elapsed_time // 60
