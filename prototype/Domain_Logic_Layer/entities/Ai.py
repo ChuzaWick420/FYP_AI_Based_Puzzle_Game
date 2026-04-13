@@ -13,7 +13,7 @@ class Ai(Entity):
         self.prev_y = self.y_coordinate
 
         # DEBUG:
-        print("Number of steps: ", self.number_of_steps)
+        # print("Number of steps: ", self.number_of_steps)
 
     def step(self):
         pos = (self.prev_x, self.prev_y)

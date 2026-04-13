@@ -4,19 +4,46 @@ from prototype.Data_Layer.CellTypes import CellTypes
 from prototype.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from prototype.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
 from prototype.Domain_Logic_Layer.entities.Graph import Graph
-from prototype.Service_Layer.spawn_entities import spawn_entities
 
 
 class Maze_Manager:
     def __init__(self):
-        size = 16 * 16
+        pass
+
+    def load_previous(self, level_number, previous_graph):
+        size = (level_number * 3) ** 2
+        self.graph = Graph(size)
+        self.graph.adj_matrix = previous_graph
+        self.maze_map = self.generate_grid_map()
+        self.search()
+        self.spawn_entities()
+
+    def initialize(self, level_number):
+
+        size = (level_number * 3) ** 2
 
         self.graph = Graph(size)
         mst = prims_algorithm(self.graph)
         self.graph.adj_matrix = mst
         self.maze_map = self.generate_grid_map()
+        self.search()
+        self.spawn_entities()
+
+        # DEBUG:
+        # print("Source: ", src)
+        # print("Destination: ", dest)
+        #
+        # for row in self.maze_map:
+        #     print(row)
+
+    def search(self):
+
+        # DEBUG:
+        # print("Type: {0}, data: {1}".format(type(self.maze_map), self.maze_map))
 
         size = len(self.maze_map)
+
+        print("size: ", size)
 
         # NOTE: Format: (y, x)
         src = [1, 0]
@@ -25,14 +52,16 @@ class Maze_Manager:
         # NOTE: Get the path before populating the grid
         self.path = a_star_search(self.maze_map, src, dest, size)
 
-        spawn_entities(self.maze_map)
+    def spawn_entities(self):
+        # TODO: Spawn power ups
 
-        # DEBUG:
-        # print("Source: ", src)
-        # print("Destination: ", dest)
+        # grid_width = len(grid)
+        # for j in range(0, grid_width):
+        #     for i in range(0, grid_width):
+        #         if grid[j][i] == CellTypes.PATH:
         #
-        # for row in self.maze_map:
-        #     print(row)
+
+        self.maze_map[1][0] = CellTypes.PLAYER_AND_AI.value
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges

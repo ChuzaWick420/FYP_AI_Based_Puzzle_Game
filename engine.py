@@ -24,21 +24,20 @@ class Engine:
         self.resolution = Global.WINDOW_RESOLUTION
         self.elapsed_time = 0
         self.frame_rate = 60
-        self.PHYSICS_TIME_UNIT = 1.0 / 5.0 
-        # self.PHYSICS_TIME_UNIT = 1.0 / 120.0 
+        self.PHYSICS_FREQUENCY = 120.0
+        self.ticks_physics = 0
         self.physics_accumulator = 0.0
         self.window_background = "black"
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
+        self.PHYSICS_TIME_UNIT = 1.0 / self.PHYSICS_FREQUENCY
 
         # Objects
         self.input_handler = InputHandler()
         self.stateMachine = StateMachine()
         self.maze_manager = Maze_Manager()
         self.db_manager = DB_Manager()
-        self.player = Player(self.maze_manager.maze_map)
-        self.ai = Ai(self.maze_manager.maze_map, self.maze_manager.path)
 
         # Menus
         self.main_menu       = MainMenu()
@@ -47,12 +46,20 @@ class Engine:
         self.result_menu     = ResultMenu()
         self.scoreboard_menu = ScoreBoardMenu()
 
-        self.playing_screen = PlayingScreen(self.maze_manager.get_render_data())
+        self.playing_screen = PlayingScreen()
 
         # States
         self.current_menu = self.main_menu
         self.isRunning = True
         self.isKeyUp = True
+        self.play_time = 0
+
+        # NOTE: This data depends on dataase to be loaded.
+        self.current_level = 0
+        self.ai_speed = 0
+        # self.current_map
+        # self.player
+        # self.ai
 
     def start(self):
         self.load()
@@ -61,8 +68,26 @@ class Engine:
 
     def load(self):
         self.db_manager.load()
+
+        self.current_level = self.db_manager.file_data["current_level"]
+        self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
+
+        if len(self.adjacent_matrix) == 0:
+            self.maze_manager.initialize(self.current_level)
+
+        else:
+            self.maze_manager.load_previous(self.current_level, self.adjacent_matrix)
+
+        self.player = Player(self.maze_manager.maze_map)
+        self.ai = Ai(self.maze_manager.maze_map, self.maze_manager.path)
+
+        max_speed = 3 # BLOCKS PER SECOND
+        min_speed = 1 # BLOCKS PER SECOND
+
+        self.ai_speed = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
+
         self.db_manager.log()
-        return
+        self.db_manager.debug()
 
     def handlePhysics(self, current, last):
         dt = current - last
@@ -71,9 +96,23 @@ class Engine:
         self.physics_accumulator += dt
         while self.physics_accumulator >= self.PHYSICS_TIME_UNIT:
             # TODO: Update Physics here
+            self.ticks_physics += 1
+            self.physics_accumulator -= self.PHYSICS_TIME_UNIT
+
+        if (self.ticks_physics / self.PHYSICS_FREQUENCY) * self.ai_speed >= 1:
+            # DEBUG
+            # print("Ticked: ", self.ticks_physics)
+            # print("AI speed: ", self.ai_speed)
+
             if self.stateMachine.current_state == GameStates.PLAY:
                 self.ai.update_grid()
-            self.physics_accumulator -= self.PHYSICS_TIME_UNIT
+
+            # Reset
+            self.ticks_physics = 0
+
+        if (self.ticks_physics /self.PHYSICS_FREQUENCY) >= 1:
+            self.play_time += 1
+
 
     def handleProcesses(self, frame_start):
        frame_end = time.perf_counter()
@@ -130,10 +169,17 @@ class Engine:
             self.ticks = pygame.time.get_ticks()
             self.current_menu.render(self.screen)
 
-        self.playing_screen.update_maze(self.maze_manager.get_render_data())
         pygame.display.flip() # Display
 
     def cleanup(self):
+
+        # save current level number
+        self.db_manager.file_data["current_level"] = self.current_level
+
+        # Save map for current level
+        self.db_manager.file_data["Graph_adjacent_matrix"] = self.maze_manager.graph.adj_matrix
+
+        self.db_manager.flush() 
         pygame.quit()
 
     def manageMenuTransition(self):
@@ -158,6 +204,10 @@ class Engine:
         self.stateMachine.current_state = self.stateMachine.next_state
 
     def handleEvents(self, events):
+        # Other Updates
+        self.playing_screen.update_maze(self.maze_manager.get_render_data())
+
+        # Events
         for event in events:
 
             # NOTE: Termination

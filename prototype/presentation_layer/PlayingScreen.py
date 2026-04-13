@@ -4,16 +4,12 @@ from prototype.Data_Layer import Global
 from prototype.Presentation_Layer.Block import Block
 from prototype.Presentation_Layer.TextElement import TextElement
 from prototype.Service_Layer.Maze_Manager import Maze_Manager
-from prototype.Service_Layer.spawn_entities import spawn_entities
 
 class PlayingScreen:
-    def __init__(self, render_data):
+    def __init__(self):
         color = (89, 255, 60)
         self.timer = TextElement("Timer: 00:00", color, (100, 50))
         self.scores = TextElement("Scores: 100", color, (100, 100))
-
-        # self.maze_manager = Maze_Manager()
-        self.update_maze(render_data)
 
     def setTimer(self, minutes, seconds):
         self.timer.setText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
@@ -30,6 +26,7 @@ class PlayingScreen:
         self.update_maze(self.render_data)
         self.visual.draw(display)
 
+    # PERF: Need optimization, updates are really laggy
     def get_visual(self, render_data):
         maze_visual = pygame.sprite.Group()
 
