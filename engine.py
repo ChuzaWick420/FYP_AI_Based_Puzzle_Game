@@ -1,6 +1,7 @@
 import pygame
 import time
 from prototype.Data_Layer import Global
+from prototype.Data_Layer.DB_Manager import DB_Manager
 from prototype.Domain_Logic_Layer.GameStates import GameStates
 from prototype.Data_Layer.SystemEvents import SystemEvents
 from prototype.Domain_Logic_Layer.entities.Ai import Ai
@@ -35,6 +36,7 @@ class Engine:
         self.input_handler = InputHandler()
         self.stateMachine = StateMachine()
         self.maze_manager = Maze_Manager()
+        self.db_manager = DB_Manager()
         self.player = Player(self.maze_manager.maze_map)
         self.ai = Ai(self.maze_manager.maze_map, self.maze_manager.path)
 
@@ -58,6 +60,8 @@ class Engine:
         self.cleanup()
 
     def load(self):
+        self.db_manager.load()
+        self.db_manager.log()
         return
 
     def handlePhysics(self, current, last):
