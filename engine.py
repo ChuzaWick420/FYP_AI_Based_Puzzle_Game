@@ -23,7 +23,8 @@ class Engine:
         self.resolution = Global.WINDOW_RESOLUTION
         self.elapsed_time = 0
         self.frame_rate = 60
-        self.PHYSICS_TIME_UNIT = 1.0 / 120.0 
+        self.PHYSICS_TIME_UNIT = 1.0 / 5.0 
+        # self.PHYSICS_TIME_UNIT = 1.0 / 120.0 
         self.physics_accumulator = 0.0
         self.window_background = "black"
 
@@ -66,6 +67,8 @@ class Engine:
         self.physics_accumulator += dt
         while self.physics_accumulator >= self.PHYSICS_TIME_UNIT:
             # TODO: Update Physics here
+            if self.stateMachine.current_state == GameStates.PLAY:
+                self.ai.update_grid()
             self.physics_accumulator -= self.PHYSICS_TIME_UNIT
 
     def handleProcesses(self, frame_start):
@@ -123,6 +126,7 @@ class Engine:
             self.ticks = pygame.time.get_ticks()
             self.current_menu.render(self.screen)
 
+        self.playing_screen.update_maze(self.maze_manager.get_render_data())
         pygame.display.flip() # Display
 
     def cleanup(self):
@@ -173,8 +177,6 @@ class Engine:
                 if event == SystemEvents.RIGHT_PRESSED:
                     self.player.move_right()
                     self.isKeyUp = False
-
-                self.playing_screen.update_maze(self.maze_manager.get_render_data())
 
             # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:

@@ -48,9 +48,9 @@ def trace_path(cell_details, dest):
     path.reverse()
 
     # Print the path
-    # for i in path:
-    #     print("->", i, end=" ")
-    # print()
+    for i in path:
+        print("->", i, end=" ")
+    print()
 
     return path
 
