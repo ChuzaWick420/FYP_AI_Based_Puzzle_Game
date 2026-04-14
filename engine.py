@@ -1,4 +1,3 @@
-from types import CellType
 import pygame
 import time
 from prototype.Data_Layer import Global
@@ -77,7 +76,6 @@ class Engine:
         # NOTE: Initializing Maze Manager
         if len(self.adjacent_matrix) == 0:
             self.maze_manager.initialize(self.current_level)
-
         else:
             self.maze_manager.load_previous(self.current_level, self.adjacent_matrix)
 
@@ -190,7 +188,7 @@ class Engine:
 
     def manageMenuTransition(self):
         if self.stateMachine.next_state == GameStates.EXIT:
-            self.isRunning = False
+            self.input_handler.createEvent(SystemEvents.TERMINATE_GAME)
 
         if self.stateMachine.next_state == GameStates.DIFFICULTY_SELECTION:
             self.current_menu = self.difficulty_menu
@@ -216,41 +214,13 @@ class Engine:
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
             if event == SystemEvents.MAZE_UPDATE:
-                # Get Entity positions
-                previous_ai = (self.ai.prev_x, self.ai.prev_y)
-                current_ai = (self.ai.x_coordinate, self.ai.y_coordinate)
-                previous_player = (self.player.prev_x, self.player.prev_y)
-                current_player = (self.player.x_coordinate, self.player.y_coordinate)
-
-                # Ask maze manager to update cells
-                # FIXME: This will be re-thought when powerups are introduced
-                self.maze_manager.update_cell(previous_ai, CellTypes.PATH["value"])
-                self.maze_manager.update_cell(current_ai, CellTypes.AI["value"])
-                self.maze_manager.update_cell(previous_player, CellTypes.PATH["value"])
-                self.maze_manager.update_cell(current_player, CellTypes.PLAYER["value"])
-
-                # ask playing screen to update render data
-                self.playing_screen.update_maze(self.maze_manager.get_render_data())
+                self.handleEventMaze()
 
             # NOTE: Keyboard handling
             if event == SystemEvents.KEY_RELEASE:
                 self.isKeyUp = True
 
-            if self.isKeyUp == True:
-
-                is_up_pressed    = event == SystemEvents.UP_PRESSED
-                is_down_pressed  = event == SystemEvents.DOWN_PRESSED
-                is_left_pressed  = event == SystemEvents.LEFT_PRESSED
-                is_right_pressed = event == SystemEvents.RIGHT_PRESSED
-
-                if is_up_pressed:    self.player.move_up()
-                if is_down_pressed:  self.player.move_down()
-                if is_left_pressed:  self.player.move_left()
-                if is_right_pressed: self.player.move_right()
-
-                if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
-                    self.isKeyUp = False
-                    self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
+            self.handleEventKeyboard(event)
 
             # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:
@@ -269,3 +239,37 @@ class Engine:
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
+
+    def handleEventMaze(self):
+        # Get Entity positions
+        previous_ai     = (self.ai.prev_x, self.ai.prev_y)
+        current_ai      = (self.ai.x_coordinate, self.ai.y_coordinate)
+        previous_player = (self.player.prev_x, self.player.prev_y)
+        current_player  = (self.player.x_coordinate, self.player.y_coordinate)
+
+        # Ask maze manager to update cells
+        # FIXME: This will be re-thought when powerups are introduced
+        self.maze_manager.update_cell(previous_ai,     CellTypes.PATH  ["value"])
+        self.maze_manager.update_cell(current_ai,      CellTypes.AI    ["value"])
+        self.maze_manager.update_cell(previous_player, CellTypes.PATH  ["value"])
+        self.maze_manager.update_cell(current_player,  CellTypes.PLAYER["value"])
+
+        # ask playing screen to update render data
+        self.playing_screen.update_maze(self.maze_manager.get_render_data())
+
+    def handleEventKeyboard(self, event):
+        if self.isKeyUp == True:
+
+            is_up_pressed    = event == SystemEvents.UP_PRESSED
+            is_down_pressed  = event == SystemEvents.DOWN_PRESSED
+            is_left_pressed  = event == SystemEvents.LEFT_PRESSED
+            is_right_pressed = event == SystemEvents.RIGHT_PRESSED
+
+            if is_up_pressed:    self.player.move_up()
+            if is_down_pressed:  self.player.move_down()
+            if is_left_pressed:  self.player.move_left()
+            if is_right_pressed: self.player.move_right()
+
+            if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
+                self.isKeyUp = False
+                self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
