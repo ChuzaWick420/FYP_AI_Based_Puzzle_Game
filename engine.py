@@ -1,6 +1,8 @@
+from types import CellType
 import pygame
 import time
 from prototype.Data_Layer import Global
+from prototype.Data_Layer.CellTypes import CellTypes
 from prototype.Data_Layer.DB_Manager import DB_Manager
 from prototype.Domain_Logic_Layer.GameStates import GameStates
 from prototype.Data_Layer.SystemEvents import SystemEvents
@@ -38,6 +40,8 @@ class Engine:
         self.stateMachine = StateMachine()
         self.maze_manager = Maze_Manager()
         self.db_manager = DB_Manager()
+        self.player = Player()
+        self.ai = Ai()
 
         # Menus
         self.main_menu       = MainMenu()
@@ -66,28 +70,36 @@ class Engine:
         self.execute()
         self.cleanup()
 
-    def load(self):
-        self.db_manager.load()
+    def initialize(self):
+        self.screen = pygame.display.set_mode(self.resolution)
+        self.ticks = pygame.time.get_ticks()
 
-        self.current_level = self.db_manager.file_data["current_level"]
-        self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
-
+        # NOTE: Initializing Maze Manager
         if len(self.adjacent_matrix) == 0:
             self.maze_manager.initialize(self.current_level)
 
         else:
             self.maze_manager.load_previous(self.current_level, self.adjacent_matrix)
 
-        self.player = Player(self.maze_manager.maze_map)
-        self.ai = Ai(self.maze_manager.maze_map, self.maze_manager.path)
+        self.playing_screen.update_maze(self.maze_manager.get_render_data())
 
-        max_speed = 3 # BLOCKS PER SECOND
-        min_speed = 1 # BLOCKS PER SECOND
+        # NOTE: AI's speed in blocks per second depending on level number
+        max_speed = 3
+        min_speed = 1
 
         self.ai_speed = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
 
+        # NOTE: initializing Player and AI
+        self.player.init(self.maze_manager.maze_map)
+        self.ai.init(self.maze_manager.path)
+
+    def load(self):
+        self.db_manager.load()
+
+        self.current_level = self.db_manager.file_data["current_level"]
+        self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
+
         self.db_manager.log()
-        self.db_manager.debug()
 
     def handlePhysics(self, current, last):
         dt = current - last
@@ -100,18 +112,15 @@ class Engine:
             self.physics_accumulator -= self.PHYSICS_TIME_UNIT
 
         if (self.ticks_physics / self.PHYSICS_FREQUENCY) * self.ai_speed >= 1:
-            # DEBUG
-            # print("Ticked: ", self.ticks_physics)
-            # print("AI speed: ", self.ai_speed)
-
             if self.stateMachine.current_state == GameStates.PLAY:
-                self.ai.update_grid()
+                self.ai.step()
+                self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
 
             # Reset
             self.ticks_physics = 0
 
-        if (self.ticks_physics /self.PHYSICS_FREQUENCY) >= 1:
-            self.play_time += 1
+        # if (self.ticks_physics /self.PHYSICS_FREQUENCY) >= 1:
+        #     self.play_time += 1
 
 
     def handleProcesses(self, frame_start):
@@ -129,10 +138,7 @@ class Engine:
                self.input_handler.reset()  # NOTE: empty the event buffer
 
     def execute(self):
-
-        self.screen = pygame.display.set_mode(self.resolution)
-        self.ticks = pygame.time.get_ticks()
-
+        self.initialize()
         last_time = time.perf_counter()
 
         while self.isRunning:
@@ -204,11 +210,27 @@ class Engine:
         self.stateMachine.current_state = self.stateMachine.next_state
 
     def handleEvents(self, events):
-        # Other Updates
-        self.playing_screen.update_maze(self.maze_manager.get_render_data())
-
         # Events
         for event in events:
+
+            # NOTE: Maze update
+            if event == SystemEvents.MAZE_UPDATE:
+                # Get Entity positions
+                previous_ai = (self.ai.prev_x, self.ai.prev_y)
+                current_ai = (self.ai.x_coordinate, self.ai.y_coordinate)
+                previous_player = (self.player.prev_x, self.player.prev_y)
+                current_player = (self.player.x_coordinate, self.player.y_coordinate)
+
+                # Ask maze manager to update cells
+                # FIXME: This will be re-thought when powerups are introduced
+                self.maze_manager.update_cell(previous_ai, CellTypes.PATH.value)
+                self.maze_manager.update_cell(current_ai, CellTypes.AI.value)
+                self.maze_manager.update_cell(previous_player, CellTypes.PATH.value)
+                self.maze_manager.update_cell(current_player, CellTypes.PLAYER.value)
+
+                # ask playing screen to update render data
+                self.playing_screen.update_maze(self.maze_manager.get_render_data())
+
 
             # NOTE: Termination
             if event == SystemEvents.TERMINATE_GAME:
@@ -219,18 +241,20 @@ class Engine:
                 self.isKeyUp = True
 
             if self.isKeyUp == True:
-                if event == SystemEvents.UP_PRESSED:
-                    self.player.move_up()
+
+                is_up_pressed    = event == SystemEvents.UP_PRESSED
+                is_down_pressed  = event == SystemEvents.DOWN_PRESSED
+                is_left_pressed  = event == SystemEvents.LEFT_PRESSED
+                is_right_pressed = event == SystemEvents.RIGHT_PRESSED
+
+                if is_up_pressed:    self.player.move_up()
+                if is_down_pressed:  self.player.move_down()
+                if is_left_pressed:  self.player.move_left()
+                if is_right_pressed: self.player.move_right()
+
+                if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
                     self.isKeyUp = False
-                if event == SystemEvents.DOWN_PRESSED:
-                    self.player.move_down()
-                    self.isKeyUp = False
-                if event == SystemEvents.LEFT_PRESSED:
-                    self.player.move_left()
-                    self.isKeyUp = False
-                if event == SystemEvents.RIGHT_PRESSED:
-                    self.player.move_right()
-                    self.isKeyUp = False
+                    self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
 
             # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:

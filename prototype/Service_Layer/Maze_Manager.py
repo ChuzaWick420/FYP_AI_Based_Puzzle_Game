@@ -8,6 +8,7 @@ from prototype.Domain_Logic_Layer.entities.Graph import Graph
 
 class Maze_Manager:
     def __init__(self):
+        self.render_data = []
         pass
 
     def load_previous(self, level_number, previous_graph):
@@ -15,8 +16,10 @@ class Maze_Manager:
         self.graph = Graph(size)
         self.graph.adj_matrix = previous_graph
         self.maze_map = self.generate_grid_map()
+        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (len(self.maze_map) ** 2)
         self.search()
         self.spawn_entities()
+        self.initialize_render_data()
 
     def initialize(self, level_number):
 
@@ -26,8 +29,10 @@ class Maze_Manager:
         mst = prims_algorithm(self.graph)
         self.graph.adj_matrix = mst
         self.maze_map = self.generate_grid_map()
+        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (len(self.maze_map) ** 2)
         self.search()
         self.spawn_entities()
+        self.initialize_render_data()
 
         # DEBUG:
         # print("Source: ", src)
@@ -108,29 +113,41 @@ class Maze_Manager:
 
         return map
 
+    def update_render_cell(self, coordinates):
+        (i, j) = coordinates
+
+        grid_width = len(self.maze_map)
+
+        if self.maze_map[j][i] == CellTypes.PATH.value:
+            current_color = CellColors.BACKGROUND
+        elif self.maze_map[j][i] == CellTypes.WALL.value:
+            current_color = CellColors.WALL
+        elif self.maze_map[j][i] == CellTypes.PLAYER.value:
+            current_color = CellColors.PLAYER
+        elif self.maze_map[j][i] == CellTypes.AI.value:
+            current_color = CellColors.AI
+        elif self.maze_map[j][i] == CellTypes.PLAYER_AND_AI.value:
+            current_color = CellColors.PLAYER_AND_AI
+
+        cell_size = (Global.BOARD_SIZE[0] // grid_width, Global.BOARD_SIZE[1] // grid_width)
+        cell_position = (i * cell_size[0], j * cell_size[1])
+
+        # 2D to 1D
+        index = i * grid_width + j
+
+        self.render_data[index] = (current_color, cell_size, cell_position)
+
+    def update_cell(self, coordinates, value):
+        (i, j) = coordinates
+        self.maze_map[j][i] = value
+        self.update_render_cell((i, j))
 
     def get_render_data(self):
-        render_data = []
-        current_color = (0, 0, 0)
+        return self.render_data
+
+    def initialize_render_data(self):
         grid_width = len(self.maze_map)
 
         for j in range(0, grid_width):
             for i in range(0, grid_width):
-
-                if self.maze_map[j][i] == CellTypes.PATH.value:
-                    current_color = CellColors.BACKGROUND
-                elif self.maze_map[j][i] == CellTypes.WALL.value:
-                    current_color = CellColors.WALL
-                elif self.maze_map[j][i] == CellTypes.PLAYER.value:
-                    current_color = CellColors.PLAYER
-                elif self.maze_map[j][i] == CellTypes.AI.value:
-                    current_color = CellColors.AI
-                elif self.maze_map[j][i] == CellTypes.PLAYER_AND_AI.value:
-                    current_color = CellColors.PLAYER_AND_AI
-
-                cell_size = (Global.BOARD_SIZE[0] // grid_width, Global.BOARD_SIZE[1] // grid_width)
-                cell_position = (i * cell_size[0], j * cell_size[1])
-
-                render_data.append((current_color, cell_size, cell_position))
-
-        return render_data
+                self.update_render_cell((i, j))

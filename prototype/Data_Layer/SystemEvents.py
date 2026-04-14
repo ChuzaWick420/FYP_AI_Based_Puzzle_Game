@@ -12,3 +12,4 @@ class SystemEvents:
     KEY_RELEASE      = 1006
     TERMINATE_GAME   = 1101
     STATE_TRANSITION = 1201
+    MAZE_UPDATE      = 1202

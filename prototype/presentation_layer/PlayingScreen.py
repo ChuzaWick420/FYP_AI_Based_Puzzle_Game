@@ -10,12 +10,12 @@ class PlayingScreen:
         color = (89, 255, 60)
         self.timer = TextElement("Timer: 00:00", color, (100, 50))
         self.scores = TextElement("Scores: 100", color, (100, 100))
+        self.visual = pygame.sprite.Group()
 
     def setTimer(self, minutes, seconds):
         self.timer.setText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
 
     def update_maze(self, render_data):
-        self.render_data = render_data
         self.visual = self.get_visual(render_data)
 
     def render(self, display):
@@ -23,7 +23,6 @@ class PlayingScreen:
         display.blit(self.scores.text, self.scores.textRect)
 
         # NOTE: Updates the visual and renders it
-        self.update_maze(self.render_data)
         self.visual.draw(display)
 
     # PERF: Need optimization, updates are really laggy
