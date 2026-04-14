@@ -214,6 +214,7 @@ class Engine:
         for event in events:
 
             # NOTE: Maze update
+            # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
             if event == SystemEvents.MAZE_UPDATE:
                 # Get Entity positions
                 previous_ai = (self.ai.prev_x, self.ai.prev_y)
@@ -223,18 +224,13 @@ class Engine:
 
                 # Ask maze manager to update cells
                 # FIXME: This will be re-thought when powerups are introduced
-                self.maze_manager.update_cell(previous_ai, CellTypes.PATH.value)
-                self.maze_manager.update_cell(current_ai, CellTypes.AI.value)
-                self.maze_manager.update_cell(previous_player, CellTypes.PATH.value)
-                self.maze_manager.update_cell(current_player, CellTypes.PLAYER.value)
+                self.maze_manager.update_cell(previous_ai, CellTypes.PATH["value"])
+                self.maze_manager.update_cell(current_ai, CellTypes.AI["value"])
+                self.maze_manager.update_cell(previous_player, CellTypes.PATH["value"])
+                self.maze_manager.update_cell(current_player, CellTypes.PLAYER["value"])
 
                 # ask playing screen to update render data
                 self.playing_screen.update_maze(self.maze_manager.get_render_data())
-
-
-            # NOTE: Termination
-            if event == SystemEvents.TERMINATE_GAME:
-                self.isRunning = False
 
             # NOTE: Keyboard handling
             if event == SystemEvents.KEY_RELEASE:
@@ -266,6 +262,10 @@ class Engine:
                         if (button.isClicked()):
                             self.stateMachine.stepState(button.name)
                             self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+
+            # NOTE: Termination
+            if event == SystemEvents.TERMINATE_GAME:
+                self.isRunning = False
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()

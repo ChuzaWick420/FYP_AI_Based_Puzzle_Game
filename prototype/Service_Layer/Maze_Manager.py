@@ -1,5 +1,4 @@
 from prototype.Data_Layer import Global
-from prototype.Data_Layer.CellColors import CellColors
 from prototype.Data_Layer.CellTypes import CellTypes
 from prototype.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from prototype.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
@@ -66,7 +65,7 @@ class Maze_Manager:
         #         if grid[j][i] == CellTypes.PATH:
         #
 
-        self.maze_map[1][0] = CellTypes.PLAYER_AND_AI.value
+        self.maze_map[1][0] = CellTypes.PLAYER_AND_AI["value"]
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
@@ -79,17 +78,17 @@ class Maze_Manager:
 
         # NOTE: Goes through padding (up and down)
         for i in range(0, grid_width):
-            map[0][i] = CellTypes.WALL.value
-            map[grid_width - 1][i] = CellTypes.WALL.value
+            map[0][i] = CellTypes.WALL["value"]
+            map[grid_width - 1][i] = CellTypes.WALL["value"]
 
         # NOTE: Goes through padding (right and left)
         for i in range(0, grid_width):
-            map[i][0] = CellTypes.WALL.value
-            map[i][grid_width - 1] = CellTypes.WALL.value
+            map[i][0] = CellTypes.WALL["value"]
+            map[i][grid_width - 1] = CellTypes.WALL["value"]
 
         # NOTE: Create openings within padding
-        map[1][0] = CellTypes.PATH.value
-        map[grid_width - 2][grid_width - 1] = CellTypes.PATH.value
+        map[1][0] = CellTypes.PATH["value"]
+        map[grid_width - 2][grid_width - 1] = CellTypes.PATH["value"]
 
         offsets = (1, 1)
 
@@ -103,13 +102,13 @@ class Maze_Manager:
             right_allowed = x + 1 < self.graph.width and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x + 1, y)] != 0
             left_allowed  = x - 1 >= 0          and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x - 1, y)] != 0
 
-            if (up_allowed):    map[(y * 2) - 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH.value
-            if (down_allowed):  map[(y * 2) + 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH.value
-            if (right_allowed): map[y * 2 + offsets[0]][(x * 2) + 1 + offsets[0]] = CellTypes.PATH.value
-            if (left_allowed):  map[y * 2 + offsets[0]][(x * 2) - 1 + offsets[0]] = CellTypes.PATH.value
+            if (up_allowed):    map[(y * 2) - 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
+            if (down_allowed):  map[(y * 2) + 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
+            if (right_allowed): map[y * 2 + offsets[0]][(x * 2) + 1 + offsets[0]] = CellTypes.PATH["value"]
+            if (left_allowed):  map[y * 2 + offsets[0]][(x * 2) - 1 + offsets[0]] = CellTypes.PATH["value"]
 
             # NOTE: Vertices
-            map[y * 2 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH.value
+            map[y * 2 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
 
         return map
 
@@ -118,16 +117,16 @@ class Maze_Manager:
 
         grid_width = len(self.maze_map)
 
-        if self.maze_map[j][i] == CellTypes.PATH.value:
-            current_color = CellColors.BACKGROUND
-        elif self.maze_map[j][i] == CellTypes.WALL.value:
-            current_color = CellColors.WALL
-        elif self.maze_map[j][i] == CellTypes.PLAYER.value:
-            current_color = CellColors.PLAYER
-        elif self.maze_map[j][i] == CellTypes.AI.value:
-            current_color = CellColors.AI
-        elif self.maze_map[j][i] == CellTypes.PLAYER_AND_AI.value:
-            current_color = CellColors.PLAYER_AND_AI
+        if self.maze_map[j][i] == CellTypes.PATH["value"]:
+            current_color = CellTypes.PATH["color"]
+        elif self.maze_map[j][i] == CellTypes.WALL["value"]:
+            current_color = CellTypes.WALL["color"]
+        elif self.maze_map[j][i] == CellTypes.PLAYER["value"]:
+            current_color = CellTypes.PLAYER["color"]
+        elif self.maze_map[j][i] == CellTypes.AI["value"]:
+            current_color = CellTypes.AI["color"]
+        elif self.maze_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
+            current_color = CellTypes.PLAYER_AND_AI["color"]
 
         cell_size = (Global.BOARD_SIZE[0] // grid_width, Global.BOARD_SIZE[1] // grid_width)
         cell_position = (i * cell_size[0], j * cell_size[1])
