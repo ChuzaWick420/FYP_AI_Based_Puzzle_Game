@@ -60,9 +60,6 @@ class Engine:
         # NOTE: This data depends on dataase to be loaded.
         self.current_level = 0
         self.ai_speed = 0
-        # self.current_map
-        # self.player
-        # self.ai
 
     def start(self):
         self.load()
@@ -116,10 +113,6 @@ class Engine:
 
             # Reset
             self.ticks_physics = 0
-
-        # if (self.ticks_physics /self.PHYSICS_FREQUENCY) >= 1:
-        #     self.play_time += 1
-
 
     def handleProcesses(self, frame_start):
        frame_end = time.perf_counter()
@@ -225,7 +218,8 @@ class Engine:
             # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:
                 if self.stateMachine.current_state == GameStates.PLAY:
-                    self.stateMachine.stepState(None)
+                    if (self.playing_screen.pause_button.isClicked()):
+                        self.stateMachine.stepState("Pause")
                     self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
                 else:
                     for button in self.current_menu.buttons:

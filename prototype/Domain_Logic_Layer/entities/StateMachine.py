@@ -29,7 +29,7 @@ class StateMachine:
             if button_id == "Restart":
                 self.next_state = GameStates.PLAY
 
-            if button_id == "Quit":
+            if button_id == "Home":
                 self.next_state = GameStates.MAINMENU
 
         if self.current_state == GameStates.RESULTS:
@@ -47,4 +47,5 @@ class StateMachine:
                 self.next_state = GameStates.MAINMENU
 
         if self.current_state == GameStates.PLAY:
-            self.next_state = GameStates.RESULTS
+            if button_id == "Pause":
+                self.next_state = GameStates.PAUSE

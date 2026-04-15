@@ -2,14 +2,17 @@ import pygame
 
 from prototype.Data_Layer import Global
 from prototype.Presentation_Layer.Block import Block
+from prototype.Presentation_Layer.Button import Button
 from prototype.Presentation_Layer.TextElement import TextElement
-from prototype.Service_Layer.Maze_Manager import Maze_Manager
 
 class PlayingScreen:
     def __init__(self):
         color = (89, 255, 60)
         self.timer = TextElement("Timer: 00:00", color, (100, 50))
         self.scores = TextElement("Scores: 100", color, (100, 100))
+
+        self.pause_button = Button("Pause", (Global.WINDOW_RESOLUTION[0] - 150, 100))
+
         self.visual = pygame.sprite.Group()
 
     def setTimer(self, minutes, seconds):
@@ -21,6 +24,8 @@ class PlayingScreen:
     def render(self, display):
         display.blit(self.timer.text, self.timer.textRect)
         display.blit(self.scores.text, self.scores.textRect)
+
+        self.pause_button.render(display)
 
         # NOTE: Updates the visual and renders it
         self.visual.draw(display)
