@@ -33,6 +33,7 @@ class Engine:
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
         self.PHYSICS_TIME_UNIT = 1.0 / self.PHYSICS_FREQUENCY
+        self.levels_per_category = Global.MAX_LEVELS // 3
 
         # Objects
         self.input_handler = InputHandler()
@@ -67,8 +68,6 @@ class Engine:
         self.cleanup()
 
     def initialize(self):
-        self.screen = pygame.display.set_mode(self.resolution)
-        self.ticks = pygame.time.get_ticks()
 
         # NOTE: Initializing Maze Manager
         if len(self.adjacent_matrix) == 0:
@@ -130,6 +129,8 @@ class Engine:
 
     def execute(self):
         self.initialize()
+        self.screen = pygame.display.set_mode(self.resolution)
+        self.ticks = pygame.time.get_ticks()
         last_time = time.perf_counter()
 
         while self.isRunning:
@@ -204,6 +205,19 @@ class Engine:
         # Events
         for event in events:
 
+            if event == SystemEvents.DIFFICULTY_EASY:
+                self.current_level = 0 * self.levels_per_category + 1
+                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+            if event == SystemEvents.DIFFICULTY_MEDIUM:
+                self.current_level = 1 * self.levels_per_category + 1
+                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+            if event == SystemEvents.DIFFICULTY_HARD:
+                self.current_level = 2 * self.levels_per_category + 1
+                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+
+            if event == SystemEvents.LEVEL_RESET:
+                self.initialize()
+
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
             if event == SystemEvents.MAZE_UPDATE:
@@ -217,15 +231,7 @@ class Engine:
 
             # NOTE: Mouse handling
             if event == SystemEvents.MOUSE_CLICK:
-                if self.stateMachine.current_state == GameStates.PLAY:
-                    if (self.playing_screen.pause_button.isClicked()):
-                        self.stateMachine.stepState("Pause")
-                    self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
-                else:
-                    for button in self.current_menu.buttons:
-                        if (button.isClicked()):
-                            self.stateMachine.stepState(button.name)
-                            self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+                self.handleEventMouse()
 
             # NOTE: Termination
             if event == SystemEvents.TERMINATE_GAME:
@@ -233,6 +239,29 @@ class Engine:
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
+
+    def handleEventMouse(self):
+        if self.stateMachine.current_state == GameStates.PLAY:
+            if (self.playing_screen.pause_button.isClicked()):
+                self.stateMachine.stepState("Pause")
+                self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+        else:
+            for button in self.current_menu.buttons:
+                if (button.isClicked()):
+                    self.stateMachine.stepState(button.name)
+                    self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+
+                    # NOTE: Difficulty Selection
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Easy":
+                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_EASY)
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Medium":
+                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Hard":
+                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_HARD)
+
+                    # NOTE: Reseting level
+                    if self.stateMachine.current_state == GameStates.PAUSE and button.name == "Restart":
+                        self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
 
     def handleEventMaze(self):
         # Get Entity positions

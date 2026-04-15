@@ -4,12 +4,16 @@ class SystemEvents:
     #               xx = 11 for window events
     #               xx = 12 for game events
 
-    MOUSE_CLICK      = 1001
-    UP_PRESSED       = 1002
-    DOWN_PRESSED     = 1003
-    RIGHT_PRESSED    = 1004
-    LEFT_PRESSED     = 1005
-    KEY_RELEASE      = 1006
-    TERMINATE_GAME   = 1101
-    STATE_TRANSITION = 1201
-    MAZE_UPDATE      = 1202
+    MOUSE_CLICK       = 1001
+    UP_PRESSED        = 1002
+    DOWN_PRESSED      = 1003
+    RIGHT_PRESSED     = 1004
+    LEFT_PRESSED      = 1005
+    KEY_RELEASE       = 1006
+    TERMINATE_GAME    = 1101
+    STATE_TRANSITION  = 1201
+    MAZE_UPDATE       = 1202
+    DIFFICULTY_EASY   = 1203
+    DIFFICULTY_MEDIUM = 1204
+    DIFFICULTY_HARD   = 1205
+    LEVEL_RESET       = 1206

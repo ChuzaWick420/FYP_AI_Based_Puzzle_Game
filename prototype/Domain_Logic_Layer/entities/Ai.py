@@ -9,11 +9,24 @@ class Ai(Entity):
         self.number_of_steps = 0
         self.step_index = 0
 
+    def reset(self):
+        self.step_index = 0
+
+        self.x_coordinate = 0
+        self.y_coordinate = 1
+
+        self.prev_x = self.x_coordinate
+        self.prev_y = self.y_coordinate
+
+
     def init(self, path):
+        self.reset()
         self.path = path
         self.number_of_steps = len(self.path)
 
     def step(self):
+        # DEBUG:
+        print("Current Position: ", self.get_position())
         (self.prev_x, self.prev_y) = self.get_position()
 
         if self.step_index < self.number_of_steps:

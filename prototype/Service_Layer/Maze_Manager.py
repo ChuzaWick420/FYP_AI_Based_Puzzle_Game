@@ -64,8 +64,7 @@ class Maze_Manager:
         #     for i in range(0, grid_width):
         #         if grid[j][i] == CellTypes.PATH:
         #
-
-        self.maze_map[1][0] = CellTypes.PLAYER_AND_AI["value"]
+        pass
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
