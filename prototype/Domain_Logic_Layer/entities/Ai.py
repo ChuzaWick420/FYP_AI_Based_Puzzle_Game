@@ -25,8 +25,6 @@ class Ai(Entity):
         self.number_of_steps = len(self.path)
 
     def step(self):
-        # DEBUG:
-        print("Current Position: ", self.get_position())
         (self.prev_x, self.prev_y) = self.get_position()
 
         if self.step_index < self.number_of_steps:

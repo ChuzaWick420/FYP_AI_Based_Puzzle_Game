@@ -17,3 +17,4 @@ class SystemEvents:
     DIFFICULTY_MEDIUM = 1204
     DIFFICULTY_HARD   = 1205
     LEVEL_RESET       = 1206
+    LEVEL_GENERATED   = 1207

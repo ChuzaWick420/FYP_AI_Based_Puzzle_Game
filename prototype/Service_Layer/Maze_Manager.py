@@ -10,44 +10,30 @@ class Maze_Manager:
         self.render_data = []
         pass
 
-    def load_previous(self, level_number, previous_graph):
+    def initialize_graph(self, level_number, previous_graph = None):
         size = (level_number * 3) ** 2
         self.graph = Graph(size)
-        self.graph.adj_matrix = previous_graph
+
+        # NOTE: If there was no previous graph provided, use prim's algorithm to generate one
+        if (previous_graph == None):
+            mst = prims_algorithm(self.graph)
+            self.graph.adj_matrix = mst
+        else:
+            self.graph.adj_matrix = previous_graph
+
+        self.initialize()
+
+    def initialize(self):
+
         self.maze_map = self.generate_grid_map()
         self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (len(self.maze_map) ** 2)
         self.search()
         self.spawn_entities()
         self.initialize_render_data()
-
-    def initialize(self, level_number):
-
-        size = (level_number * 3) ** 2
-
-        self.graph = Graph(size)
-        mst = prims_algorithm(self.graph)
-        self.graph.adj_matrix = mst
-        self.maze_map = self.generate_grid_map()
-        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (len(self.maze_map) ** 2)
-        self.search()
-        self.spawn_entities()
-        self.initialize_render_data()
-
-        # DEBUG:
-        # print("Source: ", src)
-        # print("Destination: ", dest)
-        #
-        # for row in self.maze_map:
-        #     print(row)
 
     def search(self):
 
-        # DEBUG:
-        # print("Type: {0}, data: {1}".format(type(self.maze_map), self.maze_map))
-
         size = len(self.maze_map)
-
-        print("size: ", size)
 
         # NOTE: Format: (y, x)
         src = [1, 0]

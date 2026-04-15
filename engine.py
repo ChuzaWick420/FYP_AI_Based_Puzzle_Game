@@ -71,11 +71,16 @@ class Engine:
 
         # NOTE: Initializing Maze Manager
         if len(self.adjacent_matrix) == 0:
-            self.maze_manager.initialize(self.current_level)
+            self.maze_manager.initialize_graph(self.current_level)
         else:
-            self.maze_manager.load_previous(self.current_level, self.adjacent_matrix)
+            self.maze_manager.initialize_graph(self.current_level, self.adjacent_matrix)
 
+        # NOTE: Update maze's visual
         self.playing_screen.update_maze(self.maze_manager.get_render_data())
+
+        # NOTE: initializing Player and AI
+        self.player.init(self.maze_manager.maze_map)
+        self.ai.init(self.maze_manager.path)
 
         # NOTE: AI's speed in blocks per second depending on level number
         max_speed = 3
@@ -83,17 +88,13 @@ class Engine:
 
         self.ai_speed = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
 
-        # NOTE: initializing Player and AI
-        self.player.init(self.maze_manager.maze_map)
-        self.ai.init(self.maze_manager.path)
-
     def load(self):
         self.db_manager.load()
 
         self.current_level = self.db_manager.file_data["current_level"]
         self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
 
-        self.db_manager.log()
+        # self.db_manager.log()
 
     def handlePhysics(self, current, last):
         dt = current - last
@@ -207,16 +208,22 @@ class Engine:
 
             if event == SystemEvents.DIFFICULTY_EASY:
                 self.current_level = 0 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
             if event == SystemEvents.DIFFICULTY_MEDIUM:
                 self.current_level = 1 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
             if event == SystemEvents.DIFFICULTY_HARD:
                 self.current_level = 2 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
+
+            if event == SystemEvents.LEVEL_GENERATED:
+                self.initialize()
 
             if event == SystemEvents.LEVEL_RESET:
-                self.initialize()
+                self.player.reset()
+                self.ai.reset()
+                # NOTE: Also reset the frame buffer
+                self.maze_manager.initialize()
 
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
