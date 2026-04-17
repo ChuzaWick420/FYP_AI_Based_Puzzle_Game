@@ -1,6 +1,6 @@
-from prototype.Presentation_Layer.menus.Menu import Menu
-from prototype.Data_Layer import Global
-from prototype.Presentation_Layer.Button import Button
+from src.Presentation_Layer.menus.Menu import Menu
+from src.Data_Layer import Global
+from src.Presentation_Layer.Button import Button
 
 class DifficultyMenu(Menu):
     def __init__(self):

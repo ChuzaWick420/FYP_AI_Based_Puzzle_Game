@@ -1,21 +1,21 @@
 import pygame
 import time
-from prototype.Data_Layer import Global
-from prototype.Data_Layer.CellTypes import CellTypes
-from prototype.Data_Layer.DB_Manager import DB_Manager
-from prototype.Domain_Logic_Layer.GameStates import GameStates
-from prototype.Data_Layer.SystemEvents import SystemEvents
-from prototype.Domain_Logic_Layer.entities.Ai import Ai
-from prototype.Domain_Logic_Layer.entities.Player import Player
-from prototype.Domain_Logic_Layer.entities.StateMachine import StateMachine
-from prototype.Presentation_Layer.menus.difficulty_menu import DifficultyMenu
-from prototype.Presentation_Layer.menus.main_menu import MainMenu
-from prototype.Presentation_Layer.menus.pause_menu import PauseMenu
-from prototype.Presentation_Layer.menus.result_menu import ResultMenu
-from prototype.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
-from prototype.Presentation_Layer.InputHandler import InputHandler
-from prototype.Presentation_Layer.PlayingScreen import PlayingScreen
-from prototype.Service_Layer.Maze_Manager import Maze_Manager
+from src.Data_Layer import Global
+from src.Data_Layer.CellTypes import CellTypes
+from src.Data_Layer.DB_Manager import DB_Manager
+from src.Domain_Logic_Layer.GameStates import GameStates
+from src.Data_Layer.SystemEvents import SystemEvents
+from src.Domain_Logic_Layer.entities.Ai import Ai
+from src.Domain_Logic_Layer.entities.Player import Player
+from src.Domain_Logic_Layer.entities.StateMachine import StateMachine
+from src.Presentation_Layer.menus.difficulty_menu import DifficultyMenu
+from src.Presentation_Layer.menus.main_menu import MainMenu
+from src.Presentation_Layer.menus.pause_menu import PauseMenu
+from src.Presentation_Layer.menus.result_menu import ResultMenu
+from src.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
+from src.Presentation_Layer.InputHandler import InputHandler
+from src.Presentation_Layer.PlayingScreen import PlayingScreen
+from src.Service_Layer.Maze_Manager import Maze_Manager
 
 class Engine:
     def __init__(self):

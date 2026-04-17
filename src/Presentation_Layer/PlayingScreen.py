@@ -1,9 +1,9 @@
 import pygame
 
-from prototype.Data_Layer import Global
-from prototype.Presentation_Layer.Block import Block
-from prototype.Presentation_Layer.Button import Button
-from prototype.Presentation_Layer.TextElement import TextElement
+from src.Data_Layer import Global
+from src.Presentation_Layer.Block import Block
+from src.Presentation_Layer.Button import Button
+from src.Presentation_Layer.TextElement import TextElement
 
 class PlayingScreen:
     def __init__(self):

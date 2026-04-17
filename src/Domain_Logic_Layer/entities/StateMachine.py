@@ -1,4 +1,5 @@
-from prototype.Domain_Logic_Layer.GameStates import GameStates
+from src.Domain_Logic_Layer.GameStates import GameStates
+
 class StateMachine:
     def __init__(self):
         self.current_state = GameStates.MAINMENU

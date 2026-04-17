@@ -1,5 +1,5 @@
-from prototype.Data_Layer.CellTypes import CellTypes
-from prototype.Domain_Logic_Layer.entities.Entity import Entity
+from src.Data_Layer.CellTypes import CellTypes
+from src.Domain_Logic_Layer.entities.Entity import Entity
 
 
 class Player(Entity):

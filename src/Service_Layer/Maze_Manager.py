@@ -1,8 +1,8 @@
-from prototype.Data_Layer import Global
-from prototype.Data_Layer.CellTypes import CellTypes
-from prototype.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
-from prototype.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
-from prototype.Domain_Logic_Layer.entities.Graph import Graph
+from src.Data_Layer import Global
+from src.Data_Layer.CellTypes import CellTypes
+from src.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
+from src.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
+from src.Domain_Logic_Layer.entities.Graph import Graph
 
 
 class Maze_Manager:

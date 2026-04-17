@@ -1,5 +1,4 @@
-from prototype.Data_Layer.CellTypes import CellTypes
-from prototype.Domain_Logic_Layer.entities.Entity import Entity
+from src.Domain_Logic_Layer.entities.Entity import Entity
 
 
 class Ai(Entity):

@@ -1,4 +1,4 @@
-from prototype.Presentation_Layer.TextElement import TextElement
+from src.Presentation_Layer.TextElement import TextElement
 
 class Menu:
     def __init__(self):

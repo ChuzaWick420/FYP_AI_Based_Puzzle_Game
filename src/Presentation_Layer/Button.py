@@ -1,6 +1,6 @@
 import pygame
-from prototype.Presentation_Layer.TextElement import TextElement
-from prototype.Presentation_Layer.Border import Border
+from src.Presentation_Layer.TextElement import TextElement
+from src.Presentation_Layer.Border import Border
 
 class Button:
     def __init__(self, name, pos):
