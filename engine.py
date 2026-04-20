@@ -167,6 +167,7 @@ class Engine:
         else:
             self.ticks = pygame.time.get_ticks()
             self.current_menu.render(self.screen)
+            self.current_menu.handle_hover()
 
         pygame.display.flip() # Display
 
@@ -182,6 +183,10 @@ class Engine:
         pygame.quit()
 
     def manageMenuTransition(self):
+
+        # NOTE: Reset the active button tracker
+        self.current_menu.active_btn_id = 0
+
         if self.stateMachine.next_state == GameStates.EXIT:
             self.input_handler.createEvent(SystemEvents.TERMINATE_GAME)
 
@@ -249,25 +254,26 @@ class Engine:
 
     def handleEventMouse(self):
         if self.stateMachine.current_state == GameStates.PLAY:
-            if (self.playing_screen.pause_button.isClicked()):
+            if (self.playing_screen.pause_button.isHovered()):
                 self.stateMachine.stepState("Pause")
                 self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
         else:
+            # NOTE: Check for button trigger
             for button in self.current_menu.buttons:
-                if (button.isClicked()):
-                    self.stateMachine.stepState(button.name)
+                if (button.isHovered()):
+                    self.stateMachine.stepState(button.id)
                     self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
 
                     # NOTE: Difficulty Selection
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Easy":
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Easy":
                         self.input_handler.createEvent(SystemEvents.DIFFICULTY_EASY)
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Medium":
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Medium":
                         self.input_handler.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.name == "Hard":
+                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Hard":
                         self.input_handler.createEvent(SystemEvents.DIFFICULTY_HARD)
 
                     # NOTE: Reseting level
-                    if self.stateMachine.current_state == GameStates.PAUSE and button.name == "Restart":
+                    if self.stateMachine.current_state == GameStates.PAUSE and button.id == "Restart":
                         self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
 
     def handleEventMaze(self):
@@ -288,6 +294,7 @@ class Engine:
         self.playing_screen.update_maze(self.maze_manager.get_render_data())
 
     def handleEventKeyboard(self, event):
+
         if self.isKeyUp == True:
 
             is_up_pressed    = event == SystemEvents.UP_PRESSED
@@ -295,11 +302,20 @@ class Engine:
             is_left_pressed  = event == SystemEvents.LEFT_PRESSED
             is_right_pressed = event == SystemEvents.RIGHT_PRESSED
 
-            if is_up_pressed:    self.player.move_up()
-            if is_down_pressed:  self.player.move_down()
-            if is_left_pressed:  self.player.move_left()
-            if is_right_pressed: self.player.move_right()
+            isPlaying = self.stateMachine.current_state == GameStates.PLAY
+
+            if is_up_pressed and isPlaying:    self.player.move_up()
+            if is_down_pressed and isPlaying:  self.player.move_down()
+            if is_left_pressed and isPlaying:  self.player.move_left()
+            if is_right_pressed and isPlaying: self.player.move_right()
+
+            if is_up_pressed and not isPlaying:
+                self.current_menu.active_btn_id -= 1
+            if is_down_pressed and not isPlaying:
+                self.current_menu.active_btn_id += 1
 
             if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
                 self.isKeyUp = False
-                self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
+
+                if isPlaying:
+                    self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
