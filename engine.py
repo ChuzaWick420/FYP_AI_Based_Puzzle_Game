@@ -278,7 +278,7 @@ class Engine:
         current_player  = (self.player.x_coordinate, self.player.y_coordinate)
 
         # Ask maze manager to update cells
-        # FIXME: This will be re-thought when powerups are introduced
+        # WARN: This will be re-thought when powerups are introduced
         self.maze_manager.update_cell(previous_ai,     CellTypes.PATH  ["value"])
         self.maze_manager.update_cell(current_ai,      CellTypes.AI    ["value"])
         self.maze_manager.update_cell(previous_player, CellTypes.PATH  ["value"])

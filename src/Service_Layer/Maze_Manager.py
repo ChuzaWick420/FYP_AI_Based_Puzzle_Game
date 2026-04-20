@@ -102,6 +102,8 @@ class Maze_Manager:
 
         grid_width = len(self.maze_map)
 
+        current_color = (-1, -1, -1)
+
         if self.maze_map[j][i] == CellTypes.PATH["value"]:
             current_color = CellTypes.PATH["color"]
         elif self.maze_map[j][i] == CellTypes.WALL["value"]:
