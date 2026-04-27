@@ -1,4 +1,5 @@
 import pygame
+from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.TextElement import TextElement
 
 class Button:
@@ -21,18 +22,40 @@ class Button:
 
         self.hoverFlag = False
         self.activeFlag = False
+        self.useIcon = False
+
+        self.btn_type = -1
 
         # NOTE: Border
-        reference = self.text.textRect.copy()
 
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.padding = 16
         self.thickness = 2
         self.border_radius = 8
 
-        self.rect.width = self.width
+    def setType(self, btn_type):
+        self.btn_type = btn_type
+
+        reference = pygame.Rect(0, 0, 0, 0)
+
+        if (self.btn_type == ButtonType.TEXTUAL):
+            self.text = TextElement(self.str, self.text_color, self.position)
+            reference = self.text.textRect.copy()
+            self.rect.width = self.width
+
+        else:
+            reference = self.icon.get_rect()
+            reference.center = self.position
+            self.rect.width = reference.width + self.padding
+
         self.rect.height = reference.height + self.padding
         self.rect.center = reference.center
+
+    def loadIcon(self, path):
+        image = pygame.image.load(path)
+        self.icon = pygame.transform.scale(image, (32, 32))
+        self.useIcon = True
+        self.setType(ButtonType.VISUAL)
 
     def setPosition(self, pos):
         self.position = pos
@@ -54,4 +77,7 @@ class Button:
         else:
             pygame.draw.rect(display, self.hover_color, self.rect, self.thickness, self.border_radius)
 
-        display.blit(self.text.text, self.text.textRect)
+        if (self.useIcon):
+            display.blit(self.icon, (self.position[0] - 16, self.position[1] - 16))
+        else:
+            display.blit(self.text.text, self.text.textRect)

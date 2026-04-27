@@ -1,3 +1,4 @@
+from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.TextElement import TextElement
 from src.Presentation_Layer.menus.Menu import Menu
 from src.Data_Layer import Global
@@ -23,6 +24,9 @@ class ResultMenu(Menu):
         self.buttons.append(Button("Restart Level", (pos[0], pos[1] + 0 * gap)))
         self.buttons.append(Button("Scoreboard", (pos[0], pos[1] + 1 * gap)))
         self.buttons.append(Button("Home",       (pos[0], pos[1] + 2 * gap)))
+
+        for button in self.buttons:
+            button.setType(ButtonType.TEXTUAL)
 
     def render(self, display):
         display.blit(self.text.text, self.text.textRect)

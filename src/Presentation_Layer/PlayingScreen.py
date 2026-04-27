@@ -1,6 +1,7 @@
 import pygame
 
 from src.Data_Layer import Global
+from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.Block import Block
 from src.Presentation_Layer.Button import Button
 from src.Presentation_Layer.TextElement import TextElement
@@ -12,6 +13,7 @@ class PlayingScreen:
         self.scores = TextElement("Scores: 100", color, (100, 100))
 
         self.pause_button = Button("Pause", (Global.WINDOW_RESOLUTION[0] - 150, 100))
+        self.pause_button.loadIcon("assets/pause_button.png")
 
         self.visual = pygame.sprite.Group()
 

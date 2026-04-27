@@ -1,3 +1,4 @@
+from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.menus.Menu import Menu
 from src.Data_Layer import Global
 from src.Presentation_Layer.Button import Button
@@ -14,5 +15,9 @@ class ScoreBoardMenu(Menu):
         self.text.setText("Score Board Menu")
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 
-        self.buttons.append(Button("Home",  (pos[0], pos[1] + 0 * gap)))
+        self.buttons.append(Button("Home", (80, 80)))
 
+        self.buttons[0].loadIcon("assets/home_button.png")
+
+        for button in self.buttons:
+            button.setType(ButtonType.VISUAL)
