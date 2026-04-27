@@ -252,15 +252,19 @@ class Engine:
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
 
-    def handleEventMouse(self):
+    def handle_buttons(self):
+
+        self.current_menu.handle_trigger()
+
         if self.stateMachine.current_state == GameStates.PLAY:
-            if (self.playing_screen.pause_button.isHovered()):
+            if (self.playing_screen.pause_button.isHovered() == True):
                 self.stateMachine.stepState("Pause")
                 self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+
         else:
             # NOTE: Check for button trigger
             for button in self.current_menu.buttons:
-                if (button.isHovered()):
+                if (button.activeFlag == True):
                     self.stateMachine.stepState(button.id)
                     self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
 
@@ -273,8 +277,11 @@ class Engine:
                         self.input_handler.createEvent(SystemEvents.DIFFICULTY_HARD)
 
                     # NOTE: Reseting level
-                    if self.stateMachine.current_state == GameStates.PAUSE and button.id == "Restart":
+                    if self.stateMachine.current_state == GameStates.PAUSE and (button.id == "Restart" or button.id == "Home"):
                         self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+
+    def handleEventMouse(self):
+        self.handle_buttons()
 
     def handleEventMaze(self):
         # Get Entity positions
@@ -296,6 +303,9 @@ class Engine:
     def handleEventKeyboard(self, event):
 
         if self.isKeyUp == True:
+
+            if (event == SystemEvents.RETURN_PRESSED):
+                self.handle_buttons()
 
             is_up_pressed    = event == SystemEvents.UP_PRESSED
             is_down_pressed  = event == SystemEvents.DOWN_PRESSED

@@ -20,6 +20,7 @@ class Button:
         self.text.setText(self.str)
 
         self.hoverFlag = False
+        self.activeFlag = False
 
         # NOTE: Border
         reference = self.text.textRect.copy()

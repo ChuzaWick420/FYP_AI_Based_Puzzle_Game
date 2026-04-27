@@ -15,7 +15,7 @@ class Menu:
         for button in self.buttons:
             button.render(display)
 
-    def handle_hover(self):
+    def handle_selection(self):
         stack_size = len(self.buttons)
 
         # NOTE: Wrapping the counter if out of bound.
@@ -28,8 +28,18 @@ class Menu:
         index = 0
 
         for button in self.buttons:
+            # Reset hover and selection flags
+            button.activeFlag = False
+            button.hoverFlag = False
+
             if (button.isHovered()):
                 self.active_btn_id = index
             index += 1
 
+    def handle_hover(self):
+        self.handle_selection()
         self.buttons[self.active_btn_id].hoverFlag = True
+
+    def handle_trigger(self):
+        self.handle_selection()
+        self.buttons[self.active_btn_id].activeFlag = True

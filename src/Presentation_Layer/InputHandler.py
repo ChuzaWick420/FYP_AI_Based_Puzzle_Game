@@ -29,6 +29,8 @@ class InputHandler:
                     self.system_events.append(SystemEvents.LEFT_PRESSED)
                 if event.key == self.controls_map["RIGHT"]:
                     self.system_events.append(SystemEvents.RIGHT_PRESSED)
+                if event.key == pygame.K_RETURN:
+                    self.system_events.append(SystemEvents.RETURN_PRESSED)
 
             if event.type == pygame.KEYUP:
                 self.system_events.append(SystemEvents.KEY_RELEASE)
