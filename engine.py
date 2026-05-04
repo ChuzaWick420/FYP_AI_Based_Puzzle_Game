@@ -292,10 +292,13 @@ class Engine:
 
         # Ask maze manager to update cells
         # WARN: This will be re-thought when powerups are introduced
-        self.maze_manager.update_cell(previous_ai,     CellTypes.PATH  ["value"])
+        self.maze_manager.update_cell(previous_player,     CellTypes.INVALID["value"])
+        self.maze_manager.update_cell(previous_ai,     CellTypes.INVALID  ["value"])
         self.maze_manager.update_cell(current_ai,      CellTypes.AI    ["value"])
-        self.maze_manager.update_cell(previous_player, CellTypes.PATH  ["value"])
         self.maze_manager.update_cell(current_player,  CellTypes.PLAYER["value"])
+
+        if (current_player == current_ai):
+            self.maze_manager.update_cell(current_player,  CellTypes.PLAYER_AND_AI["value"])
 
         # ask playing screen to update render data
         self.playing_screen.update_maze(self.maze_manager.get_render_data())

@@ -4,8 +4,8 @@ import random
 import math
 
 def get_random_int(min = 1, max = 9):
-    weight = min + int(random.random() * 10) % (max - min + 1)
-    return weight
+    num = min + int(random.random() * 10) % (max - min + 1)
+    return num
 
 class Graph:
     def __init__(self, num_of_nodes):

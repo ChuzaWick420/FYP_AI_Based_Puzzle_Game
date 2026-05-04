@@ -1,16 +1,19 @@
+import math
+import random
 from src.Data_Layer import Global
 from src.Data_Layer.CellTypes import CellTypes
 from src.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from src.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
-from src.Domain_Logic_Layer.entities.Graph import Graph
+from src.Domain_Logic_Layer.entities.Blinder import Blinder
+from src.Domain_Logic_Layer.entities.Graph import Graph, get_random_int
 
 
 class Maze_Manager:
     def __init__(self):
         self.render_data = []
-        pass
 
     def initialize_graph(self, level_number, previous_graph = None):
+        self.level_num = level_number
         size = (level_number * 3) ** 2
         self.graph = Graph(size)
 
@@ -26,7 +29,11 @@ class Maze_Manager:
     def initialize(self):
 
         self.maze_map = self.generate_grid_map()
-        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (len(self.maze_map) ** 2)
+        map_width = len(self.maze_map)
+        self.blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.entities_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+
+        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
         self.search()
         self.spawn_entities()
         self.initialize_render_data()
@@ -42,15 +49,36 @@ class Maze_Manager:
         # NOTE: Get the path before populating the grid
         self.path = a_star_search(self.maze_map, src, dest, size)
 
-    def spawn_entities(self):
-        # TODO: Spawn power ups
+    def get_cell(self, pos):
+        return self.maze_map[pos[1]][pos[0]]
 
-        # grid_width = len(grid)
-        # for j in range(0, grid_width):
-        #     for i in range(0, grid_width):
-        #         if grid[j][i] == CellTypes.PATH:
-        #
-        pass
+    def spawn_entities(self):
+
+        maze_width = len(self.maze_map)
+
+        # TODO: blinders
+        blinders = []
+
+        for _ in range(self.level_num * 2):
+            blinder = Blinder()
+
+            # NOTE: Level number to size
+            blinder.size = int(math.sqrt(maze_width))
+
+            x = random.randint(0, maze_width - blinder.size)
+            y = random.randint(0, maze_width - blinder.size)
+
+            blinder.setPosition((x, y))
+            blinders.append(blinder)
+
+        for blinder in blinders:
+            pos = blinder.getPosition()
+
+            for j in range(pos[1], pos[1] + blinder.size):
+                for i in range(pos[0], pos[0] + blinder.size):
+                    self.blinders_map[j][i] = CellTypes.BLINDER["value"]
+
+        # TODO: Spawn power ups
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
@@ -104,16 +132,28 @@ class Maze_Manager:
 
         current_color = (-1, -1, -1)
 
-        if self.maze_map[j][i] == CellTypes.PATH["value"]:
-            current_color = CellTypes.PATH["color"]
-        elif self.maze_map[j][i] == CellTypes.WALL["value"]:
-            current_color = CellTypes.WALL["color"]
-        elif self.maze_map[j][i] == CellTypes.PLAYER["value"]:
-            current_color = CellTypes.PLAYER["color"]
-        elif self.maze_map[j][i] == CellTypes.AI["value"]:
+        # NOTE: Layering (top to bottom)
+        # 1. Entities
+        # 2. Blinders
+        # 3. Maze
+
+        # NOTE: Entities
+        if self.entities_map[j][i] == CellTypes.AI["value"]:
             current_color = CellTypes.AI["color"]
-        elif self.maze_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
+        elif self.entities_map[j][i] == CellTypes.PLAYER["value"]:
+            current_color = CellTypes.PLAYER["color"]
+        elif self.entities_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
             current_color = CellTypes.PLAYER_AND_AI["color"]
+        elif self.entities_map[j][i] == CellTypes.INVALID["value"]:
+        # NOTE: Blinders
+            if self.blinders_map[j][i] == CellTypes.BLINDER["value"]:
+                current_color = CellTypes.BLINDER["color"]
+            elif self.blinders_map[j][i] == CellTypes.INVALID["value"]:
+                # NOTE: Maze
+                if self.maze_map[j][i] == CellTypes.PATH["value"]:
+                    current_color = CellTypes.PATH["color"]
+                elif self.maze_map[j][i] == CellTypes.WALL["value"]:
+                    current_color = CellTypes.WALL["color"]
 
         cell_size = (Global.BOARD_SIZE[0] // grid_width, Global.BOARD_SIZE[1] // grid_width)
         cell_position = (i * cell_size[0], j * cell_size[1])
@@ -125,7 +165,7 @@ class Maze_Manager:
 
     def update_cell(self, coordinates, value):
         (i, j) = coordinates
-        self.maze_map[j][i] = value
+        self.entities_map[j][i] = value
         self.update_render_cell((i, j))
 
     def get_render_data(self):
