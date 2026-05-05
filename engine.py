@@ -15,7 +15,7 @@ from src.Presentation_Layer.menus.result_menu import ResultMenu
 from src.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
 from src.Presentation_Layer.InputHandler import InputHandler
 from src.Presentation_Layer.PlayingScreen import PlayingScreen
-from src.Service_Layer.Maze_Manager import Maze_Manager
+from src.Service_Layer.Maps_Manager import Maps_Manager
 
 class Engine:
     def __init__(self):
@@ -25,10 +25,12 @@ class Engine:
         self.resolution = Global.WINDOW_RESOLUTION
         self.elapsed_time = 0
         self.frame_rate = 60
-        self.PHYSICS_FREQUENCY = 120.0
-        self.ticks_physics = 0
+        self.PHYSICS_FREQUENCY = 120.0 # NOTE: In Hz
+        self.ticks_ai_step = 0
         self.physics_accumulator = 0.0
+        self.ticks_play_time = 0
         self.window_background = "black"
+        self.test_var = 0
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
@@ -38,7 +40,7 @@ class Engine:
         # Objects
         self.input_handler = InputHandler()
         self.stateMachine = StateMachine()
-        self.maze_manager = Maze_Manager()
+        self.maps_manager = Maps_Manager()
         self.db_manager = DB_Manager()
         self.player = Player()
         self.ai = Ai()
@@ -71,16 +73,16 @@ class Engine:
 
         # NOTE: Initializing Maze Manager
         if len(self.adjacent_matrix) == 0:
-            self.maze_manager.initialize_graph(self.current_level)
+            self.maps_manager.initialize_graph(self.current_level)
         else:
-            self.maze_manager.initialize_graph(self.current_level, self.adjacent_matrix)
+            self.maps_manager.initialize_graph(self.current_level, self.adjacent_matrix)
 
         # NOTE: Update maze's visual
-        self.playing_screen.update_maze(self.maze_manager.get_render_data())
+        self.playing_screen.update_maze(self.maps_manager.get_render_data())
 
         # NOTE: initializing Player and AI
-        self.player.init(self.maze_manager.maze_map)
-        self.ai.init(self.maze_manager.path)
+        self.player.init(self.maps_manager.maze_map)
+        self.ai.init(self.maps_manager.path)
 
         # NOTE: AI's speed in blocks per second depending on level number
         max_speed = 3
@@ -102,31 +104,38 @@ class Engine:
 
         self.physics_accumulator += dt
         while self.physics_accumulator >= self.PHYSICS_TIME_UNIT:
-            # TODO: Update Physics here
-            self.ticks_physics += 1
+            # NOTE: Update Physics here
+            if self.stateMachine.current_state == GameStates.PLAY:
+                self.ticks_ai_step += 1
+                self.ticks_play_time += 1
             self.physics_accumulator -= self.PHYSICS_TIME_UNIT
 
-        if (self.ticks_physics / self.PHYSICS_FREQUENCY) * self.ai_speed >= 1:
+        if (self.ticks_play_time >= 1 * self.PHYSICS_FREQUENCY):
+            self.test_var += 1
+            self.input_handler.createEvent(SystemEvents.TIME_UPDATE)
+            self.ticks_play_time = 0
+
+        if self.ticks_ai_step * self.ai_speed >= self.PHYSICS_FREQUENCY:
             if self.stateMachine.current_state == GameStates.PLAY:
                 self.ai.step()
                 self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
 
             # Reset
-            self.ticks_physics = 0
+            self.ticks_ai_step = 0
 
     def handleProcesses(self, frame_start):
-       frame_end = time.perf_counter()
-       elapsed = frame_end - frame_start
+        frame_end = time.perf_counter()
+        elapsed = frame_end - frame_start
 
-       remaining_time = self.frame_time - elapsed
+        remaining_time = self.frame_time - elapsed
 
-       if remaining_time > 0:
-           bg_start = time.perf_counter()
+        if remaining_time > 0:
+            bg_start = time.perf_counter()
 
-           while (time.perf_counter() - bg_start) < remaining_time:
-               events = self.input_handler.processEvents()
-               self.handleEvents(events)
-               self.input_handler.reset()  # NOTE: empty the event buffer
+            while (time.perf_counter() - bg_start) < remaining_time:
+                events = self.input_handler.processEvents()
+                self.handleEvents(events)
+                self.input_handler.reset()  # NOTE: empty the event buffer
 
     def execute(self):
         self.initialize()
@@ -153,19 +162,9 @@ class Engine:
     def render(self):
         self.screen.fill(self.window_background) # Screen Background
 
-        if self.stateMachine.current_state == GameStates.RESULTS:
-            minutes = self.elapsed_time // 60
-            seconds = self.elapsed_time % 60
-            self.result_menu.setTimer(minutes, seconds)
-
         if self.stateMachine.current_state == GameStates.PLAY:
-            self.elapsed_time = (pygame.time.get_ticks() - self.ticks) // 1000
-            minutes = self.elapsed_time // 60
-            seconds = self.elapsed_time % 60
-            self.playing_screen.setTimer(minutes, seconds)
             self.playing_screen.render(self.screen)
         else:
-            self.ticks = pygame.time.get_ticks()
             self.current_menu.render(self.screen)
             self.current_menu.handle_hover()
 
@@ -177,7 +176,7 @@ class Engine:
         self.db_manager.file_data["current_level"] = self.current_level
 
         # Save map for current level
-        self.db_manager.file_data["Graph_adjacent_matrix"] = self.maze_manager.graph.adj_matrix
+        self.db_manager.file_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
 
         self.db_manager.flush() 
         pygame.quit()
@@ -227,8 +226,10 @@ class Engine:
             if event == SystemEvents.LEVEL_RESET:
                 self.player.reset()
                 self.ai.reset()
-                # NOTE: Also reset the frame buffer
-                self.maze_manager.initialize()
+                # NOTE: Reset the frame buffer
+                self.maps_manager.initialize()
+                # NOTE: Reset play time
+                self.test_var = 0
 
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
@@ -249,8 +250,17 @@ class Engine:
             if event == SystemEvents.TERMINATE_GAME:
                 self.isRunning = False
 
+            if event == SystemEvents.LEVEL_FINISHED:
+                self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
+
+            if event == SystemEvents.TIME_UPDATE:
+                minutes = self.test_var // 60
+                seconds = self.test_var % 60
+                self.result_menu.setTimer(minutes, seconds)
+                self.playing_screen.setTimer(minutes, seconds)
 
     def handle_buttons(self):
 
@@ -279,6 +289,8 @@ class Engine:
                     # NOTE: Reseting level
                     if self.stateMachine.current_state == GameStates.PAUSE and (button.id == "Restart" or button.id == "Home"):
                         self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                    if self.stateMachine.current_state == GameStates.RESULTS:
+                        self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
 
     def handleEventMouse(self):
         self.handle_buttons()
@@ -292,16 +304,41 @@ class Engine:
 
         # Ask maze manager to update cells
         # WARN: This will be re-thought when powerups are introduced
-        self.maze_manager.update_cell(previous_player,     CellTypes.INVALID["value"])
-        self.maze_manager.update_cell(previous_ai,     CellTypes.INVALID  ["value"])
-        self.maze_manager.update_cell(current_ai,      CellTypes.AI    ["value"])
-        self.maze_manager.update_cell(current_player,  CellTypes.PLAYER["value"])
+        self.maps_manager.update_cell(previous_player, CellTypes.INVALID["value"])
+        self.maps_manager.update_cell(previous_ai,     CellTypes.INVALID["value"])
+        self.maps_manager.update_cell(current_ai,      CellTypes.AI     ["value"])
+        self.maps_manager.update_cell(current_player,  CellTypes.PLAYER ["value"])
 
         if (current_player == current_ai):
-            self.maze_manager.update_cell(current_player,  CellTypes.PLAYER_AND_AI["value"])
+            self.maps_manager.update_cell(current_player,  CellTypes.PLAYER_AND_AI["value"])
+
+        width = len(self.maps_manager.maze_map)
+
+        src = (0, 1)
+        goal = (width - 1, width - 2)
+
+        self.maps_manager.update_cell(src,  CellTypes.SOURCE["value"])
+        self.maps_manager.update_cell(goal,  CellTypes.GOAL["value"])
+
+        # NOTE: DEBUG:
+        # print("PLAYER AT: ", current_player)
+        # print("AI AT: ", current_ai)
+        # print("GOAL AT: ", goal)
+
+        if (current_ai == goal):
+            self.stateMachine.stepState("Finished")
+            self.input_handler.createEvent(SystemEvents.LEVEL_FINISHED)
+            self.result_menu.winner_info.setText("You Lose!")
+            self.result_menu.buttons[0].text.setText("Restart")
+
+        if (current_player == goal):
+            self.stateMachine.stepState("Finished")
+            self.input_handler.createEvent(SystemEvents.LEVEL_FINISHED)
+            self.result_menu.winner_info.setText("You Win!")
+            self.result_menu.buttons[0].text.setText("Next")
 
         # ask playing screen to update render data
-        self.playing_screen.update_maze(self.maze_manager.get_render_data())
+        self.playing_screen.update_maze(self.maps_manager.get_render_data())
 
     def handleEventKeyboard(self, event):
 

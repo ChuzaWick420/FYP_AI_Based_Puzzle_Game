@@ -19,3 +19,5 @@ class SystemEvents:
     DIFFICULTY_HARD   = 1205
     LEVEL_RESET       = 1206
     LEVEL_GENERATED   = 1207
+    TIME_UPDATE       = 1208
+    LEVEL_FINISHED    = 1209

@@ -8,7 +8,7 @@ from src.Domain_Logic_Layer.entities.Blinder import Blinder
 from src.Domain_Logic_Layer.entities.Graph import Graph, get_random_int
 
 
-class Maze_Manager:
+class Maps_Manager:
     def __init__(self):
         self.render_data = []
 
@@ -144,6 +144,10 @@ class Maze_Manager:
             current_color = CellTypes.PLAYER["color"]
         elif self.entities_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
             current_color = CellTypes.PLAYER_AND_AI["color"]
+        elif self.entities_map[j][i] == CellTypes.SOURCE["value"]:
+            current_color = CellTypes.SOURCE["color"]
+        elif self.entities_map[j][i] == CellTypes.GOAL["value"]:
+            current_color = CellTypes.GOAL["color"]
         elif self.entities_map[j][i] == CellTypes.INVALID["value"]:
         # NOTE: Blinders
             if self.blinders_map[j][i] == CellTypes.BLINDER["value"]:
@@ -173,6 +177,10 @@ class Maze_Manager:
 
     def initialize_render_data(self):
         grid_width = len(self.maze_map)
+
+        # NOTE: Update the visuals for maze map
+        # self.entities_map[1][0] = CellTypes.SOURCE["value"]
+        # self.entities_map[grid_width - 2][grid_width - 1] = CellTypes.GOAL["value"]
 
         for j in range(0, grid_width):
             for i in range(0, grid_width):

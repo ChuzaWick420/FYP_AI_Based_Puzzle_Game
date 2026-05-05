@@ -21,7 +21,7 @@ class ResultMenu(Menu):
         self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] - 2 * gap))
         self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] - 1 * gap))
 
-        self.buttons.append(Button("Restart Level", (pos[0], pos[1] + 0 * gap)))
+        self.buttons.append(Button("Restart", (pos[0], pos[1] + 0 * gap)))
         self.buttons.append(Button("Scoreboard", (pos[0], pos[1] + 1 * gap)))
         self.buttons.append(Button("Home",       (pos[0], pos[1] + 2 * gap)))
 
