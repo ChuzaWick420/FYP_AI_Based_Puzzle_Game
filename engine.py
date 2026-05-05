@@ -23,14 +23,13 @@ class Engine:
 
         # Configuration
         self.resolution = Global.WINDOW_RESOLUTION
-        self.elapsed_time = 0
         self.frame_rate = 60
         self.PHYSICS_FREQUENCY = 120.0 # NOTE: In Hz
         self.ticks_ai_step = 0
         self.physics_accumulator = 0.0
         self.ticks_play_time = 0
         self.window_background = "black"
-        self.test_var = 0
+        self.elapsed_play_time = 0
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
@@ -111,7 +110,7 @@ class Engine:
             self.physics_accumulator -= self.PHYSICS_TIME_UNIT
 
         if (self.ticks_play_time >= 1 * self.PHYSICS_FREQUENCY):
-            self.test_var += 1
+            self.elapsed_play_time += 1
             self.input_handler.createEvent(SystemEvents.TIME_UPDATE)
             self.ticks_play_time = 0
 
@@ -229,7 +228,7 @@ class Engine:
                 # NOTE: Reset the frame buffer
                 self.maps_manager.initialize()
                 # NOTE: Reset play time
-                self.test_var = 0
+                self.elapsed_play_time = 0
 
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
@@ -257,8 +256,8 @@ class Engine:
                 self.manageMenuTransition()
 
             if event == SystemEvents.TIME_UPDATE:
-                minutes = self.test_var // 60
-                seconds = self.test_var % 60
+                minutes = self.elapsed_play_time // 60
+                seconds = self.elapsed_play_time % 60
                 self.result_menu.setTimer(minutes, seconds)
                 self.playing_screen.setTimer(minutes, seconds)
 
@@ -320,20 +319,15 @@ class Engine:
         self.maps_manager.update_cell(src,  CellTypes.SOURCE["value"])
         self.maps_manager.update_cell(goal,  CellTypes.GOAL["value"])
 
-        # NOTE: DEBUG:
-        # print("PLAYER AT: ", current_player)
-        # print("AI AT: ", current_ai)
-        # print("GOAL AT: ", goal)
-
-        if (current_ai == goal):
+        if (current_ai == goal or current_player == goal):
             self.stateMachine.stepState("Finished")
             self.input_handler.createEvent(SystemEvents.LEVEL_FINISHED)
+
+        if (current_ai == goal):
             self.result_menu.winner_info.setText("You Lose!")
             self.result_menu.buttons[0].text.setText("Restart")
 
         if (current_player == goal):
-            self.stateMachine.stepState("Finished")
-            self.input_handler.createEvent(SystemEvents.LEVEL_FINISHED)
             self.result_menu.winner_info.setText("You Win!")
             self.result_menu.buttons[0].text.setText("Next")
 

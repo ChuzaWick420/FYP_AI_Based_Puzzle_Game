@@ -5,7 +5,7 @@ from src.Data_Layer.CellTypes import CellTypes
 from src.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from src.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
 from src.Domain_Logic_Layer.entities.Blinder import Blinder
-from src.Domain_Logic_Layer.entities.Graph import Graph, get_random_int
+from src.Domain_Logic_Layer.entities.Graph import Graph
 
 
 class Maps_Manager:
@@ -110,10 +110,10 @@ class Maps_Manager:
 
             (x, y) = self.graph.index_to_coordinates(node_index)
 
-            up_allowed    = y - 1 >= 0          and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x, y - 1)] != 0
+            up_allowed    = y - 1 >= 0               and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x, y - 1)] != 0
             down_allowed  = y + 1 < self.graph.width and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x, y + 1)] != 0
             right_allowed = x + 1 < self.graph.width and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x + 1, y)] != 0
-            left_allowed  = x - 1 >= 0          and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x - 1, y)] != 0
+            left_allowed  = x - 1 >= 0               and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x - 1, y)] != 0
 
             if (up_allowed):    map[(y * 2) - 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
             if (down_allowed):  map[(y * 2) + 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
@@ -177,10 +177,6 @@ class Maps_Manager:
 
     def initialize_render_data(self):
         grid_width = len(self.maze_map)
-
-        # NOTE: Update the visuals for maze map
-        # self.entities_map[1][0] = CellTypes.SOURCE["value"]
-        # self.entities_map[grid_width - 2][grid_width - 1] = CellTypes.GOAL["value"]
 
         for j in range(0, grid_width):
             for i in range(0, grid_width):

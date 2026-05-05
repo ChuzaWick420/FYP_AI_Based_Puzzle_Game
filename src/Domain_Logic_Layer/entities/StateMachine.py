@@ -53,5 +53,6 @@ class StateMachine:
         if self.current_state == GameStates.PLAY:
             if button_id == "Pause":
                 self.next_state = GameStates.PAUSE
+
             if button_id == "Finished":
                 self.next_state = GameStates.RESULTS
