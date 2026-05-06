@@ -6,6 +6,7 @@ from src.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from src.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
 from src.Domain_Logic_Layer.entities.Blinder import Blinder
 from src.Domain_Logic_Layer.entities.Graph import Graph
+from src.Presentation_Layer.PowerUp import PowerUp
 
 
 class Maps_Manager:
@@ -79,6 +80,33 @@ class Maps_Manager:
                     self.blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         # TODO: Spawn power ups
+        powerups = []
+
+        i = 0
+
+        while (i < self.level_num):
+            powerup = PowerUp()
+
+            x = random.randint(0, maze_width - 1)
+            y = random.randint(0, maze_width - 1)
+
+            if (self.maze_map[y][x] != CellTypes.WALL["value"]):
+                powerup.setPosition((x, y))
+
+                powerup_type = random.randint(
+                    CellTypes.POWERUP_REVEAL["value"],
+                    CellTypes.POWERUP_SLOW["value"]
+                )
+
+                powerup.setType(powerup_type)
+                powerups.append(powerup)
+
+                i += 1
+
+        for powerup in powerups:
+            (x, y) = powerup.getPosition()
+
+            self.entities_map[y][x] = powerup.type
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
@@ -148,6 +176,10 @@ class Maps_Manager:
             current_color = CellTypes.SOURCE["color"]
         elif self.entities_map[j][i] == CellTypes.GOAL["value"]:
             current_color = CellTypes.GOAL["color"]
+        elif self.entities_map[j][i] == CellTypes.POWERUP_SLOW["value"]:
+            current_color = CellTypes.POWERUP_SLOW["color"]
+        elif self.entities_map[j][i] == CellTypes.POWERUP_REVEAL["value"]:
+            current_color = CellTypes.POWERUP_REVEAL["color"]
         elif self.entities_map[j][i] == CellTypes.INVALID["value"]:
         # NOTE: Blinders
             if self.blinders_map[j][i] == CellTypes.BLINDER["value"]:
