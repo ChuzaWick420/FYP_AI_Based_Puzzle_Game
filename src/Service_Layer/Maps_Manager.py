@@ -57,10 +57,29 @@ class Maps_Manager:
         return self.maze_map[pos[1]][pos[0]]
 
     def spawn_entities(self):
-
         maze_width = len(self.maze_map)
+        self.spawn_blinders(maze_width)
+        self.spawn_powerups(maze_width)
 
-        # TODO: blinders
+    def pop_blinder(self):
+        self.temp_blinders.append(self.blinders.pop())
+
+        # NOTE: Refresh blinder's map
+        map_width = len(self.maze_map)
+
+        self.blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+
+        for blinder in self.blinders:
+            pos = blinder.getPosition()
+
+            for j in range(pos[1], pos[1] + blinder.size):
+                for i in range(pos[0], pos[0] + blinder.size):
+                    self.blinders_map[j][i] = CellTypes.BLINDER["value"]
+
+        # NOTE: Update render cells for whole maze
+        self.initialize_render_data()
+
+    def spawn_blinders(self, maze_width):
         self.blinders = []
 
         for _ in range(self.level_num * 2):
@@ -82,7 +101,7 @@ class Maps_Manager:
                 for i in range(pos[0], pos[0] + blinder.size):
                     self.blinders_map[j][i] = CellTypes.BLINDER["value"]
 
-        # TODO: Spawn power ups
+    def spawn_powerups(self, maze_width):
         powerups = []
 
         i = 0
@@ -108,39 +127,12 @@ class Maps_Manager:
 
         for powerup in powerups:
             (x, y) = powerup.getPosition()
-
             self.others_map[y][x] = powerup.type
 
-    def pop_blinder(self):
-        self.temp_blinders.append(self.blinders.pop())
-
-        # NOTE: Refresh blinder's map
-        map_width = len(self.maze_map)
-
-        self.blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
-
-        for blinder in self.blinders:
-            pos = blinder.getPosition()
-
-            for j in range(pos[1], pos[1] + blinder.size):
-                for i in range(pos[0], pos[0] + blinder.size):
-                    self.blinders_map[j][i] = CellTypes.BLINDER["value"]
-
-        # NOTE: Update render cells for whole maze
-        for j in range(map_width):
-            for i in range(map_width):
-                self.update_render_cell((i, j))
-
     def disable_random_blinders(self):
-
         amount_to_disable = random.randint(1, len(self.blinders))
-
         for _ in range(amount_to_disable):
             self.pop_blinder()
-
-
-        #NOTE: DEBUG
-        print("After deletion: ", self.blinders_map)
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
