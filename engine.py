@@ -30,6 +30,8 @@ class Engine:
         self.ticks_play_time = 0
         self.window_background = "black"
         self.elapsed_play_time = 0
+        self.blinders_spawned = False
+        self.visible_for_seconds = 10
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
@@ -263,6 +265,10 @@ class Engine:
                 seconds = self.elapsed_play_time % 60
                 self.result_menu.setTimer(minutes, seconds)
                 self.playing_screen.setTimer(minutes, seconds)
+
+                if (self.elapsed_play_time >= self.visible_for_seconds and self.blinders_spawned == False):
+                    self.maps_manager.spawn_blinders()
+                    self.blinders_spawned = True
 
     def handle_buttons(self):
 

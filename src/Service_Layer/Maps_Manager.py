@@ -39,7 +39,7 @@ class Maps_Manager:
 
         self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
         self.search()
-        self.spawn_entities()
+        self.spawn_powerups()
         self.initialize_render_data()
 
     def search(self):
@@ -57,9 +57,8 @@ class Maps_Manager:
         return self.maze_map[pos[1]][pos[0]]
 
     def spawn_entities(self):
-        maze_width = len(self.maze_map)
-        self.spawn_blinders(maze_width)
-        self.spawn_powerups(maze_width)
+        self.spawn_blinders()
+        self.spawn_powerups()
 
     def pop_blinder(self):
         self.temp_blinders.append(self.blinders.pop())
@@ -79,7 +78,8 @@ class Maps_Manager:
         # NOTE: Update render cells for whole maze
         self.initialize_render_data()
 
-    def spawn_blinders(self, maze_width):
+    def spawn_blinders(self):
+        maze_width = len(self.maze_map)
         self.blinders = []
 
         for _ in range(self.level_num * 2):
@@ -101,7 +101,10 @@ class Maps_Manager:
                 for i in range(pos[0], pos[0] + blinder.size):
                     self.blinders_map[j][i] = CellTypes.BLINDER["value"]
 
-    def spawn_powerups(self, maze_width):
+        self.initialize_render_data()
+
+    def spawn_powerups(self):
+        maze_width = len(self.maze_map)
         powerups = []
 
         i = 0
@@ -128,6 +131,8 @@ class Maps_Manager:
         for powerup in powerups:
             (x, y) = powerup.getPosition()
             self.others_map[y][x] = powerup.type
+
+        self.initialize_render_data()
 
     def disable_random_blinders(self):
         amount_to_disable = random.randint(1, len(self.blinders))
