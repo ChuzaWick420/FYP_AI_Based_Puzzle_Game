@@ -61,7 +61,8 @@ class Engine:
 
         # NOTE: This data depends on dataase to be loaded.
         self.current_level = 0
-        self.ai_speed = 0
+        self.ai_speed_ideal = 0
+        self.ai_speed_current = 0
 
     def start(self):
         self.load()
@@ -87,7 +88,8 @@ class Engine:
         max_speed = 3
         min_speed = 1
 
-        self.ai_speed = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
+        self.ai_speed_ideal = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
+        self.ai_speed_current = self.ai_speed_ideal
 
     def load(self):
         self.db_manager.load()
@@ -114,7 +116,7 @@ class Engine:
             self.input_handler.createEvent(SystemEvents.TIME_UPDATE)
             self.ticks_play_time = 0
 
-        if self.ticks_ai_step * self.ai_speed >= self.PHYSICS_FREQUENCY:
+        if self.ticks_ai_step * self.ai_speed_current >= self.PHYSICS_FREQUENCY:
             if self.stateMachine.current_state == GameStates.PLAY:
                 self.ai.step()
                 self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
@@ -229,6 +231,7 @@ class Engine:
                 self.maps_manager.initialize()
                 # NOTE: Reset play time
                 self.elapsed_play_time = 0
+                self.ai_speed_current = self.ai_speed_ideal
 
             # NOTE: Maze update
             # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
@@ -302,7 +305,7 @@ class Engine:
         current_player  = (self.player.x_coordinate, self.player.y_coordinate)
 
         # Ask maze manager to update cells
-        # WARN: This will be re-thought when powerups are introduced
+        # NOTE: handling Player and AI movements
         self.maps_manager.update_cell(previous_player, CellTypes.INVALID["value"])
         self.maps_manager.update_cell(previous_ai,     CellTypes.INVALID["value"])
         self.maps_manager.update_cell(current_ai,      CellTypes.AI     ["value"])
@@ -311,13 +314,19 @@ class Engine:
         if (current_player == current_ai):
             self.maps_manager.update_cell(current_player,  CellTypes.PLAYER_AND_AI["value"])
 
+        # NOTE: handling powerups
+        if (self.maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_SLOW["value"]):
+            self.ai_speed_current = self.ai_speed_ideal - 1
+            self.maps_manager.others_map[current_player[1]][current_player[0]] = CellTypes.INVALID["value"]
+
+        if (self.maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_REVEAL["value"]):
+            self.maps_manager.disable_random_blinders()
+            self.maps_manager.others_map[current_player[1]][current_player[0]] = CellTypes.INVALID["value"]
+
+        # NOTE: handling Winner information
+
         width = len(self.maps_manager.maze_map)
-
-        src = (0, 1)
         goal = (width - 1, width - 2)
-
-        self.maps_manager.update_cell(src,  CellTypes.SOURCE["value"])
-        self.maps_manager.update_cell(goal,  CellTypes.GOAL["value"])
 
         if (current_ai == goal or current_player == goal):
             self.stateMachine.stepState("Finished")
