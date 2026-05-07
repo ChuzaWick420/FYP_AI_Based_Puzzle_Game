@@ -6,7 +6,7 @@ from src.Domain_Logic_Layer.algorithms.a_star_search_algo import a_star_search
 from src.Domain_Logic_Layer.algorithms.prims_algo import prims_algorithm
 from src.Domain_Logic_Layer.entities.Blinder import Blinder
 from src.Domain_Logic_Layer.entities.Graph import Graph
-from src.Presentation_Layer.PowerUp import PowerUp
+from src.Domain_Logic_Layer.entities.PowerUp import PowerUp
 
 
 class Maps_Manager:
