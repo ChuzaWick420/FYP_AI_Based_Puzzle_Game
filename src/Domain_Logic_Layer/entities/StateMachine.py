@@ -60,3 +60,9 @@ class StateMachine:
                 self.next_state = GameStates.RESULTS
 
         self.current_state = self.next_state
+
+    def getCurrentState(self):
+        return self.current_state
+
+    def getNextState(self):
+        return self.next_state

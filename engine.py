@@ -239,7 +239,7 @@ class Engine:
                 self.ai_speed_current = self.ai_speed_ideal
 
             # NOTE: Maze update
-            # PERF: Causing few second lags at timestamps: 6, 19, 35 seconds onwards
+            # PERF: There are lag spikes on large mazes seconds 13, 33 etc. Frequency of lag spikes increases when player moves as well, could be related to events.
             if event == SystemEvents.MAZE_UPDATE:
                 self.handleEventMaze()
 
@@ -279,33 +279,74 @@ class Engine:
 
         self.current_menu.handle_trigger()
 
-        if self.stateMachine.current_state == GameStates.PLAY:
+        state = self.stateMachine.getCurrentState()
+
+        if state == GameStates.PLAY:
             if (self.playing_screen.pause_button.isHovered() == True):
                 self.stateMachine.stepState(StateInputs.PAUSE)
                 self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
-        else:
-            # NOTE: Check for button trigger
+        elif state == GameStates.DIFFICULTY_SELECTION:
             for button in self.current_menu.buttons:
-                if (button.activeFlag == True):
-                    input = button.getInput()
+                if button.activeFlag != True:
+                    continue
 
-                    # NOTE: Difficulty Selection
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and input == StateInputs.DIFFICULTY_EASY:
-                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and input == StateInputs.DIFFICULTY_MEDIUM:
-                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
-                    if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and input == StateInputs.DIFFICULTY_HARD:
-                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
+                input = button.getInput()
 
-                    # NOTE: Reseting level
-                    if self.stateMachine.current_state == GameStates.PAUSE and (input == StateInputs.RESTART or input == StateInputs.EXIT):
-                        self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
-                    if self.stateMachine.current_state == GameStates.RESULTS:
-                        self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
-
+                if input == StateInputs.DIFFICULTY_EASY:
+                    self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
                     self.stateMachine.stepState(input)
                     self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+                if input == StateInputs.DIFFICULTY_MEDIUM:
+                    self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
+                    self.stateMachine.stepState(input)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+                if input == StateInputs.DIFFICULTY_HARD:
+                    self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
+                    self.stateMachine.stepState(input)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+        elif state == GameStates.PAUSE:
+            for button in self.current_menu.buttons:
+                if button.activeFlag != True:
+                    continue
+
+                input = button.getInput()
+
+                if input == StateInputs.RESUME:
+                    self.stateMachine.stepState(input)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+                if input == StateInputs.RESTART:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
+                    self.stateMachine.stepState(input)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+                if input == StateInputs.EXIT:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
+                    self.stateMachine.stepState(input)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+
+        elif state == GameStates.RESULTS:
+            for button in self.current_menu.buttons:
+                if button.activeFlag != True:
+                    continue
+
+                input = button.getInput()
+
+                self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
+                self.stateMachine.stepState(input)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+        # NOTE: Any generic menu
+        else:
+            for button in self.current_menu.buttons:
+                if button.activeFlag != True:
+                    continue
+
+                input = button.getInput()
+
+                self.stateMachine.stepState(input)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
     def handleEventMouse(self):
         self.handle_buttons()
