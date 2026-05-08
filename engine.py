@@ -295,16 +295,13 @@ class Engine:
 
                 if input == StateInputs.DIFFICULTY_EASY:
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
                 if input == StateInputs.DIFFICULTY_MEDIUM:
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
                 if input == StateInputs.DIFFICULTY_HARD:
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+                self.stateMachine.stepState(input)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         elif state == GameStates.PAUSE:
             for button in self.current_menu.buttons:
@@ -313,17 +310,13 @@ class Engine:
 
                 input = button.getInput()
 
-                if input == StateInputs.RESUME:
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
                 if input == StateInputs.RESTART:
                     self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
                 if input == StateInputs.EXIT:
                     self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
-                    self.stateMachine.stepState(input)
-                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+                self.stateMachine.stepState(input)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
 
         elif state == GameStates.RESULTS:
