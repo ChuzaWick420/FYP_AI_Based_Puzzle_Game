@@ -6,6 +6,7 @@ from src.Data_Layer.DB_Manager import DB_Manager
 from src.Domain_Logic_Layer.GameStates import GameStates
 from src.Data_Layer.SystemEvents import SystemEvents
 from src.Domain_Logic_Layer.entities.Ai import Ai
+from src.Domain_Logic_Layer.entities.EventListener import EventListener
 from src.Domain_Logic_Layer.entities.Player import Player
 from src.Domain_Logic_Layer.entities.StateMachine import StateMachine
 from src.Presentation_Layer.menus.difficulty_menu import DifficultyMenu
@@ -40,6 +41,7 @@ class Engine:
 
         # Objects
         self.input_handler = InputHandler()
+        self.event_listener = EventListener()
         self.stateMachine = StateMachine()
         self.maps_manager = Maps_Manager()
         self.db_manager = DB_Manager()
@@ -115,13 +117,13 @@ class Engine:
 
         if (self.ticks_play_time >= 1 * self.PHYSICS_FREQUENCY):
             self.elapsed_play_time += 1
-            self.input_handler.createEvent(SystemEvents.TIME_UPDATE)
+            self.event_listener.createEvent(SystemEvents.TIME_UPDATE)
             self.ticks_play_time = 0
 
         if self.ticks_ai_step * self.ai_speed_current >= self.PHYSICS_FREQUENCY:
             if self.stateMachine.current_state == GameStates.PLAY:
                 self.ai.step()
-                self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
+                self.event_listener.createEvent(SystemEvents.MAZE_UPDATE)
 
             # Reset
             self.ticks_ai_step = 0
@@ -136,9 +138,10 @@ class Engine:
             bg_start = time.perf_counter()
 
             while (time.perf_counter() - bg_start) < remaining_time:
-                events = self.input_handler.processEvents()
-                self.handleEvents(events)
-                self.input_handler.reset()  # NOTE: empty the event buffer
+                event = self.input_handler.processEvents()
+                self.event_listener.createEvent(event)
+                self.handleEvents()
+                self.event_listener.reset()  # NOTE: empty the event buffer
 
     def execute(self):
         self.initialize()
@@ -190,7 +193,7 @@ class Engine:
         self.current_menu.active_btn_id = 0
 
         if self.stateMachine.next_state == GameStates.EXIT:
-            self.input_handler.createEvent(SystemEvents.TERMINATE_GAME)
+            self.event_listener.createEvent(SystemEvents.TERMINATE_GAME)
 
         if self.stateMachine.next_state == GameStates.DIFFICULTY_SELECTION:
             self.current_menu = self.difficulty_menu
@@ -209,19 +212,19 @@ class Engine:
 
         self.stateMachine.current_state = self.stateMachine.next_state
 
-    def handleEvents(self, events):
+    def handleEvents(self):
         # Events
-        for event in events:
+        for event in self.event_listener.getEvents():
 
             if event == SystemEvents.DIFFICULTY_EASY:
                 self.current_level = 0 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
+                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
             if event == SystemEvents.DIFFICULTY_MEDIUM:
                 self.current_level = 1 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
+                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
             if event == SystemEvents.DIFFICULTY_HARD:
                 self.current_level = 2 * self.levels_per_category + 1
-                self.input_handler.createEvent(SystemEvents.LEVEL_GENERATED)
+                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
 
             if event == SystemEvents.LEVEL_GENERATED:
                 self.initialize()
@@ -255,7 +258,7 @@ class Engine:
                 self.isRunning = False
 
             if event == SystemEvents.LEVEL_FINISHED:
-                self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
@@ -277,28 +280,28 @@ class Engine:
         if self.stateMachine.current_state == GameStates.PLAY:
             if (self.playing_screen.pause_button.isHovered() == True):
                 self.stateMachine.stepState("Pause")
-                self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         else:
             # NOTE: Check for button trigger
             for button in self.current_menu.buttons:
                 if (button.activeFlag == True):
                     self.stateMachine.stepState(button.id)
-                    self.input_handler.createEvent(SystemEvents.STATE_TRANSITION)
+                    self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
                     # NOTE: Difficulty Selection
                     if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Easy":
-                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_EASY)
+                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
                     if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Medium":
-                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
+                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
                     if self.stateMachine.current_state == GameStates.DIFFICULTY_SELECTION and button.id == "Hard":
-                        self.input_handler.createEvent(SystemEvents.DIFFICULTY_HARD)
+                        self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
 
                     # NOTE: Reseting level
                     if self.stateMachine.current_state == GameStates.PAUSE and (button.id == "Restart" or button.id == "Home"):
-                        self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                        self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     if self.stateMachine.current_state == GameStates.RESULTS:
-                        self.input_handler.createEvent(SystemEvents.LEVEL_RESET)
+                        self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
 
     def handleEventMouse(self):
         self.handle_buttons()
@@ -336,7 +339,7 @@ class Engine:
 
         if (current_ai == goal or current_player == goal):
             self.stateMachine.stepState("Finished")
-            self.input_handler.createEvent(SystemEvents.LEVEL_FINISHED)
+            self.event_listener.createEvent(SystemEvents.LEVEL_FINISHED)
 
         if (current_ai == goal):
             self.result_menu.winner_info.setText("You Lose!")
@@ -377,4 +380,4 @@ class Engine:
                 self.isKeyUp = False
 
                 if isPlaying:
-                    self.input_handler.createEvent(SystemEvents.MAZE_UPDATE)
+                    self.event_listener.createEvent(SystemEvents.MAZE_UPDATE)
