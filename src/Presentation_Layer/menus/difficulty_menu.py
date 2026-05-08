@@ -1,4 +1,5 @@
 from src.Data_Layer.ButtonType import ButtonType
+from src.Data_Layer.StateInputs import StateInputs
 from src.Presentation_Layer.menus.Menu import Menu
 from src.Data_Layer import Global
 from src.Presentation_Layer.Button import Button
@@ -15,9 +16,9 @@ class DifficultyMenu(Menu):
         self.text.setText("Difficulty Menu")
         self.text.setPosition((pos[0], pos[1] - 2 * gap))
 
-        self.buttons.append(Button("Easy",    (pos[0], pos[1] + 0 * gap)))
-        self.buttons.append(Button("Medium",  (pos[0], pos[1] + 1 * gap)))
-        self.buttons.append(Button("Hard",    (pos[0], pos[1] + 2 * gap)))
+        self.buttons.append(Button("Easy",   StateInputs.DIFFICULTY_EASY,   (pos[0], pos[1] + 0 * gap)))
+        self.buttons.append(Button("Medium", StateInputs.DIFFICULTY_MEDIUM, (pos[0], pos[1] + 1 * gap)))
+        self.buttons.append(Button("Hard",   StateInputs.DIFFICULTY_HARD,   (pos[0], pos[1] + 2 * gap)))
 
         for button in self.buttons:
             button.setType(ButtonType.TEXTUAL)

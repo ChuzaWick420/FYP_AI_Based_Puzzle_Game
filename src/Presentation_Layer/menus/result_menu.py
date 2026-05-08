@@ -1,4 +1,5 @@
 from src.Data_Layer.ButtonType import ButtonType
+from src.Data_Layer.StateInputs import StateInputs
 from src.Presentation_Layer.TextElement import TextElement
 from src.Presentation_Layer.menus.Menu import Menu
 from src.Data_Layer import Global
@@ -21,9 +22,9 @@ class ResultMenu(Menu):
         self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] - 2 * gap))
         self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] - 1 * gap))
 
-        self.buttons.append(Button("Restart", (pos[0], pos[1] + 0 * gap)))
-        self.buttons.append(Button("Scoreboard", (pos[0], pos[1] + 1 * gap)))
-        self.buttons.append(Button("Home",       (pos[0], pos[1] + 2 * gap)))
+        self.buttons.append(Button("Restart",    StateInputs.RESTART,     (pos[0], pos[1] + 0 * gap)))
+        self.buttons.append(Button("Scoreboard", StateInputs.SCORE_BOARD, (pos[0], pos[1] + 1 * gap)))
+        self.buttons.append(Button("Home",       StateInputs.EXIT,        (pos[0], pos[1] + 2 * gap)))
 
         for button in self.buttons:
             button.setType(ButtonType.TEXTUAL)

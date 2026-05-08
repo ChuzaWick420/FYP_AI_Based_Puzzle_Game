@@ -29,6 +29,12 @@ class InputHandler:
                     return SystemEvents.RIGHT_PRESSED
                 if event.key == pygame.K_RETURN:
                     return SystemEvents.RETURN_PRESSED
+                if event.key == pygame.K_ESCAPE:
+                    return SystemEvents.PAUSE_PRESSED
+                if event.key == pygame.K_p:
+                    return SystemEvents.PAUSE_PRESSED
 
             if event.type == pygame.KEYUP:
                 return SystemEvents.KEY_RELEASE
+
+        return None

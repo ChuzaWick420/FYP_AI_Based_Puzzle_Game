@@ -10,3 +10,6 @@ class EventListener:
 
     def reset(self):
         self.events = []
+
+    def processed(self, event):
+        self.events.remove(event)

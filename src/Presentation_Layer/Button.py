@@ -3,9 +3,9 @@ from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.TextElement import TextElement
 
 class Button:
-    def __init__(self, text_str, pos):
+    def __init__(self, text_str, input, pos):
         self.str = text_str
-        self.id = self.str
+        self.input = input
 
         self.position = pos
         self.width = 250
@@ -32,6 +32,12 @@ class Button:
         self.padding = 16
         self.thickness = 2
         self.border_radius = 8
+
+    def setInput(self, input):
+        self.input = input
+
+    def getInput(self):
+        return self.input
 
     def setType(self, btn_type):
         self.btn_type = btn_type
