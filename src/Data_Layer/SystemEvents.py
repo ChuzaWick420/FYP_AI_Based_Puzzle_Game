@@ -22,3 +22,4 @@ class SystemEvents:
     LEVEL_GENERATED   = 1207
     TIME_UPDATE       = 1208
     LEVEL_FINISHED    = 1209
+    LEVEL_NEXT        = 1210

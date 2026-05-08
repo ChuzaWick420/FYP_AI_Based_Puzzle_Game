@@ -229,6 +229,12 @@ class Engine:
             if event == SystemEvents.LEVEL_GENERATED:
                 self.initialize()
 
+            if event == SystemEvents.LEVEL_NEXT:
+                self.current_level += 1
+                self.current_level = self.current_level % Global.MAX_LEVELS
+                self.adjacent_matrix = []
+                self.initialize()
+
             if event == SystemEvents.LEVEL_RESET:
                 self.player.reset()
                 self.ai.reset()
@@ -325,6 +331,9 @@ class Engine:
                     continue
 
                 input = button.getInput()
+
+                if input == StateInputs.NEXT:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_NEXT)
 
                 self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                 self.stateMachine.stepState(input)
