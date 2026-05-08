@@ -380,12 +380,12 @@ class Engine:
             self.event_listener.createEvent(SystemEvents.LEVEL_FINISHED)
 
         if (current_ai == goal):
-            self.result_menu.winner_info.setText("You Lose!")
+            self.result_menu.winner_info.setText("AI Win!")
             self.result_menu.buttons[0].text.setText("Restart")
             self.result_menu.buttons[0].setInput(StateInputs.RESTART)
 
         if (current_player == goal):
-            self.result_menu.winner_info.setText("You Win!")
+            self.result_menu.winner_info.setText("Player Win!")
             self.result_menu.buttons[0].text.setText("Next")
             self.result_menu.buttons[0].setInput(StateInputs.NEXT)
 
