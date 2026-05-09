@@ -99,15 +99,15 @@ class Engine:
     def load(self):
         self.db_manager.load()
 
-        self.current_level = self.db_manager.file_data["current_level"]
-        self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
+        self.current_level = self.db_manager.json_data["current_level"]
+        self.adjacent_matrix = self.db_manager.json_data["Graph_adjacent_matrix"]
 
         # self.db_manager.log()
         self.db_manager.debug()
 
         # NOTE: Update scoreboard
-        self.scoreboard_menu.num_of_wins.setText("Wins: {}".format(self.db_manager.file_data["wins"]))
-        self.scoreboard_menu.num_of_loses.setText("Loses: {}".format(self.db_manager.file_data["loses"]))
+        self.scoreboard_menu.num_of_wins.setText("Wins: {}".format(self.db_manager.json_data["wins"]))
+        self.scoreboard_menu.num_of_loses.setText("Loses: {}".format(self.db_manager.json_data["loses"]))
 
         data = self.db_manager.getDBData()
 
@@ -191,10 +191,10 @@ class Engine:
     def cleanup(self):
 
         # save current level number
-        self.db_manager.file_data["current_level"] = self.current_level
+        self.db_manager.json_data["current_level"] = self.current_level
 
         # Save map for current level
-        self.db_manager.file_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
+        self.db_manager.json_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
 
         self.db_manager.flush() 
         pygame.quit()
@@ -221,11 +221,7 @@ class Engine:
         for index in range(len(data)):
             new_data.append((index + 1, completion_times[index]))
 
-        # NOTE: DEBUG
-        print("new data:", new_data)
-
         self.db_manager.setDBData(new_data)
-
 
     def manageMenuTransition(self):
 
@@ -269,7 +265,9 @@ class Engine:
 
             if event == SystemEvents.LEVEL_NEXT:
                 self.current_level += 1
-                self.current_level = self.current_level % Global.MAX_LEVELS # FIXME: High potential for a crash point
+                if self.current_level > Global.MAX_LEVELS:
+                    self.current_level = 1
+
                 self.adjacent_matrix = []
                 self.initialize()
 

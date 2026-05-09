@@ -135,7 +135,12 @@ class Maps_Manager:
         self.initialize_render_data()
 
     def disable_random_blinders(self):
-        amount_to_disable = random.randint(1, len(self.blinders))
+
+        amount_to_disable = 0
+
+        if len(self.blinders) > 0:
+            amount_to_disable = random.randint(1, len(self.blinders))
+
         for _ in range(amount_to_disable):
             self.pop_blinder()
 
