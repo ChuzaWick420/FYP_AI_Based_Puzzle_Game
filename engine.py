@@ -96,6 +96,8 @@ class Engine:
         self.ai_speed_ideal = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
         self.ai_speed_current = self.ai_speed_ideal
 
+        self.playing_screen.setLevel(self.current_level)
+
     def load(self):
         self.db_manager.load()
 
@@ -267,6 +269,7 @@ class Engine:
 
                 self.adjacent_matrix = []
                 self.initialize()
+                self.playing_screen.setLevel(self.current_level)
 
             if event == SystemEvents.LEVEL_RESET:
                 self.player.reset()
