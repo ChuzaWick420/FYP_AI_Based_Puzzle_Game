@@ -339,10 +339,13 @@ class Engine:
                 input = button.getInput()
 
                 if input == StateInputs.DIFFICULTY_EASY:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
                 if input == StateInputs.DIFFICULTY_MEDIUM:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
                 if input == StateInputs.DIFFICULTY_HARD:
+                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
 
                 self.stateMachine.stepState(input)
@@ -430,11 +433,13 @@ class Engine:
         if (current_ai == goal):
             self.result_menu.winner_info.setText("AI Win!")
             self.result_menu.buttons[0].text.setText("Restart")
+            self.db_manager.json_data["loses"] = self.db_manager.json_data["loses"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.RESTART)
 
         if (current_player == goal):
             self.result_menu.winner_info.setText("Player Win!")
             self.result_menu.buttons[0].text.setText("Next")
+            self.db_manager.json_data["wins"] = self.db_manager.json_data["wins"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.NEXT)
             self.event_listener.createEvent(SystemEvents.PLAYER_WIN)
 
