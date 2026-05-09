@@ -231,7 +231,7 @@ class Engine:
 
             if event == SystemEvents.LEVEL_NEXT:
                 self.current_level += 1
-                self.current_level = self.current_level % Global.MAX_LEVELS
+                self.current_level = self.current_level % Global.MAX_LEVELS # FIXME: High potential for a crash point
                 self.adjacent_matrix = []
                 self.initialize()
 
