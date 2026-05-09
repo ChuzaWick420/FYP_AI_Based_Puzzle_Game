@@ -19,7 +19,7 @@ class PlayingScreen:
         self.visual = pygame.sprite.Group()
 
     def setTimer(self, minutes, seconds):
-        self.timer.setText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
+        self.timer.setText("Timer: {0:02}:{1:02}".format(minutes, seconds))
 
     def setLevel(self, level):
         self.level_num.setText(f"Level: {str(level)}")

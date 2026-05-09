@@ -38,4 +38,4 @@ class ResultMenu(Menu):
             button.render(display)
 
     def setTimer(self, minutes, seconds):
-        self.completion_time.setText("Timer: {0:02}:{1:02}".format(minutes // 60, seconds % 60))
+        self.completion_time.setText("Timer: {0:02}:{1:02}".format(minutes, seconds))
