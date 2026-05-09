@@ -27,12 +27,18 @@ class ScoreBoardMenu(Menu):
         self.scores = []
         temp_color = (232, 93, 7)
 
+        self.num_of_wins = TextElement("Wins: 0", temp_color, (pos[0], pos[1] + 6 * gap))
+        self.num_of_loses = TextElement("Loses: 0", temp_color, (pos[0], pos[1] + 7 * gap))
+
         for i in range(5):
             (x, y) = (pos[0], pos[1] + i * gap)
             self.scores.append(TextElement("Temp", temp_color, (x, y)))
 
     def render(self, display):
+
         display.blit(self.text.text, self.text.textRect)
+        display.blit(self.num_of_wins.text, self.num_of_wins.textRect)
+        display.blit(self.num_of_loses.text, self.num_of_loses.textRect)
 
         for button in self.buttons:
             button.render(display)

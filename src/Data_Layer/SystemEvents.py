@@ -23,3 +23,4 @@ class SystemEvents:
     TIME_UPDATE       = 1208
     LEVEL_FINISHED    = 1209
     LEVEL_NEXT        = 1210
+    PLAYER_WIN        = 1211

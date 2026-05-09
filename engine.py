@@ -103,6 +103,16 @@ class Engine:
         self.adjacent_matrix = self.db_manager.file_data["Graph_adjacent_matrix"]
 
         # self.db_manager.log()
+        self.db_manager.debug()
+
+        # NOTE: Update scoreboard
+        self.scoreboard_menu.num_of_wins.setText("Wins: {}".format(self.db_manager.file_data["wins"]))
+        self.scoreboard_menu.num_of_loses.setText("Loses: {}".format(self.db_manager.file_data["loses"]))
+
+        data = self.db_manager.getDBData()
+
+        for index in range(len(self.scoreboard_menu.scores)):
+            self.scoreboard_menu.scores[index].setText(data[index][1])
 
     def handlePhysics(self, current, last):
         dt = current - last
@@ -189,6 +199,34 @@ class Engine:
         self.db_manager.flush() 
         pygame.quit()
 
+    def update_data_base(self):
+        data = self.db_manager.getDBData()
+
+        completion_times = []
+
+        for entry in data:
+            completion_times.append(entry[1])
+
+        minutes = self.elapsed_play_time // 60
+        seconds = self.elapsed_play_time % 60
+
+        new_time = f"00:{minutes:02}:{seconds:02}"
+
+        completion_times.append(new_time)
+        completion_times.sort()
+        completion_times.pop()
+
+        new_data = []
+
+        for index in range(len(data)):
+            new_data.append((index + 1, completion_times[index]))
+
+        # NOTE: DEBUG
+        print("new data:", new_data)
+
+        self.db_manager.setDBData(new_data)
+
+
     def manageMenuTransition(self):
 
         # NOTE: Reset the active button tracker
@@ -265,6 +303,9 @@ class Engine:
 
             if event == SystemEvents.LEVEL_FINISHED:
                 self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+            if event == SystemEvents.PLAYER_WIN:
+                self.update_data_base()
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
@@ -397,6 +438,7 @@ class Engine:
             self.result_menu.winner_info.setText("Player Win!")
             self.result_menu.buttons[0].text.setText("Next")
             self.result_menu.buttons[0].setInput(StateInputs.NEXT)
+            self.event_listener.createEvent(SystemEvents.PLAYER_WIN)
 
         # ask playing screen to update render data
         self.playing_screen.update_maze(self.maps_manager.get_render_data())
