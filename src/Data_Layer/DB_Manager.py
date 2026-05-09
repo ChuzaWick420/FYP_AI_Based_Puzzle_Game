@@ -36,40 +36,8 @@ class DB_Manager:
         cursor.close()
         db.close()
 
-    def log(self):
-        print("Database Data: ", self.json_data)
-
     def getDBData(self):
         return self.db_data
 
     def setDBData(self, data):
         self.db_data = data
-
-    def debug(self):
-        # data = [
-        #     (1, '00:00:00'),
-        #     (2, '00:10:00'),
-        #     (3, '00:00:00'),
-        #     (4, '00:00:00'),
-        #     (5, '00:00:00'),
-        # ]
-        #
-        # self.db_data = data
-
-        # NOTE: debug
-        # print(self.db_data)
-
-        # NOTE: Testing
-        data = [
-            '08:00:00',
-            '09:30:00',
-            '18:20:00',
-            '11:15:00',
-            '14:45:00'
-        ]
-
-        data.sort()
-
-        print(data)
-
-        pass

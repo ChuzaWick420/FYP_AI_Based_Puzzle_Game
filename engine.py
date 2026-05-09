@@ -102,9 +102,6 @@ class Engine:
         self.current_level = self.db_manager.json_data["current_level"]
         self.adjacent_matrix = self.db_manager.json_data["Graph_adjacent_matrix"]
 
-        # self.db_manager.log()
-        self.db_manager.debug()
-
         # NOTE: Update scoreboard
         self.scoreboard_menu.num_of_wins.setText("Wins: {}".format(self.db_manager.json_data["wins"]))
         self.scoreboard_menu.num_of_loses.setText("Loses: {}".format(self.db_manager.json_data["loses"]))
