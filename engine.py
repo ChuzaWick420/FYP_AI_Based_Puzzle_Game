@@ -260,79 +260,86 @@ class Engine:
         if self.stateMachine.next_state == GameStates.SCORE_BOARD:
             self.current_menu = self.scoreboard_menu
 
+# NOTE: Events Section ##################################################################################################
+
+    def handleInputEvents(self, event):
+        # NOTE: Mouse handling
+        if event == SystemEvents.MOUSE_CLICK:
+            self.handleEventMouse()
+
+        # NOTE: Keyboard handling
+        if event == SystemEvents.KEY_RELEASE:
+            self.isKeyUp = True
+
+        self.handleEventKeyboard(event)
+
+    def handleWindowEvents(self, event):
+        # NOTE: Termination
+        if event == SystemEvents.TERMINATE_GAME:
+            self.isRunning = False
+
+    def handleGameEvents(self, event):
+        if event == SystemEvents.DIFFICULTY_EASY:
+            self.current_level = 0 * self.levels_per_category + 1
+            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
+        if event == SystemEvents.DIFFICULTY_MEDIUM:
+            self.current_level = 1 * self.levels_per_category + 1
+            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
+        if event == SystemEvents.DIFFICULTY_HARD:
+            self.current_level = 2 * self.levels_per_category + 1
+            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
+
+        if event == SystemEvents.LEVEL_GENERATED:
+            self.initialize()
+
+        if event == SystemEvents.LEVEL_NEXT:
+            self.current_level += 1
+            if self.current_level > Global.MAX_LEVELS:
+                self.current_level = 1
+
+            self.adjacent_matrix = []
+            self.initialize()
+            self.playing_screen.setLevel(self.current_level)
+
+        if event == SystemEvents.LEVEL_RESET:
+            self.player.reset()
+            self.ai.reset()
+            # NOTE: Reset the frame buffer
+            self.maps_manager.initialize()
+            # NOTE: Reset play time
+            self.elapsed_play_time = 0
+            self.ai_speed_current = self.ai_speed_ideal
+
+        # NOTE: Maze update
+        # PERF: There are lag spikes on large mazes seconds 13, 33 etc. Frequency of lag spikes increases when player moves as well, could be related to events.
+        if event == SystemEvents.MAZE_UPDATE:
+            self.handleEventMaze()
+
+
+        if event == SystemEvents.LEVEL_FINISHED:
+            self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+
+        if event == SystemEvents.PLAYER_WIN:
+            self.updateDB()
+
+        if event == SystemEvents.STATE_TRANSITION:
+            self.manageMenuTransition()
+
+        if event == SystemEvents.TIME_UPDATE:
+            minutes = self.elapsed_play_time // 60
+            seconds = self.elapsed_play_time % 60
+            self.result_menu.setTimer(minutes, seconds)
+            self.playing_screen.setTimer(minutes, seconds)
+
+            if (self.elapsed_play_time >= self.visible_for_seconds and self.blinders_spawned == False):
+                self.maps_manager.spawn_blinders()
+                self.blinders_spawned = True
+
     def handleEvents(self):
-        # Events
         for event in self.event_listener.getEvents():
-
-            if event == SystemEvents.DIFFICULTY_EASY:
-                self.current_level = 0 * self.levels_per_category + 1
-                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
-            if event == SystemEvents.DIFFICULTY_MEDIUM:
-                self.current_level = 1 * self.levels_per_category + 1
-                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
-            if event == SystemEvents.DIFFICULTY_HARD:
-                self.current_level = 2 * self.levels_per_category + 1
-                self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
-
-            if event == SystemEvents.LEVEL_GENERATED:
-                self.initialize()
-
-            if event == SystemEvents.LEVEL_NEXT:
-                self.current_level += 1
-                if self.current_level > Global.MAX_LEVELS:
-                    self.current_level = 1
-
-                self.adjacent_matrix = []
-                self.initialize()
-                self.playing_screen.setLevel(self.current_level)
-
-            if event == SystemEvents.LEVEL_RESET:
-                self.player.reset()
-                self.ai.reset()
-                # NOTE: Reset the frame buffer
-                self.maps_manager.initialize()
-                # NOTE: Reset play time
-                self.elapsed_play_time = 0
-                self.ai_speed_current = self.ai_speed_ideal
-
-            # NOTE: Maze update
-            # PERF: There are lag spikes on large mazes seconds 13, 33 etc. Frequency of lag spikes increases when player moves as well, could be related to events.
-            if event == SystemEvents.MAZE_UPDATE:
-                self.handleEventMaze()
-
-            # NOTE: Keyboard handling
-            if event == SystemEvents.KEY_RELEASE:
-                self.isKeyUp = True
-
-            self.handleEventKeyboard(event)
-
-            # NOTE: Mouse handling
-            if event == SystemEvents.MOUSE_CLICK:
-                self.handleEventMouse()
-
-            # NOTE: Termination
-            if event == SystemEvents.TERMINATE_GAME:
-                self.isRunning = False
-
-            if event == SystemEvents.LEVEL_FINISHED:
-                self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
-
-            if event == SystemEvents.PLAYER_WIN:
-                self.updateDB()
-
-            if event == SystemEvents.STATE_TRANSITION:
-                self.manageMenuTransition()
-
-            if event == SystemEvents.TIME_UPDATE:
-                minutes = self.elapsed_play_time // 60
-                seconds = self.elapsed_play_time % 60
-                self.result_menu.setTimer(minutes, seconds)
-                self.playing_screen.setTimer(minutes, seconds)
-
-                if (self.elapsed_play_time >= self.visible_for_seconds and self.blinders_spawned == False):
-                    self.maps_manager.spawn_blinders()
-                    self.blinders_spawned = True
-
+            if event // 100 == 10: self.handleInputEvents(event)
+            if event // 100 == 11: self.handleWindowEvents(event)
+            if event // 100 == 12: self.handleGameEvents(event)
             self.event_listener.processed(event)
 
     def handle_buttons(self):
@@ -448,15 +455,15 @@ class Engine:
         if (current_ai == goal):
             self.result_menu.winner_info.setText("AI Win!")
             self.result_menu.buttons[0].text.setText("Restart")
-            self.db_manager.__json_data["loses"] = self.db_manager.__json_data["loses"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.RESTART)
+            self.__session_data["loses"] += 1
 
         if (current_player == goal):
             self.result_menu.winner_info.setText("Player Win!")
             self.result_menu.buttons[0].text.setText("Next")
-            self.db_manager.__json_data["wins"] = self.db_manager.__json_data["wins"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.NEXT)
             self.event_listener.createEvent(SystemEvents.PLAYER_WIN)
+            self.__session_data["wins"] += 1
 
         # ask playing screen to update render data
         self.playing_screen.update_maze(self.maps_manager.get_render_data())
