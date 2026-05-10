@@ -301,6 +301,7 @@ class Engine:
 
             # NOTE: Reset playing screen data
             self.__elapsed_play_time = 0
+            self.__flag_blinders = False
             self.__playing_screen.setLevel(self.__session_data["current_level"])
             self.__event_listener.createEvent(SystemEvents.MAZE_UPDATE)
 
