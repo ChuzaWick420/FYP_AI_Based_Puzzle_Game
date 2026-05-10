@@ -65,7 +65,6 @@ class Engine:
         self.play_time = 0
 
         # NOTE: This data depends on dataase to be loaded.
-        self.current_level = 0
         self.__level_category_index = -1
         self.ai_speed_ideal = 0
         self.ai_speed_current = 0
@@ -80,8 +79,6 @@ class Engine:
         self.db_manager.load()
 
         self.__session_data = self.db_manager.getJSONData()
-
-        self.current_level = self.__session_data["current_level"]
 
         # NOTE: Update scoreboard
         self.scoreboard_menu.setWins(self.__session_data["wins"])
@@ -118,25 +115,19 @@ class Engine:
             last_time = current_time
 
     def cleanup(self):
-
-        # NOTE: save sessions's Level
-        self.__session_data["current_level"] = self.current_level
-
         self.updateDB()
-
         self.db_manager.flush() 
-
         pygame.quit()
 
 # NOTE: Time Sliced Section #################################################################################################
 
     def initialize(self):
 
-        # NOTE: Initializing Maze Manager
+        # NOTE: Initializing Maps Manager
         if len(self.__session_data["saved_mst"]) == 0:
-            self.maps_manager.initialize_graph(self.current_level)
+            self.maps_manager.initialize_graph(self.__session_data["current_level"])
         else:
-            self.maps_manager.initialize_graph(self.current_level, self.__session_data["saved_mst"])
+            self.maps_manager.initialize_graph(self.__session_data["current_level"], self.__session_data["saved_mst"])
 
         self.__session_data["saved_mst"] = self.maps_manager.getMST()
 
@@ -151,10 +142,10 @@ class Engine:
         max_speed = 3
         min_speed = 1
 
-        self.ai_speed_ideal = min_speed + self.current_level * (max_speed - min_speed) / Global.MAX_LEVELS
+        self.ai_speed_ideal = min_speed + self.__session_data["current_level"] * (max_speed - min_speed) / Global.MAX_LEVELS
         self.ai_speed_current = self.ai_speed_ideal
 
-        self.playing_screen.setLevel(self.current_level)
+        self.playing_screen.setLevel(self.__session_data["current_level"])
 
     def render(self):
         self.screen.fill(self.window_background)
@@ -292,7 +283,7 @@ class Engine:
         if (event == SystemEvents.DIFFICULTY_EASY or
             event == SystemEvents.DIFFICULTY_MEDIUM or
             event == SystemEvents.DIFFICULTY_HARD):
-            self.current_level = self.__level_category_index * self.levels_per_category + 1
+            self.__session_data["current_level"] = self.__level_category_index * self.levels_per_category + 1
             self.__session_data["saved_mst"] = []
             self.event_listener.createEvent(SystemEvents.REQUEST_LEVEL_GENERATE)
 
@@ -300,13 +291,13 @@ class Engine:
             self.initialize()
 
         if event == SystemEvents.LEVEL_NEXT:
-            self.current_level += 1
-            if self.current_level > Global.MAX_LEVELS:
-                self.current_level = 1
+            self.__session_data["current_level"] += 1
+            if self.__session_data["current_level"] > Global.MAX_LEVELS:
+                self.__session_data["current_level"] = 1
 
             self.__session_data["saved_mst"] = []
             self.initialize()
-            self.playing_screen.setLevel(self.current_level)
+            self.playing_screen.setLevel(self.__session_data["current_level"])
 
         if event == SystemEvents.LEVEL_RESET:
             self.player.reset()
