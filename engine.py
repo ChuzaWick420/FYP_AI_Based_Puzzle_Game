@@ -31,14 +31,14 @@ class Engine:
         self.physics_accumulator = 0.0
         self.ticks_play_time = 0
         self.window_background = "black"
-        self.elapsed_play_time = 0
-        self.blinders_spawned = False
-        self.visible_for_seconds = 10
+        self.__elapsed_play_time = 0
+        self.__flag_blinders = False
+        self.__visible_for_seconds = 10
 
         # Derived Configuration
         self.frame_time = 1.0 / self.frame_rate
         self.PHYSICS_TIME_UNIT = 1.0 / self.PHYSICS_FREQUENCY
-        self.levels_per_category = Global.MAX_LEVELS // 3
+        self.__levels_per_category = Global.MAX_LEVELS // 3
 
         # Objects
         self.input_handler = InputHandler()
@@ -60,22 +60,21 @@ class Engine:
 
         # States
         self.current_menu = self.main_menu
-        self.isRunning = True
-        self.isKeyUp = True
-        self.play_time = 0
+        self.__isRunning = True
+        self.__isKeyUp = True
 
         # NOTE: This data depends on dataase to be loaded.
         self.__level_category_index = -1
-        self.ai_speed_ideal = 0
-        self.ai_speed_current = 0
+        self.__ai_speed_ideal = -1
+        self.__ai_speed_current = -1
         self.__session_data = {}
 
     def start(self):
-        self.load()
-        self.execute()
-        self.cleanup()
+        self.__load()
+        self.__execute()
+        self.__cleanup()
 
-    def load(self):
+    def __load(self):
         self.db_manager.load()
 
         self.__session_data = self.db_manager.getJSONData()
@@ -93,12 +92,12 @@ class Engine:
 
         self.scoreboard_menu.setScores(scores)
 
-    def execute(self):
-        self.initialize()
+    def __execute(self):
+        self.__initialize()
         self.screen = pygame.display.set_mode(self.resolution)
         last_time = time.perf_counter()
 
-        while self.isRunning:
+        while self.__isRunning:
 
             # NOTE: Time Slice execution time into
             # 1. Rendering (30 or 60 Frames per second)
@@ -108,20 +107,20 @@ class Engine:
             frame_start = time.perf_counter()
             current_time = time.perf_counter()
 
-            self.handlePhysics(current_time, last_time)
-            self.render()
-            self.handleProcesses(frame_start)
+            self.__handlePhysics(current_time, last_time)
+            self.__render()
+            self.__handleProcesses(frame_start)
 
             last_time = current_time
 
-    def cleanup(self):
-        self.updateDB()
+    def __cleanup(self):
+        self.__updateDB()
         self.db_manager.flush() 
         pygame.quit()
 
 # NOTE: Time Sliced Section #################################################################################################
 
-    def initialize(self):
+    def __initialize(self):
 
         # NOTE: Initializing Maps Manager
         if len(self.__session_data["saved_mst"]) == 0:
@@ -142,12 +141,12 @@ class Engine:
         max_speed = 3
         min_speed = 1
 
-        self.ai_speed_ideal = min_speed + self.__session_data["current_level"] * (max_speed - min_speed) / Global.MAX_LEVELS
-        self.ai_speed_current = self.ai_speed_ideal
+        self.__ai_speed_ideal = min_speed + self.__session_data["current_level"] * (max_speed - min_speed) / Global.MAX_LEVELS
+        self.__ai_speed_current = self.__ai_speed_ideal
 
         self.playing_screen.setLevel(self.__session_data["current_level"])
 
-    def render(self):
+    def __render(self):
         self.screen.fill(self.window_background)
 
         if self.stateMachine.current_state == GameStates.PLAY:
@@ -158,7 +157,7 @@ class Engine:
 
         pygame.display.flip()
 
-    def handlePhysics(self, current, last):
+    def __handlePhysics(self, current, last):
         dt = current - last
         dt = min(dt, 0.25) # NOTE: Clamp dt to avoid spiral of death
 
@@ -171,11 +170,11 @@ class Engine:
             self.physics_accumulator -= self.PHYSICS_TIME_UNIT
 
         if (self.ticks_play_time >= 1 * self.PHYSICS_FREQUENCY):
-            self.elapsed_play_time += 1
+            self.__elapsed_play_time += 1
             self.event_listener.createEvent(SystemEvents.TIME_UPDATE)
             self.ticks_play_time = 0
 
-        if self.ticks_ai_step * self.ai_speed_current >= self.PHYSICS_FREQUENCY:
+        if self.ticks_ai_step * self.__ai_speed_current >= self.PHYSICS_FREQUENCY:
             if self.stateMachine.current_state == GameStates.PLAY:
                 self.ai.step()
                 self.event_listener.createEvent(SystemEvents.MAZE_UPDATE)
@@ -183,7 +182,7 @@ class Engine:
             # Reset
             self.ticks_ai_step = 0
 
-    def handleProcesses(self, frame_start):
+    def __handleProcesses(self, frame_start):
         frame_end = time.perf_counter()
         elapsed = frame_end - frame_start
 
@@ -197,11 +196,11 @@ class Engine:
                 if event != None:
                     self.event_listener.createEvent(event)
 
-                self.handleEvents()
+                self.__handleEvents()
 
 # NOTE: Utility Section ##################################################################################################
 
-    def updateDB(self):
+    def __updateDB(self):
         db_data = self.db_manager.getDBData()
 
         # NOTE: Handling the completion times
@@ -210,8 +209,8 @@ class Engine:
         for entry in db_data:
             completion_times.append(entry[1])
 
-        minutes = self.elapsed_play_time // 60
-        seconds = self.elapsed_play_time % 60
+        minutes = self.__elapsed_play_time // 60
+        seconds = self.__elapsed_play_time % 60
 
         new_time = f"00:{minutes:02}:{seconds:02}"
 
@@ -229,7 +228,7 @@ class Engine:
         # NOTE: Handling the json data
         self.db_manager.setJSONData(self.__session_data)
 
-    def manageMenuTransition(self):
+    def __manageMenuTransition(self):
 
         # NOTE: Reset the active button tracker
         self.current_menu.active_btn_id = 0
@@ -254,23 +253,23 @@ class Engine:
 
 # NOTE: Events Section ##################################################################################################
 
-    def handleInputEvents(self, event):
+    def __handleInputEvents(self, event):
         # NOTE: Mouse handling
         if event == SystemEvents.MOUSE_CLICK:
-            self.handleEventMouse()
+            self.__handleEventMouse()
 
         # NOTE: Keyboard handling
         if event == SystemEvents.KEY_RELEASE:
-            self.isKeyUp = True
+            self.__isKeyUp = True
 
-        self.handleEventKeyboard(event)
+        self.__handleEventKeyboard(event)
 
-    def handleWindowEvents(self, event):
+    def __handleWindowEvents(self, event):
         # NOTE: Termination
         if event == SystemEvents.TERMINATE_GAME:
-            self.isRunning = False
+            self.__isRunning = False
 
-    def handleGameEvents(self, event):
+    def __handleGameEvents(self, event):
 
         # NOTE: Player Selects either of the difficulties
         if event == SystemEvents.DIFFICULTY_EASY:
@@ -283,12 +282,12 @@ class Engine:
         if (event == SystemEvents.DIFFICULTY_EASY or
             event == SystemEvents.DIFFICULTY_MEDIUM or
             event == SystemEvents.DIFFICULTY_HARD):
-            self.__session_data["current_level"] = self.__level_category_index * self.levels_per_category + 1
+            self.__session_data["current_level"] = self.__level_category_index * self.__levels_per_category + 1
             self.__session_data["saved_mst"] = []
             self.event_listener.createEvent(SystemEvents.REQUEST_LEVEL_GENERATE)
 
         if event == SystemEvents.REQUEST_LEVEL_GENERATE:
-            self.initialize()
+            self.__initialize()
 
         if event == SystemEvents.LEVEL_NEXT:
             self.__session_data["current_level"] += 1
@@ -296,7 +295,7 @@ class Engine:
                 self.__session_data["current_level"] = 1
 
             self.__session_data["saved_mst"] = []
-            self.initialize()
+            self.__initialize()
             self.playing_screen.setLevel(self.__session_data["current_level"])
 
         if event == SystemEvents.LEVEL_RESET:
@@ -305,42 +304,41 @@ class Engine:
             # NOTE: Reset the frame buffer
             self.maps_manager.initialize()
             # NOTE: Reset play time
-            self.elapsed_play_time = 0
-            self.ai_speed_current = self.ai_speed_ideal
+            self.__elapsed_play_time = 0
+            self.__ai_speed_current = self.__ai_speed_ideal
 
         # NOTE: Maze update
         # PERF: There are lag spikes on large mazes seconds 13, 33 etc. Frequency of lag spikes increases when player moves as well, could be related to events.
         if event == SystemEvents.MAZE_UPDATE:
-            self.handleEventMaze()
-
+            self.__handleEventMaze()
 
         if event == SystemEvents.LEVEL_FINISHED:
             self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         if event == SystemEvents.PLAYER_WIN:
-            self.updateDB()
+            self.__updateDB()
 
         if event == SystemEvents.STATE_TRANSITION:
-            self.manageMenuTransition()
+            self.__manageMenuTransition()
 
         if event == SystemEvents.TIME_UPDATE:
-            minutes = self.elapsed_play_time // 60
-            seconds = self.elapsed_play_time % 60
+            minutes = self.__elapsed_play_time // 60
+            seconds = self.__elapsed_play_time % 60
             self.result_menu.setTimer(minutes, seconds)
             self.playing_screen.setTimer(minutes, seconds)
 
-            if (self.elapsed_play_time >= self.visible_for_seconds and self.blinders_spawned == False):
+            if (self.__elapsed_play_time >= self.__visible_for_seconds and self.__flag_blinders == False):
                 self.maps_manager.spawn_blinders()
-                self.blinders_spawned = True
+                self.__flag_blinders = True
 
-    def handleEvents(self):
+    def __handleEvents(self):
         for event in self.event_listener.getEvents():
-            if event // 100 == 10: self.handleInputEvents(event)
-            if event // 100 == 11: self.handleWindowEvents(event)
-            if event // 100 == 12: self.handleGameEvents(event)
+            if event // 100 == 10: self.__handleInputEvents(event)
+            if event // 100 == 11: self.__handleWindowEvents(event)
+            if event // 100 == 12: self.__handleGameEvents(event)
             self.event_listener.processed(event)
 
-    def handle_buttons(self):
+    def __handle_buttons(self):
 
         self.current_menu.handle_trigger()
 
@@ -359,13 +357,10 @@ class Engine:
                 input = button.getInput()
 
                 if input == StateInputs.DIFFICULTY_EASY:
-                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_EASY)
                 if input == StateInputs.DIFFICULTY_MEDIUM:
-                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_MEDIUM)
                 if input == StateInputs.DIFFICULTY_HARD:
-                    self.event_listener.createEvent(SystemEvents.LEVEL_RESET)
                     self.event_listener.createEvent(SystemEvents.DIFFICULTY_HARD)
 
                 self.stateMachine.stepState(input)
@@ -412,10 +407,10 @@ class Engine:
                 self.stateMachine.stepState(input)
                 self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
-    def handleEventMouse(self):
-        self.handle_buttons()
+    def __handleEventMouse(self):
+        self.__handle_buttons()
 
-    def handleEventMaze(self):
+    def __handleEventMaze(self):
         # Get Entity positions
         previous_ai     = (self.ai.prev_x, self.ai.prev_y)
         current_ai      = (self.ai.x_coordinate, self.ai.y_coordinate)
@@ -434,7 +429,7 @@ class Engine:
 
         # NOTE: handling powerups
         if (self.maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_SLOW["value"]):
-            self.ai_speed_current = self.ai_speed_ideal - 1
+            self.__ai_speed_current = self.__ai_speed_ideal - 1
             self.maps_manager.others_map[current_player[1]][current_player[0]] = CellTypes.INVALID["value"]
 
         if (self.maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_REVEAL["value"]):
@@ -466,12 +461,12 @@ class Engine:
         # ask playing screen to update render data
         self.playing_screen.update_maze(self.maps_manager.get_render_data())
 
-    def handleEventKeyboard(self, event):
+    def __handleEventKeyboard(self, event):
 
-        if self.isKeyUp == True:
+        if self.__isKeyUp == True:
 
             if (event == SystemEvents.RETURN_PRESSED):
-                self.handle_buttons()
+                self.__handle_buttons()
 
             if (event == SystemEvents.PAUSE_PRESSED and self.stateMachine.current_state == GameStates.PLAY):
                 self.stateMachine.stepState(StateInputs.PAUSE)
@@ -495,7 +490,7 @@ class Engine:
                 self.current_menu.active_btn_id += 1
 
             if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
-                self.isKeyUp = False
+                self.__isKeyUp = False
 
                 if isPlaying:
                     self.event_listener.createEvent(SystemEvents.MAZE_UPDATE)
