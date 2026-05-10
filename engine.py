@@ -66,6 +66,7 @@ class Engine:
 
         # NOTE: This data depends on dataase to be loaded.
         self.current_level = 0
+        self.__level_category_index = -1
         self.ai_speed_ideal = 0
         self.ai_speed_current = 0
         self.__session_data = {}
@@ -81,7 +82,6 @@ class Engine:
         self.__session_data = self.db_manager.getJSONData()
 
         self.current_level = self.__session_data["current_level"]
-        self.adjacent_matrix = self.__session_data["Graph_adjacent_matrix"]
 
         # NOTE: Update scoreboard
         self.scoreboard_menu.setWins(self.__session_data["wins"])
@@ -119,9 +119,8 @@ class Engine:
 
     def cleanup(self):
 
-        # NOTE: save sessions's Level and Map
+        # NOTE: save sessions's Level
         self.__session_data["current_level"] = self.current_level
-        self.__session_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
 
         self.updateDB()
 
@@ -134,10 +133,12 @@ class Engine:
     def initialize(self):
 
         # NOTE: Initializing Maze Manager
-        if len(self.adjacent_matrix) == 0:
+        if len(self.__session_data["saved_mst"]) == 0:
             self.maps_manager.initialize_graph(self.current_level)
         else:
-            self.maps_manager.initialize_graph(self.current_level, self.adjacent_matrix)
+            self.maps_manager.initialize_graph(self.current_level, self.__session_data["saved_mst"])
+
+        self.__session_data["saved_mst"] = self.maps_manager.getMST()
 
         # NOTE: Update maze's visual
         self.playing_screen.update_maze(self.maps_manager.get_render_data())
@@ -279,17 +280,23 @@ class Engine:
             self.isRunning = False
 
     def handleGameEvents(self, event):
-        if event == SystemEvents.DIFFICULTY_EASY:
-            self.current_level = 0 * self.levels_per_category + 1
-            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
-        if event == SystemEvents.DIFFICULTY_MEDIUM:
-            self.current_level = 1 * self.levels_per_category + 1
-            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
-        if event == SystemEvents.DIFFICULTY_HARD:
-            self.current_level = 2 * self.levels_per_category + 1
-            self.event_listener.createEvent(SystemEvents.LEVEL_GENERATED)
 
-        if event == SystemEvents.LEVEL_GENERATED:
+        # NOTE: Player Selects either of the difficulties
+        if event == SystemEvents.DIFFICULTY_EASY:
+            self.__level_category_index = 0
+        if event == SystemEvents.DIFFICULTY_MEDIUM:
+            self.__level_category_index = 1
+        if event == SystemEvents.DIFFICULTY_HARD:
+            self.__level_category_index = 2
+
+        if (event == SystemEvents.DIFFICULTY_EASY or
+            event == SystemEvents.DIFFICULTY_MEDIUM or
+            event == SystemEvents.DIFFICULTY_HARD):
+            self.current_level = self.__level_category_index * self.levels_per_category + 1
+            self.__session_data["saved_mst"] = []
+            self.event_listener.createEvent(SystemEvents.REQUEST_LEVEL_GENERATE)
+
+        if event == SystemEvents.REQUEST_LEVEL_GENERATE:
             self.initialize()
 
         if event == SystemEvents.LEVEL_NEXT:
@@ -297,7 +304,7 @@ class Engine:
             if self.current_level > Global.MAX_LEVELS:
                 self.current_level = 1
 
-            self.adjacent_matrix = []
+            self.__session_data["saved_mst"] = []
             self.initialize()
             self.playing_screen.setLevel(self.current_level)
 

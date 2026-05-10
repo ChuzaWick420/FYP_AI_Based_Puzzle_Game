@@ -48,9 +48,9 @@ def trace_path(cell_details, dest):
     path.reverse()
 
     # Print the path
-    for i in path:
-        print("->", i, end=" ")
-    print()
+    # for i in path:
+    #     print("->", i, end=" ")
+    # print()
 
     return path
 
@@ -123,7 +123,7 @@ def a_star_search(grid, src, dest, grid_width):
                     # Set the parent of the destination cell
                     cell_details[new_i][new_j].parent_i = i
                     cell_details[new_i][new_j].parent_j = j
-                    print("The destination cell is found")
+                    print("A* found the destination cell")
                     # Trace and print the path from source to destination
                     found_path = trace_path(cell_details, dest)
                     found_dest = True
@@ -147,4 +147,4 @@ def a_star_search(grid, src, dest, grid_width):
 
     # If the destination is not found after visiting all cells
     if not found_dest:
-        print("Failed to find the destination cell")
+        print("A* failed to find the destination cell")

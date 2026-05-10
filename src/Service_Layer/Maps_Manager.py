@@ -15,17 +15,16 @@ class Maps_Manager:
         self.blinders = []
         self.temp_blinders = []
 
-    def initialize_graph(self, level_number, previous_graph = None):
+    def initialize_graph(self, level_number, saved_mst = None):
         self.level_num = level_number
         size = (level_number * 3) ** 2
         self.graph = Graph(size)
 
         # NOTE: If there was no previous graph provided, use prim's algorithm to generate one
-        if (previous_graph == None):
-            mst = prims_algorithm(self.graph)
-            self.graph.adj_matrix = mst
+        if (saved_mst == None):
+            self.graph.adj_matrix = prims_algorithm(self.graph)
         else:
-            self.graph.adj_matrix = previous_graph
+            self.graph.adj_matrix = saved_mst
 
         self.initialize()
 
@@ -258,3 +257,6 @@ class Maps_Manager:
         for j in range(0, grid_width):
             for i in range(0, grid_width):
                 self.update_render_cell((i, j))
+
+    def getMST(self):
+        return self.graph.adj_matrix
