@@ -149,7 +149,7 @@ class Engine:
     def __render(self):
         self.screen.fill(self.__window_background)
 
-        if self.__stateMachine.current_state == GameStates.PLAY:
+        if self.__stateMachine.getCurrentState() == GameStates.PLAY:
             self.__playing_screen.render(self.screen) # NOTE: Playing screen doesn't need button hovering
         else:
             self.__current_menu.render(self.screen)
@@ -164,7 +164,7 @@ class Engine:
         self.__physics_accumulator += dt
         while self.__physics_accumulator >= self.PHYSICS_TIME_UNIT:
             # NOTE: Update Physics here
-            if self.__stateMachine.current_state == GameStates.PLAY:
+            if self.__stateMachine.getCurrentState() == GameStates.PLAY:
                 self.__ticks_ai_step += 1
                 self.__ticks_play_time += 1
             self.__physics_accumulator -= self.PHYSICS_TIME_UNIT
@@ -175,7 +175,7 @@ class Engine:
             self.__ticks_play_time = 0
 
         if self.__ticks_ai_step * self.__ai_speed_current >= self.PHYSICS_FREQUENCY:
-            if self.__stateMachine.current_state == GameStates.PLAY:
+            if self.__stateMachine.getCurrentState() == GameStates.PLAY:
                 self.__ai.step()
                 self.__event_listener.createEvent(SystemEvents.MAZE_UPDATE)
 
@@ -233,22 +233,24 @@ class Engine:
         # NOTE: Reset the active button tracker
         self.__current_menu.active_btn_id = 0
 
-        if self.__stateMachine.next_state == GameStates.EXIT:
+        next_state = self.__stateMachine.getNextState()
+
+        if next_state == GameStates.EXIT:
             self.__event_listener.createEvent(SystemEvents.TERMINATE_GAME)
 
-        if self.__stateMachine.next_state == GameStates.DIFFICULTY_SELECTION:
+        if next_state == GameStates.DIFFICULTY_SELECTION:
             self.__current_menu = self.__difficulty_menu
 
-        if self.__stateMachine.next_state == GameStates.MAINMENU:
+        if next_state == GameStates.MAINMENU:
             self.__current_menu = self.__main_menu
 
-        if self.__stateMachine.next_state == GameStates.RESULTS:
+        if next_state == GameStates.RESULTS:
             self.__current_menu = self.__result_menu
 
-        if self.__stateMachine.next_state == GameStates.PAUSE:
+        if next_state == GameStates.PAUSE:
             self.__current_menu = self.__pause_menu
 
-        if self.__stateMachine.next_state == GameStates.SCORE_BOARD:
+        if next_state == GameStates.SCORE_BOARD:
             self.__current_menu = self.__scoreboard_menu
 
 # NOTE: Events Section ##################################################################################################
@@ -468,7 +470,9 @@ class Engine:
             if (event == SystemEvents.RETURN_PRESSED):
                 self.__handle_buttons()
 
-            if (event == SystemEvents.PAUSE_PRESSED and self.__stateMachine.current_state == GameStates.PLAY):
+            isPlaying = self.__stateMachine.getCurrentState() == GameStates.PLAY
+
+            if (event == SystemEvents.PAUSE_PRESSED and isPlaying):
                 self.__stateMachine.stepState(StateInputs.PAUSE)
                 self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
@@ -477,11 +481,9 @@ class Engine:
             is_left_pressed  = event == SystemEvents.LEFT_PRESSED
             is_right_pressed = event == SystemEvents.RIGHT_PRESSED
 
-            isPlaying = self.__stateMachine.current_state == GameStates.PLAY
-
-            if is_up_pressed and isPlaying:    self.__player.move_up()
-            if is_down_pressed and isPlaying:  self.__player.move_down()
-            if is_left_pressed and isPlaying:  self.__player.move_left()
+            if is_up_pressed    and isPlaying: self.__player.move_up()
+            if is_down_pressed  and isPlaying: self.__player.move_down()
+            if is_left_pressed  and isPlaying: self.__player.move_left()
             if is_right_pressed and isPlaying: self.__player.move_right()
 
             if is_up_pressed and not isPlaying:
