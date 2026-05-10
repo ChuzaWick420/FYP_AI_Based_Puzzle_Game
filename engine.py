@@ -114,7 +114,7 @@ class Engine:
             last_time = current_time
 
     def __cleanup(self):
-        self.__updateDB()
+        self.db_manager.setJSONData(self.__session_data)
         self.db_manager.flush() 
         pygame.quit()
 
