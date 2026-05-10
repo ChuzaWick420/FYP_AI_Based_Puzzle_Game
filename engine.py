@@ -68,11 +68,68 @@ class Engine:
         self.current_level = 0
         self.ai_speed_ideal = 0
         self.ai_speed_current = 0
+        self.__session_data = {}
 
     def start(self):
         self.load()
         self.execute()
         self.cleanup()
+
+    def load(self):
+        self.db_manager.load()
+
+        self.__session_data = self.db_manager.getJSONData()
+
+        self.current_level = self.__session_data["current_level"]
+        self.adjacent_matrix = self.__session_data["Graph_adjacent_matrix"]
+
+        # NOTE: Update scoreboard
+        self.scoreboard_menu.setWins(self.__session_data["wins"])
+        self.scoreboard_menu.setLoses(self.__session_data["loses"])
+
+        db_data = self.db_manager.getDBData()
+
+        scores = []
+
+        for entry in db_data:
+            scores.append(entry[1])
+
+        self.scoreboard_menu.setScores(scores)
+
+    def execute(self):
+        self.initialize()
+        self.screen = pygame.display.set_mode(self.resolution)
+        last_time = time.perf_counter()
+
+        while self.isRunning:
+
+            # NOTE: Time Slice execution time into
+            # 1. Rendering (30 or 60 Frames per second)
+            # 2. Physics (time units)
+            # 3. Background computations
+
+            frame_start = time.perf_counter()
+            current_time = time.perf_counter()
+
+            self.handlePhysics(current_time, last_time)
+            self.render()
+            self.handleProcesses(frame_start)
+
+            last_time = current_time
+
+    def cleanup(self):
+
+        # NOTE: save sessions's Level and Map
+        self.__session_data["current_level"] = self.current_level
+        self.__session_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
+
+        self.updateDB()
+
+        self.db_manager.flush() 
+
+        pygame.quit()
+
+# NOTE: Time Sliced Section #################################################################################################
 
     def initialize(self):
 
@@ -98,20 +155,16 @@ class Engine:
 
         self.playing_screen.setLevel(self.current_level)
 
-    def load(self):
-        self.db_manager.load()
+    def render(self):
+        self.screen.fill(self.window_background)
 
-        self.current_level = self.db_manager.json_data["current_level"]
-        self.adjacent_matrix = self.db_manager.json_data["Graph_adjacent_matrix"]
+        if self.stateMachine.current_state == GameStates.PLAY:
+            self.playing_screen.render(self.screen) # NOTE: Playing screen doesn't need button hovering
+        else:
+            self.current_menu.render(self.screen)
+            self.current_menu.handle_hover()
 
-        # NOTE: Update scoreboard
-        self.scoreboard_menu.num_of_wins.setText("Wins: {}".format(self.db_manager.json_data["wins"]))
-        self.scoreboard_menu.num_of_loses.setText("Loses: {}".format(self.db_manager.json_data["loses"]))
-
-        data = self.db_manager.getDBData()
-
-        for index in range(len(self.scoreboard_menu.scores)):
-            self.scoreboard_menu.scores[index].setText(data[index][1])
+        pygame.display.flip()
 
     def handlePhysics(self, current, last):
         dt = current - last
@@ -154,56 +207,15 @@ class Engine:
 
                 self.handleEvents()
 
-    def execute(self):
-        self.initialize()
-        self.screen = pygame.display.set_mode(self.resolution)
-        self.ticks = pygame.time.get_ticks()
-        last_time = time.perf_counter()
+# NOTE: Utility Section ##################################################################################################
 
-        while self.isRunning:
+    def updateDB(self):
+        db_data = self.db_manager.getDBData()
 
-            # NOTE: Time Slice execution time into
-            # 1. Rendering (30 or 60 Frames per second)
-            # 2. Physics (time units)
-            # 3. Background computations
-
-            frame_start = time.perf_counter()
-            current_time = time.perf_counter()
-
-            self.handlePhysics(current_time, last_time)
-            self.render()
-            self.handleProcesses(frame_start)
-
-            last_time = current_time
-
-    def render(self):
-        self.screen.fill(self.window_background) # Screen Background
-
-        if self.stateMachine.current_state == GameStates.PLAY:
-            self.playing_screen.render(self.screen)
-        else:
-            self.current_menu.render(self.screen)
-            self.current_menu.handle_hover()
-
-        pygame.display.flip() # Display
-
-    def cleanup(self):
-
-        # save current level number
-        self.db_manager.json_data["current_level"] = self.current_level
-
-        # Save map for current level
-        self.db_manager.json_data["Graph_adjacent_matrix"] = self.maps_manager.graph.adj_matrix
-
-        self.db_manager.flush() 
-        pygame.quit()
-
-    def update_data_base(self):
-        data = self.db_manager.getDBData()
-
+        # NOTE: Handling the completion times
         completion_times = []
 
-        for entry in data:
+        for entry in db_data:
             completion_times.append(entry[1])
 
         minutes = self.elapsed_play_time // 60
@@ -215,12 +227,15 @@ class Engine:
         completion_times.sort()
         completion_times.pop()
 
-        new_data = []
+        new_db_data = []
 
-        for index in range(len(data)):
-            new_data.append((index + 1, completion_times[index]))
+        for index in range(len(db_data)):
+            new_db_data.append((index + 1, completion_times[index]))
 
-        self.db_manager.setDBData(new_data)
+        self.db_manager.setDBData(new_db_data)
+
+        # NOTE: Handling the json data
+        self.db_manager.setJSONData(self.__session_data)
 
     def manageMenuTransition(self):
 
@@ -303,7 +318,7 @@ class Engine:
                 self.event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
             if event == SystemEvents.PLAYER_WIN:
-                self.update_data_base()
+                self.updateDB()
 
             if event == SystemEvents.STATE_TRANSITION:
                 self.manageMenuTransition()
@@ -433,13 +448,13 @@ class Engine:
         if (current_ai == goal):
             self.result_menu.winner_info.setText("AI Win!")
             self.result_menu.buttons[0].text.setText("Restart")
-            self.db_manager.json_data["loses"] = self.db_manager.json_data["loses"] + 1
+            self.db_manager.__json_data["loses"] = self.db_manager.__json_data["loses"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.RESTART)
 
         if (current_player == goal):
             self.result_menu.winner_info.setText("Player Win!")
             self.result_menu.buttons[0].text.setText("Next")
-            self.db_manager.json_data["wins"] = self.db_manager.json_data["wins"] + 1
+            self.db_manager.__json_data["wins"] = self.db_manager.__json_data["wins"] + 1
             self.result_menu.buttons[0].setInput(StateInputs.NEXT)
             self.event_listener.createEvent(SystemEvents.PLAYER_WIN)
 

@@ -45,3 +45,13 @@ class ScoreBoardMenu(Menu):
 
         for score in self.scores:
             display.blit(score.text, score.textRect)
+
+    def setWins(self, wins):
+        self.num_of_wins.setText(f"Wins: {wins}")
+
+    def setLoses(self, loses):
+        self.num_of_loses.setText(f"Loses: {loses}")
+
+    def setScores(self, scores_data):
+        for index in range(len(self.scores)):
+            self.scores[index].setText(scores_data[index])
