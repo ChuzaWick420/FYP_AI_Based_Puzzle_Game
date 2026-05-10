@@ -289,7 +289,7 @@ class Engine:
             self.__maps_manager.initialize()
 
             # NOTE: initializing Player and AI
-            self.__player.init(self.__maps_manager.maze_map)
+            self.__player.init(self.__maps_manager.getMazeMap())
             self.__ai.init(self.__maps_manager.path)
 
             # NOTE: AI's speed in blocks per second depending on level number
@@ -310,10 +310,10 @@ class Engine:
             self.__handleEventMaze()
 
         if event == SystemEvents.LEVEL_FINISHED:
-            self.__event_listener.createEvent(SystemEvents.LEVEL_NEXT)
             self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         if event == SystemEvents.PLAYER_WIN:
+            self.__event_listener.createEvent(SystemEvents.LEVEL_NEXT)
             self.__updateDB()
 
         if event == SystemEvents.STATE_TRANSITION:
@@ -387,9 +387,6 @@ class Engine:
 
                 input = button.getInput()
 
-                if input == StateInputs.NEXT:
-                    self.__event_listener.createEvent(SystemEvents.LEVEL_NEXT)
-
                 self.__event_listener.createEvent(SystemEvents.LEVEL_RESET)
                 self.__stateMachine.stepState(input)
                 self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
@@ -417,26 +414,30 @@ class Engine:
 
         # Ask maze manager to update cells
         # NOTE: handling Player and AI movements
-        self.__maps_manager.update_cell(previous_player, CellTypes.INVALID["value"])
-        self.__maps_manager.update_cell(previous_ai,     CellTypes.INVALID["value"])
-        self.__maps_manager.update_cell(current_ai,      CellTypes.AI     ["value"])
-        self.__maps_manager.update_cell(current_player,  CellTypes.PLAYER ["value"])
+        self.__maps_manager.setEntitiesCell(previous_player, CellTypes.INVALID["value"])
+        self.__maps_manager.setEntitiesCell(previous_ai,     CellTypes.INVALID["value"])
+        self.__maps_manager.setEntitiesCell(current_ai,      CellTypes.AI     ["value"])
+        self.__maps_manager.setEntitiesCell(current_player,  CellTypes.PLAYER ["value"])
 
         if (current_player == current_ai):
-            self.__maps_manager.update_cell(current_player,  CellTypes.PLAYER_AND_AI["value"])
+            self.__maps_manager.setEntitiesCell(current_player,  CellTypes.PLAYER_AND_AI["value"])
 
         # NOTE: handling powerups
-        if (self.__maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_SLOW["value"]):
-            self.__ai_speed_current = self.__ai_speed_ideal - 1
-            self.__maps_manager.others_map[current_player[1]][current_player[0]] = CellTypes.INVALID["value"]
+        map = self.__maps_manager.getSpecialsMap()
+        pp_overlap = map[current_player[1]][current_player[0]]
 
-        if (self.__maps_manager.others_map[current_player[1]][current_player[0]] == CellTypes.POWERUP_REVEAL["value"]):
+        if (pp_overlap == CellTypes.POWERUP_SLOW["value"]):
+            self.__ai_speed_current = self.__ai_speed_ideal - 1
+
+        if (pp_overlap == CellTypes.POWERUP_REVEAL["value"]):
             self.__maps_manager.disable_random_blinders()
-            self.__maps_manager.others_map[current_player[1]][current_player[0]] = CellTypes.INVALID["value"]
+
+        if (pp_overlap == CellTypes.POWERUP_SLOW["value"] or pp_overlap == CellTypes.POWERUP_REVEAL["value"]):
+            self.__maps_manager.setSpecialCell(current_player, CellTypes.INVALID["value"])
 
         # NOTE: handling Winner information
 
-        width = len(self.__maps_manager.maze_map)
+        width = len(self.__maps_manager.getMazeMap())
         goal = (width - 1, width - 2)
 
         if (current_ai == goal or current_player == goal):

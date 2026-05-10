@@ -28,11 +28,11 @@ class Maps_Manager:
 
     def initialize(self):
 
-        self.maze_map = self.generate_grid_map()
-        map_width = len(self.maze_map)
-        self.blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
-        self.entities_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
-        self.others_map   = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__maze_map = self.generate_grid_map()
+        map_width = len(self.__maze_map)
+        self.__blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__entities_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__specials_map   = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
 
         self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
         self.search()
@@ -41,38 +41,38 @@ class Maps_Manager:
 
     def search(self):
 
-        size = len(self.maze_map)
+        size = len(self.__maze_map)
 
         # NOTE: Format: (y, x)
         src = [1, 0]
         dest = [size - 2, size - 1]
 
         # NOTE: Get the path before populating the grid
-        self.path = a_star_search(self.maze_map, src, dest, size)
+        self.path = a_star_search(self.__maze_map, src, dest, size)
 
     def get_cell(self, pos):
-        return self.maze_map[pos[1]][pos[0]]
+        return self.__maze_map[pos[1]][pos[0]]
 
     def pop_blinder(self):
         self.temp_blinders.append(self.blinders.pop())
 
         # NOTE: Refresh blinder's map
-        map_width = len(self.maze_map)
+        map_width = len(self.__maze_map)
 
-        self.blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
 
         for blinder in self.blinders:
             pos = blinder.getPosition()
 
             for j in range(pos[1], pos[1] + blinder.size):
                 for i in range(pos[0], pos[0] + blinder.size):
-                    self.blinders_map[j][i] = CellTypes.BLINDER["value"]
+                    self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         # NOTE: Update render cells for whole maze
         self.initialize_render_data()
 
     def spawn_blinders(self):
-        maze_width = len(self.maze_map)
+        maze_width = len(self.__maze_map)
         self.blinders = []
 
         for _ in range(self.level_num * 2):
@@ -92,12 +92,12 @@ class Maps_Manager:
 
             for j in range(pos[1], pos[1] + blinder.size):
                 for i in range(pos[0], pos[0] + blinder.size):
-                    self.blinders_map[j][i] = CellTypes.BLINDER["value"]
+                    self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         self.initialize_render_data()
 
     def spawn_powerups(self):
-        maze_width = len(self.maze_map)
+        maze_width = len(self.__maze_map)
         powerups = []
 
         i = 0
@@ -108,7 +108,7 @@ class Maps_Manager:
             x = random.randint(1, maze_width - 1)
             y = random.randint(1, maze_width - 1)
 
-            if (self.maze_map[y][x] != CellTypes.WALL["value"]):
+            if (self.__maze_map[y][x] != CellTypes.WALL["value"]):
                 powerup.setPosition((x, y))
 
                 powerup_type = random.randint(
@@ -123,7 +123,7 @@ class Maps_Manager:
 
         for powerup in powerups:
             (x, y) = powerup.getPosition()
-            self.others_map[y][x] = powerup.type
+            self.__specials_map[y][x] = powerup.type
 
         self.initialize_render_data()
 
@@ -185,7 +185,7 @@ class Maps_Manager:
     def update_render_cell(self, coordinates):
         (i, j) = coordinates
 
-        grid_width = len(self.maze_map)
+        grid_width = len(self.__maze_map)
 
         current_color = (-1, -1, -1)
 
@@ -196,31 +196,31 @@ class Maps_Manager:
         # 4. Maze
 
         # NOTE: Entities
-        if self.entities_map[j][i] == CellTypes.AI["value"]:
+        if self.__entities_map[j][i] == CellTypes.AI["value"]:
             current_color = CellTypes.AI["color"]
-        elif self.entities_map[j][i] == CellTypes.PLAYER["value"]:
+        elif self.__entities_map[j][i] == CellTypes.PLAYER["value"]:
             current_color = CellTypes.PLAYER["color"]
-        elif self.entities_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
+        elif self.__entities_map[j][i] == CellTypes.PLAYER_AND_AI["value"]:
             current_color = CellTypes.PLAYER_AND_AI["color"]
-        elif self.entities_map[j][i] == CellTypes.INVALID["value"]:
+        elif self.__entities_map[j][i] == CellTypes.INVALID["value"]:
             # NOTE: Others
-            if self.others_map[j][i] == CellTypes.POWERUP_SLOW["value"]:
+            if self.__specials_map[j][i] == CellTypes.POWERUP_SLOW["value"]:
                 current_color = CellTypes.POWERUP_SLOW["color"]
-            elif self.others_map[j][i] == CellTypes.POWERUP_REVEAL["value"]:
+            elif self.__specials_map[j][i] == CellTypes.POWERUP_REVEAL["value"]:
                 current_color = CellTypes.POWERUP_REVEAL["color"]
-            elif self.others_map[j][i] == CellTypes.SOURCE["value"]:
+            elif self.__specials_map[j][i] == CellTypes.SOURCE["value"]:
                 current_color = CellTypes.SOURCE["color"]
-            elif self.others_map[j][i] == CellTypes.GOAL["value"]:
+            elif self.__specials_map[j][i] == CellTypes.GOAL["value"]:
                 current_color = CellTypes.GOAL["color"]
-            elif self.others_map[j][i] == CellTypes.INVALID["value"]:
+            elif self.__specials_map[j][i] == CellTypes.INVALID["value"]:
                 # NOTE: Blinders
-                if self.blinders_map[j][i] == CellTypes.BLINDER["value"]:
+                if self.__blinders_map[j][i] == CellTypes.BLINDER["value"]:
                     current_color = CellTypes.BLINDER["color"]
-                elif self.blinders_map[j][i] == CellTypes.INVALID["value"]:
+                elif self.__blinders_map[j][i] == CellTypes.INVALID["value"]:
                     # NOTE: Maze
-                    if self.maze_map[j][i] == CellTypes.PATH["value"]:
+                    if self.__maze_map[j][i] == CellTypes.PATH["value"]:
                         current_color = CellTypes.PATH["color"]
-                    elif self.maze_map[j][i] == CellTypes.WALL["value"]:
+                    elif self.__maze_map[j][i] == CellTypes.WALL["value"]:
                         current_color = CellTypes.WALL["color"]
 
         cell_size = (Global.BOARD_SIZE[0] // grid_width, Global.BOARD_SIZE[1] // grid_width)
@@ -231,22 +231,22 @@ class Maps_Manager:
 
         self.render_data[index] = (current_color, cell_size, cell_position)
 
-    def update_cell(self, coordinates, value):
+    def setEntitiesCell(self, coordinates, value):
         (i, j) = coordinates
-        self.entities_map[j][i] = value
+        self.__entities_map[j][i] = value
         self.update_render_cell((i, j))
 
     def get_render_data(self):
         return self.render_data
 
     def initialize_render_data(self):
-        grid_width = len(self.maze_map)
+        grid_width = len(self.__maze_map)
 
         src = (0, 1)
         goal = (grid_width - 1, grid_width - 2)
 
-        self.others_map[src[1]][src[0]] = CellTypes.SOURCE["value"]
-        self.others_map[goal[1]][goal[0]] = CellTypes.GOAL["value"]
+        self.__specials_map[src[1]][src[0]] = CellTypes.SOURCE["value"]
+        self.__specials_map[goal[1]][goal[0]] = CellTypes.GOAL["value"]
 
         for j in range(0, grid_width):
             for i in range(0, grid_width):
@@ -254,3 +254,18 @@ class Maps_Manager:
 
     def getMST(self):
         return self.graph.adj_matrix
+
+    def getSpecialsMap(self):
+        return self.__specials_map
+
+    def getBlindersMap(self):
+        return self.__blinders_map
+
+    def getEntitiesMap(self):
+        return self.__entities_map
+
+    def getMazeMap(self):
+        return self.__maze_map
+
+    def setSpecialCell(self, pos, cell_value):
+        self.__specials_map[pos[1]][pos[0]] = cell_value
