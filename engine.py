@@ -350,7 +350,7 @@ class Engine:
 
         elif state == GameStates.DIFFICULTY_SELECTION:
             for button in self.__current_menu.buttons:
-                if button.activeFlag != True:
+                if not button.isActive():
                     continue
 
                 input = button.getInput()
@@ -367,7 +367,7 @@ class Engine:
 
         elif state == GameStates.PAUSE:
             for button in self.__current_menu.buttons:
-                if button.activeFlag != True:
+                if not button.isActive():
                     continue
 
                 input = button.getInput()
@@ -383,7 +383,7 @@ class Engine:
 
         elif state == GameStates.RESULTS:
             for button in self.__current_menu.buttons:
-                if button.activeFlag != True:
+                if not button.isActive():
                     continue
 
                 input = button.getInput()
@@ -395,7 +395,7 @@ class Engine:
         # NOTE: Any generic menu
         else:
             for button in self.__current_menu.buttons:
-                if button.activeFlag != True:
+                if not button.isActive():
                     continue
 
                 input = button.getInput()

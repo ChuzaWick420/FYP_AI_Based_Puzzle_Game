@@ -20,9 +20,9 @@ class Button:
         self.text.setSize(28) # NOTE: Won't update unless setText is set
         self.text.setText(self.str)
 
-        self.hoverFlag = False
-        self.activeFlag = False
-        self.useIcon = False
+        self.__hover_flag = False
+        self.__active_flag = False
+        self.__use_icon = False
 
         self.btn_type = -1
 
@@ -60,7 +60,7 @@ class Button:
     def loadIcon(self, path):
         image = pygame.image.load(path)
         self.icon = pygame.transform.scale(image, (32, 32))
-        self.useIcon = True
+        self.__use_icon = True
         self.setType(ButtonType.VISUAL)
 
     def setPosition(self, pos):
@@ -68,22 +68,31 @@ class Button:
         self.text.setPosition(pos)
 
     def isHovered(self):
-        self.hoverFlag = False
+        self.__hover_flag = False
 
         mouse_pos = pygame.mouse.get_pos()
 
         if self.rect.collidepoint(mouse_pos):
-            self.hoverFlag = True
+            self.__hover_flag = True
 
-        return self.hoverFlag
+        return self.__hover_flag
+
+    def isActive(self):
+        return self.__active_flag
+
+    def setActiveFlag(self, flag):
+        self.__active_flag = flag
+
+    def setHoverFlag(self, flag):
+        self.__hover_flag = flag
 
     def render(self, display):
-        if self.hoverFlag == False:
+        if self.__hover_flag == False:
             pygame.draw.rect(display, self.border_color, self.rect, self.thickness, self.border_radius)
         else:
             pygame.draw.rect(display, self.hover_color, self.rect, self.thickness, self.border_radius)
 
-        if (self.useIcon):
+        if (self.__use_icon):
             display.blit(self.icon, (self.position[0] - 16, self.position[1] - 16))
         else:
             display.blit(self.text.text, self.text.textRect)

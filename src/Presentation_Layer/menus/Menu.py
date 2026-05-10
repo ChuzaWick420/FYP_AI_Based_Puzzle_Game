@@ -29,8 +29,8 @@ class Menu:
 
         for button in self.buttons:
             # Reset hover and selection flags
-            button.activeFlag = False
-            button.hoverFlag = False
+            button.setActiveFlag(False)
+            button.setHoverFlag(False)
 
             if (button.isHovered()):
                 self.active_btn_id = index
@@ -38,8 +38,8 @@ class Menu:
 
     def handle_hover(self):
         self.handle_selection()
-        self.buttons[self.active_btn_id].hoverFlag = True
+        self.buttons[self.active_btn_id].setHoverFlag(True)
 
     def handle_trigger(self):
         self.handle_selection()
-        self.buttons[self.active_btn_id].activeFlag = True
+        self.buttons[self.active_btn_id].setActiveFlag(True)
