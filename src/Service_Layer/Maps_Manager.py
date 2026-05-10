@@ -15,7 +15,7 @@ class Maps_Manager:
         self.blinders = []
         self.temp_blinders = []
 
-    def initialize_graph(self, level_number, saved_mst = None):
+    def createGraph(self, level_number, saved_mst = None):
         self.level_num = level_number
         size = (level_number * 3) ** 2
         self.graph = Graph(size)
@@ -25,8 +25,6 @@ class Maps_Manager:
             self.graph.adj_matrix = prims_algorithm(self.graph)
         else:
             self.graph.adj_matrix = saved_mst
-
-        self.initialize()
 
     def initialize(self):
 
@@ -54,10 +52,6 @@ class Maps_Manager:
 
     def get_cell(self, pos):
         return self.maze_map[pos[1]][pos[0]]
-
-    def spawn_entities(self):
-        self.spawn_blinders()
-        self.spawn_powerups()
 
     def pop_blinder(self):
         self.temp_blinders.append(self.blinders.pop())

@@ -124,27 +124,12 @@ class Engine:
 
         # NOTE: Initializing Maps Manager
         if len(self.__session_data["saved_mst"]) == 0:
-            self.__maps_manager.initialize_graph(self.__session_data["current_level"])
+            self.__maps_manager.createGraph(self.__session_data["current_level"])
         else:
-            self.__maps_manager.initialize_graph(self.__session_data["current_level"], self.__session_data["saved_mst"])
+            self.__maps_manager.createGraph(self.__session_data["current_level"], self.__session_data["saved_mst"])
 
         self.__session_data["saved_mst"] = self.__maps_manager.getMST()
-
-        # NOTE: Update maze's visual
-        self.__playing_screen.update_maze(self.__maps_manager.get_render_data())
-
-        # NOTE: initializing Player and AI
-        self.__player.init(self.__maps_manager.maze_map)
-        self.__ai.init(self.__maps_manager.path)
-
-        # NOTE: AI's speed in blocks per second depending on level number
-        max_speed = 3
-        min_speed = 1
-
-        self.__ai_speed_ideal = min_speed + self.__session_data["current_level"] * (max_speed - min_speed) / Global.MAX_LEVELS
-        self.__ai_speed_current = self.__ai_speed_ideal
-
-        self.__playing_screen.setLevel(self.__session_data["current_level"])
+        self.__event_listener.createEvent(SystemEvents.LEVEL_RESET)
 
     def __render(self):
         self.screen.fill(self.__window_background)
@@ -297,17 +282,27 @@ class Engine:
                 self.__session_data["current_level"] = 1
 
             self.__session_data["saved_mst"] = []
-            self.__initialize()
-            self.__playing_screen.setLevel(self.__session_data["current_level"])
+            self.__event_listener.createEvent(SystemEvents.REQUEST_LEVEL_GENERATE)
 
         if event == SystemEvents.LEVEL_RESET:
-            self.__player.reset()
-            self.__ai.reset()
-            # NOTE: Reset the frame buffer
+            # NOTE: Reset the maps
             self.__maps_manager.initialize()
-            # NOTE: Reset play time
-            self.__elapsed_play_time = 0
+
+            # NOTE: initializing Player and AI
+            self.__player.init(self.__maps_manager.maze_map)
+            self.__ai.init(self.__maps_manager.path)
+
+            # NOTE: AI's speed in blocks per second depending on level number
+            max_speed = 3
+            min_speed = 1
+
+            self.__ai_speed_ideal = min_speed + self.__session_data["current_level"] * (max_speed - min_speed) / Global.MAX_LEVELS
             self.__ai_speed_current = self.__ai_speed_ideal
+
+            # NOTE: Reset playing screen data
+            self.__elapsed_play_time = 0
+            self.__playing_screen.setLevel(self.__session_data["current_level"])
+            self.__event_listener.createEvent(SystemEvents.MAZE_UPDATE)
 
         # NOTE: Maze update
         # PERF: There are lag spikes on large mazes seconds 13, 33 etc. Frequency of lag spikes increases when player moves as well, could be related to events.
@@ -315,6 +310,7 @@ class Engine:
             self.__handleEventMaze()
 
         if event == SystemEvents.LEVEL_FINISHED:
+            self.__event_listener.createEvent(SystemEvents.LEVEL_NEXT)
             self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         if event == SystemEvents.PLAYER_WIN:
