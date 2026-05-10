@@ -11,20 +11,20 @@ from src.Domain_Logic_Layer.entities.PowerUp import PowerUp
 
 class Maps_Manager:
     def __init__(self):
-        self.render_data = []
-        self.blinders = []
-        self.temp_blinders = []
+        self.__frame_buffer = []
+        self.__blinders = []
+        self.__level_num = -1
 
     def createGraph(self, level_number, saved_mst = None):
-        self.level_num = level_number
+        self.__level_num = level_number
         size = (level_number * 3) ** 2
-        self.graph = Graph(size)
+        self.__graph = Graph(size)
 
         # NOTE: If there was no previous graph provided, use prim's algorithm to generate one
         if (saved_mst == None):
-            self.graph.adj_matrix = prims_algorithm(self.graph)
+            self.__graph.adj_matrix = prims_algorithm(self.__graph)
         else:
-            self.graph.adj_matrix = saved_mst
+            self.__graph.adj_matrix = saved_mst
 
     def initialize(self):
 
@@ -32,14 +32,14 @@ class Maps_Manager:
         map_width = len(self.__maze_map)
         self.__blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
         self.__entities_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
-        self.__specials_map   = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__specials_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
 
-        self.render_data = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
-        self.search()
+        self.__frame_buffer = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
+        self.__search()
         self.spawn_powerups()
-        self.initialize_render_data()
+        self.initializeFrameBuffer()
 
-    def search(self):
+    def __search(self):
 
         size = len(self.__maze_map)
 
@@ -53,15 +53,17 @@ class Maps_Manager:
     def get_cell(self, pos):
         return self.__maze_map[pos[1]][pos[0]]
 
-    def pop_blinder(self):
-        self.temp_blinders.append(self.blinders.pop())
+    def __popBlinder(self):
+        self.__blinders.pop()
 
         # NOTE: Refresh blinder's map
         map_width = len(self.__maze_map)
 
         self.__blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
+        self.__injectBlinders()
 
-        for blinder in self.blinders:
+    def __injectBlinders(self):
+        for blinder in self.__blinders:
             pos = blinder.getPosition()
 
             for j in range(pos[1], pos[1] + blinder.size):
@@ -69,13 +71,13 @@ class Maps_Manager:
                     self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         # NOTE: Update render cells for whole maze
-        self.initialize_render_data()
+        self.initializeFrameBuffer()
 
     def spawn_blinders(self):
         maze_width = len(self.__maze_map)
-        self.blinders = []
+        self.__blinders = []
 
-        for _ in range(self.level_num * 2):
+        for _ in range(self.__level_num * 2):
             blinder = Blinder()
 
             # NOTE: Level number to size
@@ -85,16 +87,9 @@ class Maps_Manager:
             y = random.randint(0, maze_width - blinder.size)
 
             blinder.setPosition((x, y))
-            self.blinders.append(blinder)
+            self.__blinders.append(blinder)
 
-        for blinder in self.blinders:
-            pos = blinder.getPosition()
-
-            for j in range(pos[1], pos[1] + blinder.size):
-                for i in range(pos[0], pos[0] + blinder.size):
-                    self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
-
-        self.initialize_render_data()
+        self.__injectBlinders()
 
     def spawn_powerups(self):
         maze_width = len(self.__maze_map)
@@ -102,7 +97,7 @@ class Maps_Manager:
 
         i = 0
 
-        while (i < self.level_num):
+        while (i < self.__level_num):
             powerup = PowerUp()
 
             x = random.randint(1, maze_width - 1)
@@ -125,24 +120,24 @@ class Maps_Manager:
             (x, y) = powerup.getPosition()
             self.__specials_map[y][x] = powerup.type
 
-        self.initialize_render_data()
+        self.initializeFrameBuffer()
 
     def disable_random_blinders(self):
 
         amount_to_disable = 0
 
-        if len(self.blinders) > 0:
-            amount_to_disable = random.randint(1, len(self.blinders))
+        if len(self.__blinders) > 0:
+            amount_to_disable = random.randint(1, len(self.__blinders))
 
         for _ in range(amount_to_disable):
-            self.pop_blinder()
+            self.__popBlinder()
 
     def generate_grid_map(self):
         # NOTE: Nodes + Edges
-        nodes_amount = self.graph.width
-        edges_amount = self.graph.width - 1
+        nodes_amount_1D = self.__graph.width
+        edges_amount_1D = self.__graph.width - 1
         padding = 1 + 1
-        grid_width = nodes_amount + edges_amount + padding
+        grid_width = nodes_amount_1D + edges_amount_1D + padding
 
         map = [[0] * grid_width for _ in range(grid_width)]
 
@@ -163,14 +158,14 @@ class Maps_Manager:
         offsets = (1, 1)
 
         # NOTE: Goes through each vertex
-        for node_index in range(0, self.graph.total_nodes):
+        for node_index in range(0, self.__graph.total_nodes):
 
-            (x, y) = self.graph.index_to_coordinates(node_index)
+            (x, y) = self.__graph.index_to_coordinates(node_index)
 
-            up_allowed    = y - 1 >= 0               and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x, y - 1)] != 0
-            down_allowed  = y + 1 < self.graph.width and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x, y + 1)] != 0
-            right_allowed = x + 1 < self.graph.width and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x + 1, y)] != 0
-            left_allowed  = x - 1 >= 0               and self.graph.adj_matrix[node_index][self.graph.coordinates_to_index(x - 1, y)] != 0
+            up_allowed    = y - 1 >= 0                 and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x, y - 1)] != 0
+            down_allowed  = y + 1 < self.__graph.width and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x, y + 1)] != 0
+            right_allowed = x + 1 < self.__graph.width and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x + 1, y)] != 0
+            left_allowed  = x - 1 >= 0                 and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x - 1, y)] != 0
 
             if (up_allowed):    map[(y * 2) - 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
             if (down_allowed):  map[(y * 2) + 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
@@ -182,7 +177,7 @@ class Maps_Manager:
 
         return map
 
-    def update_render_cell(self, coordinates):
+    def updateFrameCell(self, coordinates):
         (i, j) = coordinates
 
         grid_width = len(self.__maze_map)
@@ -229,17 +224,17 @@ class Maps_Manager:
         # 2D to 1D
         index = i * grid_width + j
 
-        self.render_data[index] = (current_color, cell_size, cell_position)
+        self.__frame_buffer[index] = (current_color, cell_size, cell_position)
 
     def setEntitiesCell(self, coordinates, value):
         (i, j) = coordinates
         self.__entities_map[j][i] = value
-        self.update_render_cell((i, j))
+        self.updateFrameCell((i, j))
 
-    def get_render_data(self):
-        return self.render_data
+    def getFrameBuffer(self):
+        return self.__frame_buffer
 
-    def initialize_render_data(self):
+    def initializeFrameBuffer(self):
         grid_width = len(self.__maze_map)
 
         src = (0, 1)
@@ -250,10 +245,10 @@ class Maps_Manager:
 
         for j in range(0, grid_width):
             for i in range(0, grid_width):
-                self.update_render_cell((i, j))
+                self.updateFrameCell((i, j))
 
     def getMST(self):
-        return self.graph.adj_matrix
+        return self.__graph.adj_matrix
 
     def getSpecialsMap(self):
         return self.__specials_map

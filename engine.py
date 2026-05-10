@@ -206,7 +206,7 @@ class Engine:
         new_db_data = []
 
         for index in range(len(db_data)):
-            new_db_data.append((index + 1, completion_times[index]))
+            new_db_data.append((index, completion_times[index]))
 
         self.__db_manager.setDBData(new_db_data)
 
@@ -458,7 +458,7 @@ class Engine:
             self.__session_data["wins"] += 1
 
         # ask playing screen to update render data
-        self.__playing_screen.update_maze(self.__maps_manager.get_render_data())
+        self.__playing_screen.update_maze(self.__maps_manager.getFrameBuffer())
 
     def __handleEventKeyboard(self, event):
 

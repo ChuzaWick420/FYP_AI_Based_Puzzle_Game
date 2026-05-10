@@ -3,10 +3,6 @@
 import random
 import math
 
-def get_random_int(min = 1, max = 9):
-    num = min + int(random.random() * 10) % (max - min + 1)
-    return num
-
 class Graph:
     def __init__(self, num_of_nodes):
         self.adj_matrix = [[0] * num_of_nodes for _ in range(num_of_nodes)]
@@ -41,16 +37,16 @@ class Graph:
             (x, y) = self.index_to_coordinates(i)
 
             # NOTE: Boundary checking before population
-            left_violated =  x - 1 < 0
+            left_violated  = x - 1 < 0
             right_violated = x + 1 >= self.width
-            up_violated = y - 1 < 0
-            down_violated = y + 1 >= self.width
+            up_violated    = y - 1 < 0
+            down_violated  = y + 1 >= self.width
 
             if (not left_violated):
-                self.add_edge(i, self.coordinates_to_index(x - 1, y), get_random_int())
+                self.add_edge(i, self.coordinates_to_index(x - 1, y), random.randint(1, 9))
             if (not right_violated):
-                self.add_edge(i, self.coordinates_to_index(x + 1, y), get_random_int())
+                self.add_edge(i, self.coordinates_to_index(x + 1, y), random.randint(1, 9))
             if (not up_violated):
-                self.add_edge(i, self.coordinates_to_index(x, y - 1), get_random_int())
+                self.add_edge(i, self.coordinates_to_index(x, y - 1), random.randint(1, 9))
             if (not down_violated):
-                self.add_edge(i, self.coordinates_to_index(x, y + 1), get_random_int())
+                self.add_edge(i, self.coordinates_to_index(x, y + 1), random.randint(1, 9))
