@@ -28,7 +28,7 @@ class MapsManager:
 
     def initialize(self):
 
-        self.__maze_map = self.generate_grid_map()
+        self.__maze_map = self.__generate_grid_map()
         map_width = len(self.__maze_map)
         self.__blinders_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
         self.__entities_map = [[CellTypes.INVALID["value"]] * map_width for _ in range(map_width)]
@@ -37,7 +37,7 @@ class MapsManager:
         self.__frame_buffer = [((-1, -1, -1), (-1, -1), (-1, -1))] * (map_width ** 2)
         self.__search()
         self.spawn_powerups()
-        self.initializeFrameBuffer()
+        self.__initializeFrameBuffer()
 
     def __search(self):
 
@@ -49,9 +49,6 @@ class MapsManager:
 
         # NOTE: Get the path before populating the grid
         self.path = a_star_search(self.__maze_map, src, dest, size)
-
-    def get_cell(self, pos):
-        return self.__maze_map[pos[1]][pos[0]]
 
     def __popBlinder(self):
         self.__blinders.pop()
@@ -71,7 +68,7 @@ class MapsManager:
                     self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         # NOTE: Update render cells for whole maze
-        self.initializeFrameBuffer()
+        self.__initializeFrameBuffer()
 
     def spawn_blinders(self):
         maze_width = len(self.__maze_map)
@@ -120,7 +117,7 @@ class MapsManager:
             (x, y) = powerup.getPosition()
             self.__specials_map[y][x] = powerup.type
 
-        self.initializeFrameBuffer()
+        self.__initializeFrameBuffer()
 
     def disable_random_blinders(self):
 
@@ -132,7 +129,7 @@ class MapsManager:
         for _ in range(amount_to_disable):
             self.__popBlinder()
 
-    def generate_grid_map(self):
+    def __generate_grid_map(self):
         # NOTE: Nodes + Edges
         nodes_amount_1D = self.__graph.width
         edges_amount_1D = self.__graph.width - 1
@@ -234,7 +231,7 @@ class MapsManager:
     def getFrameBuffer(self):
         return self.__frame_buffer
 
-    def initializeFrameBuffer(self):
+    def __initializeFrameBuffer(self):
         grid_width = len(self.__maze_map)
 
         src = (0, 1)

@@ -3,7 +3,7 @@ import pygame
 
 class InputHandler:
     def __init__(self):
-        self.controls_map = {
+        self.__controls_map = {
             "UP": pygame.K_UP,
             "DOWN": pygame.K_DOWN,
             "LEFT": pygame.K_LEFT,
@@ -19,13 +19,13 @@ class InputHandler:
                 return SystemEvents.MOUSE_CLICK
 
             if event.type == pygame.KEYDOWN:
-                if event.key == self.controls_map["UP"]:
+                if event.key == self.__controls_map["UP"]:
                     return SystemEvents.UP_PRESSED
-                if event.key == self.controls_map["DOWN"]:
+                if event.key == self.__controls_map["DOWN"]:
                     return SystemEvents.DOWN_PRESSED
-                if event.key == self.controls_map["LEFT"]:
+                if event.key == self.__controls_map["LEFT"]:
                     return SystemEvents.LEFT_PRESSED
-                if event.key == self.controls_map["RIGHT"]:
+                if event.key == self.__controls_map["RIGHT"]:
                     return SystemEvents.RIGHT_PRESSED
                 if event.key == pygame.K_RETURN:
                     return SystemEvents.RETURN_PRESSED
