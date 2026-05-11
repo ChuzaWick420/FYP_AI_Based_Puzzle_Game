@@ -9,7 +9,7 @@ from src.Presentation_Layer.TextElement import TextElement
 
 class PlayingScreen:
     def __init__(self):
-        color = (89, 255, 60)
+        color = (176, 228, 204)
         self.timer = TextElement("Timer: 00:00", color, (100, 50))
         self.level_num = TextElement("Level: 1", color, (100, 100))
 

@@ -18,7 +18,7 @@ class ResultMenu(Menu):
         self.text.setPosition((pos[0], pos[1] - 3 * gap))
 
         # Extras
-        color = (254, 197, 43)
+        color = (64, 138, 113)
         self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] - 2 * gap))
         self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] - 1 * gap))
 

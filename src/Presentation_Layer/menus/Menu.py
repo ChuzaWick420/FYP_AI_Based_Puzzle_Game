@@ -3,7 +3,7 @@ from src.Presentation_Layer.TextElement import TextElement
 
 class Menu:
     def __init__(self):
-        color = (255, 255, 255)
+        color = (176, 228, 204)
         self.text = TextElement("Menu", color, (0, 0))
         self.text.setSize(48)
         self.buttons = []

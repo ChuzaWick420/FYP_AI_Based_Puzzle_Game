@@ -25,14 +25,14 @@ class ScoreBoardMenu(Menu):
             button.setType(ButtonType.VISUAL)
 
         self.scores = []
-        temp_color = (232, 93, 7)
+        color = (176, 228, 204)
 
-        self.num_of_wins = TextElement("Wins: 0", temp_color, (pos[0], pos[1] + 6 * gap))
-        self.num_of_loses = TextElement("Loses: 0", temp_color, (pos[0], pos[1] + 7 * gap))
+        self.num_of_wins = TextElement("Wins: 0", color, (pos[0], pos[1] + 6 * gap))
+        self.num_of_loses = TextElement("Loses: 0", color, (pos[0], pos[1] + 7 * gap))
 
         for i in range(5):
             (x, y) = (pos[0], pos[1] + i * gap)
-            self.scores.append(TextElement("Temp", temp_color, (x, y)))
+            self.scores.append(TextElement("Temp", color, (x, y)))
 
     def render(self, display):
 

@@ -11,9 +11,9 @@ class Button:
         self.width = 250
         self.height = 0
 
-        self.text_color = (255, 255, 255)
-        self.border_color = (255, 255, 255)
-        self.hover_color = (100, 100, 100)
+        self.text_color = (176, 228, 204)
+        self.border_color = (176, 228, 204)
+        self.hover_color = (40, 90, 72)
 
         self.text = TextElement(self.str, self.text_color, self.position)
 

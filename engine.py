@@ -30,7 +30,7 @@ class Engine:
         self.__ticks_ai_step = 0
         self.__physics_accumulator = 0.0
         self.__ticks_play_time = 0
-        self.__window_background = "black"
+        self.__window_background = (9, 20, 19)
         self.__elapsed_play_time = 0
         self.__flag_blinders = False
         self.__visible_for_seconds = 10
