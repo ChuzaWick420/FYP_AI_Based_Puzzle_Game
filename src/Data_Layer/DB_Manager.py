@@ -1,7 +1,7 @@
 import json
 import sqlite3
 
-class DB_Manager:
+class DBManager:
     def __init__(self):
         self.__json_data = {}
         self.__db_data = []

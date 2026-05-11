@@ -2,7 +2,7 @@ import pygame
 import time
 from src.Data_Layer import Global
 from src.Data_Layer.CellTypes import CellTypes
-from src.Data_Layer.DB_Manager import DB_Manager
+from src.Data_Layer.DB_Manager import DBManager
 from src.Data_Layer.StateInputs import StateInputs
 from src.Domain_Logic_Layer.GameStates import GameStates
 from src.Data_Layer.SystemEvents import SystemEvents
@@ -17,7 +17,7 @@ from src.Presentation_Layer.menus.result_menu import ResultMenu
 from src.Presentation_Layer.menus.scoreboard_menu import ScoreBoardMenu
 from src.Presentation_Layer.InputHandler import InputHandler
 from src.Presentation_Layer.PlayingScreen import PlayingScreen
-from src.Service_Layer.Maps_Manager import Maps_Manager
+from src.Service_Layer.Maps_Manager import MapsManager
 
 class Engine:
     def __init__(self):
@@ -44,8 +44,8 @@ class Engine:
         self.__input_handler = InputHandler()
         self.__event_listener = EventListener()
         self.__stateMachine = StateMachine()
-        self.__maps_manager = Maps_Manager()
-        self.__db_manager = DB_Manager()
+        self.__maps_manager = MapsManager()
+        self.__db_manager = DBManager()
         self.__player = Player()
         self.__ai = Ai()
 
@@ -213,7 +213,7 @@ class Engine:
         # NOTE: Handling the json data
         self.__db_manager.setJSONData(self.__session_data)
 
-    def __manageMenuTransition(self):
+    def __handleMenuTransitions(self):
 
         # NOTE: Reset the active button tracker
         self.__current_menu.active_btn_id = 0
@@ -318,7 +318,7 @@ class Engine:
             self.__updateDB()
 
         if event == SystemEvents.STATE_TRANSITION:
-            self.__manageMenuTransition()
+            self.__handleMenuTransitions()
 
         if event == SystemEvents.TIME_UPDATE:
             minutes = self.__elapsed_play_time // 60
@@ -337,7 +337,7 @@ class Engine:
             if event // 100 == 12: self.__handleGameEvents(event)
             self.__event_listener.processed(event)
 
-    def __handle_buttons(self):
+    def __handleButtons(self):
 
         self.__current_menu.handle_trigger()
 
@@ -404,7 +404,7 @@ class Engine:
                 self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
     def __handleEventMouse(self):
-        self.__handle_buttons()
+        self.__handleButtons()
 
     def __handleEventMaze(self):
         # Get Entity positions
@@ -466,7 +466,7 @@ class Engine:
         if self.__isKeyUp == True:
 
             if (event == SystemEvents.RETURN_PRESSED):
-                self.__handle_buttons()
+                self.__handleButtons()
 
             isPlaying = self.__stateMachine.getCurrentState() == GameStates.PLAY
 
