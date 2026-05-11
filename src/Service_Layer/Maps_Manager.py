@@ -9,7 +9,7 @@ from src.Domain_Logic_Layer.entities.Graph import Graph
 from src.Domain_Logic_Layer.entities.PowerUp import PowerUp
 
 
-class Maps_Manager:
+class MapsManager:
     def __init__(self):
         self.__frame_buffer = []
         self.__blinders = []
