@@ -1,11 +1,11 @@
 import pygame
 from src.Data_Layer import Global
+from src.Data_Layer.Colors import Colors
 from src.Presentation_Layer.TextElement import TextElement
 
 class Menu:
     def __init__(self):
-        color = (176, 228, 204)
-        self.text = TextElement("Menu", color, (0, 0))
+        self.text = TextElement("Menu", Colors.MENU_TITLE, (0, 0))
         self.text.setSize(48)
         self.buttons = []
         self.active_btn_id = 0
