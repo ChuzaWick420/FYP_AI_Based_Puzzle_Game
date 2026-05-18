@@ -10,6 +10,7 @@ class Button:
         self.position = pos
         self.width = 250
         self.height = 0
+        self.font_size = 28
 
         self.text_color = (40, 90, 72)
         self.border_color = (40, 90, 72)
@@ -17,8 +18,7 @@ class Button:
 
         self.text = TextElement(self.str, self.text_color, self.position)
 
-        self.text.setSize(28) # NOTE: Won't update unless setText is set
-        self.text.setText(self.str)
+        self.text.setSize(self.font_size)
 
         self.__hover_flag = False
         self.__active_flag = False
@@ -45,7 +45,6 @@ class Button:
         reference = pygame.Rect(0, 0, 0, 0)
 
         if (self.btn_type == ButtonType.TEXTUAL):
-            self.text = TextElement(self.str, self.text_color, self.position)
             reference = self.text.textRect.copy()
             self.rect.width = self.width
 
