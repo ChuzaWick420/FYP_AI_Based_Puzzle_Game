@@ -36,15 +36,15 @@ class ScoreBoardMenu(Menu):
 
     def render(self, display):
 
-        display.blit(self.text.text, self.text.textRect)
-        display.blit(self.num_of_wins.text, self.num_of_wins.textRect)
-        display.blit(self.num_of_loses.text, self.num_of_loses.textRect)
+        self.text.render(display)
+        self.num_of_wins.render(display)
+        self.num_of_loses.render(display)
 
         for button in self.buttons:
             button.render(display)
 
         for score in self.scores:
-            display.blit(score.text, score.textRect)
+            score.render(display)
 
     def setWins(self, wins):
         self.num_of_wins.setText(f"Wins: {wins}")

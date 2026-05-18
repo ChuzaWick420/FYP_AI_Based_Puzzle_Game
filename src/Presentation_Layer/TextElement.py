@@ -2,37 +2,40 @@ import pygame
 
 class TextElement:
     def __init__(self, txt, clr, pos):
-        self.font_size = 32
-        self.color = clr 
-        self.string = txt
-        self.position = pos
+        self.__font_size = 32
+        self.__color = clr 
+        self.__string = txt
+        self.__position = pos
 
-        self.font = pygame.font.Font(None, self.font_size)
-        self.text = self.font.render(txt, True, clr)
-        self.textRect = self.text.get_rect()
-        self.textRect.center = pos
+        self.__font = pygame.font.Font(None, self.__font_size)
+        self.__text = self.__font.render(txt, True, clr)
+        self.__textRect = self.__text.get_rect()
+        self.__textRect.center = pos
 
     def setText(self, txt):
-        self.string = txt
-        self.update()
+        self.__string = txt
+        self.__update()
 
     def setSize(self, size):
-        self.font_size = size
-        self.update()
+        self.__font_size = size
+        self.__update()
 
     def setPosition(self, pos):
-        self.position = pos
-        self.update()
+        self.__position = pos
+        self.__update()
 
     def setColor(self, clr):
-        self.color = clr
-        self.update()
+        self.__color = clr
+        self.__update()
 
-    def update(self):
-        self.font = pygame.font.Font(None, self.font_size)
-        self.text = self.font.render(self.string, True, self.color)
-        self.textRect = self.text.get_rect()
-        self.textRect.center = self.position
+    def getRect(self):
+        return self.__textRect
+
+    def __update(self):
+        self.__font = pygame.font.Font(None, self.__font_size)
+        self.__text = self.__font.render(self.__string, True, self.__color)
+        self.__textRect = self.__text.get_rect()
+        self.__textRect.center = self.__position
 
     def render(self, display):
-        display.blit(self.text, self.textRect)
+        display.blit(self.__text, self.__textRect)

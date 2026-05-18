@@ -30,9 +30,9 @@ class ResultMenu(Menu):
             button.setType(ButtonType.TEXTUAL)
 
     def render(self, display):
-        display.blit(self.text.text, self.text.textRect)
-        display.blit(self.winner_info.text, self.winner_info.textRect)
-        display.blit(self.completion_time.text, self.completion_time.textRect)
+        self.text.render(display)
+        self.winner_info.render(display)
+        self.completion_time.render(display)
 
         for button in self.buttons:
             button.render(display)

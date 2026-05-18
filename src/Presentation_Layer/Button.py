@@ -45,7 +45,7 @@ class Button:
         reference = pygame.Rect(0, 0, 0, 0)
 
         if (self.btn_type == ButtonType.TEXTUAL):
-            reference = self.text.textRect.copy()
+            reference = self.text.getRect()
             self.rect.width = self.width
 
         else:

@@ -28,8 +28,8 @@ class PlayingScreen:
         self.visual = self.get_visual(render_data)
 
     def render(self, display):
-        display.blit(self.timer.text, self.timer.textRect)
-        display.blit(self.level_num.text, self.level_num.textRect)
+        self.timer.render(display)
+        self.level_num.render(display)
 
         self.pause_button.render(display)
 
