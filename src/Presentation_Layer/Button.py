@@ -11,9 +11,9 @@ class Button:
         self.width = 250
         self.height = 0
 
-        self.text_color = (176, 228, 204)
-        self.border_color = (176, 228, 204)
-        self.hover_color = (40, 90, 72)
+        self.text_color = (40, 90, 72)
+        self.border_color = (40, 90, 72)
+        self.hover_color = (176, 228, 204)
 
         self.text = TextElement(self.str, self.text_color, self.position)
 
@@ -89,8 +89,10 @@ class Button:
     def render(self, display):
         if self.__hover_flag == False:
             pygame.draw.rect(display, self.border_color, self.rect, self.thickness, self.border_radius)
+            self.text.setColor(self.text_color)
         else:
             pygame.draw.rect(display, self.hover_color, self.rect, self.thickness, self.border_radius)
+            self.text.setColor(self.hover_color)
 
         if (self.__use_icon):
             display.blit(self.icon, (self.position[0] - 16, self.position[1] - 16))
