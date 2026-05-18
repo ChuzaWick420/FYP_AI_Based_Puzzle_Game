@@ -97,4 +97,4 @@ class Button:
         if (self.__use_icon):
             display.blit(self.icon, (self.position[0] - 16, self.position[1] - 16))
         else:
-            display.blit(self.text.text, self.text.textRect)
+            self.text.render(display)

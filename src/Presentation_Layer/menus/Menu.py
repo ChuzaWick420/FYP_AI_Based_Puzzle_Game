@@ -10,7 +10,7 @@ class Menu:
         self.active_btn_id = 0
 
     def render(self, display):
-        display.blit(self.text.text, self.text.textRect)
+        self.text.render(display)
 
         for button in self.buttons:
             button.render(display)
