@@ -43,3 +43,9 @@ class Menu:
     def handle_trigger(self):
         self.handle_selection()
         self.buttons[self.active_btn_id].setActiveFlag(True)
+
+    def getActiveBtnID(self):
+        return self.active_btn_id
+
+    def setActiveBtnID(self, id):
+        self.active_btn_id = id

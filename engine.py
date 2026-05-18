@@ -484,10 +484,12 @@ class Engine:
             if is_left_pressed  and isPlaying: self.__player.move_left()
             if is_right_pressed and isPlaying: self.__player.move_right()
 
+            current_button = self.__current_menu.getActiveBtnID()
+
             if is_up_pressed and not isPlaying:
-                self.__current_menu.active_btn_id -= 1
+                self.__current_menu.setActiveBtnID(current_button - 1)
             if is_down_pressed and not isPlaying:
-                self.__current_menu.active_btn_id += 1
+                self.__current_menu.setActiveBtnID(current_button + 1)
 
             if is_right_pressed or is_left_pressed or is_up_pressed or is_down_pressed:
                 self.__isKeyUp = False
