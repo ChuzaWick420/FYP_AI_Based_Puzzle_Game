@@ -3,7 +3,7 @@ from src.Data_Layer.ButtonType import ButtonType
 from src.Presentation_Layer.TextElement import TextElement
 
 class Button:
-    def __init__(self, text_str, input, pos):
+    def __init__(self, text_str, input, pos = (0, 0)):
         self.str = text_str
         self.input = input
 
@@ -65,6 +65,7 @@ class Button:
     def setPosition(self, pos):
         self.position = pos
         self.text.setPosition(pos)
+        self.setType(self.btn_type)
 
     def isHovered(self):
         self.__hover_flag = False

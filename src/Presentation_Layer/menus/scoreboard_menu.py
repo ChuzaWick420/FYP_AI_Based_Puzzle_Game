@@ -9,13 +9,8 @@ class ScoreBoardMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        starting_offset = 200
-        gap = 50
-
-        pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
-
         self.text.setText("Score Board Menu")
-        self.text.setPosition((pos[0], pos[1] - 2 * gap))
+        self.text.setPosition(Global.MENU_TITLE_POS)
 
         self.buttons.append(Button("Home", StateInputs.EXIT, (80, 80)))
 
@@ -27,12 +22,15 @@ class ScoreBoardMenu(Menu):
         self.scores = []
         color = (176, 228, 204)
 
-        self.num_of_wins = TextElement("Wins: 0", color, (pos[0], pos[1] + 6 * gap))
-        self.num_of_loses = TextElement("Loses: 0", color, (pos[0], pos[1] + 7 * gap))
+        pos = Global.MENU_TITLE_POS
+        gap = 50
 
-        for i in range(5):
+        for i in range(1, 6):
             (x, y) = (pos[0], pos[1] + i * gap)
             self.scores.append(TextElement("Temp", color, (x, y)))
+
+        self.num_of_wins = TextElement("Wins: 0", color, (pos[0], pos[1] + 6 * gap))
+        self.num_of_loses = TextElement("Loses: 0", color, (pos[0], pos[1] + 7 * gap))
 
     def render(self, display):
 

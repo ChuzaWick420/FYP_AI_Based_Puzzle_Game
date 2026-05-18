@@ -9,25 +9,25 @@ class ResultMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        starting_offset = 200
+        pos = Global.MENU_TITLE_POS
         gap = 50
 
-        pos = (Global.WINDOW_RESOLUTION[0] // 2, starting_offset)
-
         self.text.setText("Result Menu")
-        self.text.setPosition((pos[0], pos[1] - 3 * gap))
+        self.text.setPosition(pos)
 
         # Extras
         color = (64, 138, 113)
-        self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] - 2 * gap))
-        self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] - 1 * gap))
+        self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] + 1 * gap))
+        self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] + 2 * gap))
 
-        self.buttons.append(Button("Restart",    StateInputs.RESTART,     (pos[0], pos[1] + 0 * gap)))
-        self.buttons.append(Button("Scoreboard", StateInputs.SCORE_BOARD, (pos[0], pos[1] + 1 * gap)))
-        self.buttons.append(Button("Home",       StateInputs.EXIT,        (pos[0], pos[1] + 2 * gap)))
+        self.buttons.append(Button("Restart",    StateInputs.RESTART))
+        self.buttons.append(Button("Scoreboard", StateInputs.SCORE_BOARD))
+        self.buttons.append(Button("Home",       StateInputs.EXIT))
 
         for button in self.buttons:
             button.setType(ButtonType.TEXTUAL)
+
+        self.stackButtons()
 
     def render(self, display):
         self.text.render(display)

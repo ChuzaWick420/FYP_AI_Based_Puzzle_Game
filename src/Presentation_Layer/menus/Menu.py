@@ -1,4 +1,5 @@
 import pygame
+from src.Data_Layer import Global
 from src.Presentation_Layer.TextElement import TextElement
 
 class Menu:
@@ -49,3 +50,12 @@ class Menu:
 
     def setActiveBtnID(self, id):
         self.active_btn_id = id
+
+    def stackButtons(self, h_reference = Global.WINDOW_RESOLUTION[0] // 2, v_reference = Global.WINDOW_RESOLUTION[1] // 2, gap = 50):
+
+        index = 0
+
+        for button in self.buttons:
+            pos = (h_reference, v_reference + gap * index)
+            button.setPosition(pos)
+            index += 1
