@@ -6,7 +6,7 @@
 
 ## Machine Diagram
 <div align="center">
-    <img src="../assets/Proj_FYP_Prim's_Algorithm.png">
+    <img src="../assets/docs_related/Proj_FYP_Prim's_Algorithm.png">
 </div>
 
 ## Side Notes

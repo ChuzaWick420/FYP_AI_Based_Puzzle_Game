@@ -7,7 +7,7 @@ An `edge` is an `unordered pair` of two `vertices` or `nodes`.
 
 ## Visual Aid
 <div align="center">
-    <img src="../assets/Proj_FYP_Graph_example.png">
+    <img src="../assets/docs_related/Proj_FYP_Graph_example.png">
 </div>
 
 ## References
