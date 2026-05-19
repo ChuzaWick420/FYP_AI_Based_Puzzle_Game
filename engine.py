@@ -100,7 +100,7 @@ class Engine:
         while self.__isRunning:
 
             # NOTE: Time Slice execution time into
-            # 1. Rendering (30 or 60 Frames per second)
+            # 1. Rendering (60 Frames per second)
             # 2. Physics (time units)
             # 3. Background computations
 
