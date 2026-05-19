@@ -74,8 +74,6 @@ The _Memory Maze - Human vs AI Pathfinding Game_ is a standalone desktop applica
 - Track scores, levels, and performance metrics.
 - Manage game states (pause, restart, exit).
 
-![Maze Game Functional Diagram](diagram.png){id="diagram"}
-
 ## User Characteristics
 
 - Player
@@ -143,4 +141,8 @@ The _Memory Maze - Human vs AI Pathfinding Game_ is a standalone desktop applica
 
 ## Non Functional Requirements
 
-- <span id="NFA_1">NFA1</span>: Frames per second should be at least 30.
+- <span id="NFA_1">NFA1</span>: The game shall support 30 frames per second.
+- <span id="NFA_2">NFA2</span>: The game shall be designed primarily for Windows environments and is not required to support other operating systems.
+- <span id="NFA_3">NFA3</span>: The game shall maintain stable gameplay without crashes during a continuous session of 30 minutes.
+- <span id="NFA_4">NFA4</span>: The game interface shall provide clear visual feedback for player actions and game state changes.
+- <span id="NFA_5">NFA5</span>: The system shall support single-player gameplay only, involving one human player competing against one AI agent.
