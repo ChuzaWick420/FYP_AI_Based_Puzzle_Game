@@ -83,14 +83,7 @@ class Engine:
         self.__scoreboard_menu.setWins(self.__session_data["wins"])
         self.__scoreboard_menu.setLoses(self.__session_data["loses"])
 
-        db_data = self.__db_manager.getDBData()
-
-        scores = []
-
-        for entry in db_data:
-            scores.append(entry[1])
-
-        self.__scoreboard_menu.setScores(scores)
+        self.__updateCompletionTimes()
 
     def __execute(self):
         self.__initialize()
@@ -184,6 +177,16 @@ class Engine:
                 self.__handleEvents()
 
 # NOTE: Utility Section ##################################################################################################
+
+    def __updateCompletionTimes(self):
+        db_data = self.__db_manager.getDBData()
+
+        scores = []
+
+        for entry in db_data:
+            scores.append(entry[1])
+
+        self.__scoreboard_menu.setScores(scores)
 
     def __updateDB(self):
         db_data = self.__db_manager.getDBData()
@@ -312,10 +315,13 @@ class Engine:
 
         if event == SystemEvents.LEVEL_FINISHED:
             self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
+            self.__scoreboard_menu.setWins(self.__session_data["wins"])
+            self.__scoreboard_menu.setLoses(self.__session_data["loses"])
 
         if event == SystemEvents.PLAYER_WIN:
             self.__event_listener.createEvent(SystemEvents.LEVEL_NEXT)
             self.__updateDB()
+            self.__updateCompletionTimes()
 
         if event == SystemEvents.STATE_TRANSITION:
             self.__handleMenuTransitions()
