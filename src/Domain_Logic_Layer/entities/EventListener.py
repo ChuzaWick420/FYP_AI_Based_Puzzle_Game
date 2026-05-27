@@ -1,15 +1,15 @@
 class EventListener:
     def __init__(self):
-        self.events = []
+        self.__events = []
 
     def createEvent(self, event):
-        self.events.append(event)
+        self.__events.append(event)
 
     def getEvents(self):
-        return self.events
+        return self.__events
 
     def reset(self):
-        self.events = []
+        self.__events = []
 
     def processed(self, event):
-        self.events.remove(event)
+        self.__events.remove(event)
