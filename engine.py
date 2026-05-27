@@ -414,10 +414,10 @@ class Engine:
 
     def __handleEventMaze(self):
         # Get Entity positions
-        previous_ai     = (self.__ai.prev_x, self.__ai.prev_y)
-        current_ai      = (self.__ai.x_coordinate, self.__ai.y_coordinate)
-        previous_player = (self.__player.prev_x, self.__player.prev_y)
-        current_player  = (self.__player.x_coordinate, self.__player.y_coordinate)
+        previous_ai     = self.__ai.getPrevPosition()
+        current_ai      = self.__ai.getPosition()
+        previous_player = self.__player.getPrevPosition()
+        current_player  = self.__player.getPosition()
 
         # Ask maze manager to update cells
         # NOTE: handling Player and AI movements

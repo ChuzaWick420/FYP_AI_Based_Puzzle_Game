@@ -3,7 +3,7 @@ from src.Domain_Logic_Layer.entities.Entity import Entity
 
 class Ai(Entity):
     def __init__(self):
-        super().__init__()
+        Entity.__init__(self)
         self.__path = []
         self.__number_of_steps = 0
         self.__step_index = 0
@@ -11,11 +11,10 @@ class Ai(Entity):
     def reset(self):
         self.__step_index = 0
 
-        self.x_coordinate = 0
-        self.y_coordinate = 1
+        pos = (0, 1)
 
-        self.prev_x = self.x_coordinate
-        self.prev_y = self.y_coordinate
+        self.setPosition(pos)
+        self.setPrevPosition(pos)
 
 
     def init(self, path):
@@ -24,9 +23,12 @@ class Ai(Entity):
         self.__number_of_steps = len(self.__path)
 
     def step(self):
-        (self.prev_x, self.prev_y) = self.get_position()
+        pos = self.getPosition()
+        self.setPrevPosition(pos)
 
         if self.__step_index < self.__number_of_steps:
             coordinates = self.__path[self.__step_index]
+            new_pos = (coordinates[1], coordinates[0])
+            self.setPosition(new_pos)
+
             self.__step_index += 1
-            (self.x_coordinate, self.y_coordinate) = (coordinates[1], coordinates[0])
