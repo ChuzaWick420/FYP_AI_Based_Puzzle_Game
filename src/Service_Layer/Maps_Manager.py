@@ -62,9 +62,10 @@ class MapsManager:
     def __injectBlinders(self):
         for blinder in self.__blinders:
             pos = blinder.getPosition()
+            size = blinder.getSize()
 
-            for j in range(pos[1], pos[1] + blinder.size):
-                for i in range(pos[0], pos[0] + blinder.size):
+            for j in range(pos[1], pos[1] + size):
+                for i in range(pos[0], pos[0] + size):
                     self.__blinders_map[j][i] = CellTypes.BLINDER["value"]
 
         # NOTE: Update render cells for whole maze
@@ -78,10 +79,12 @@ class MapsManager:
             blinder = Blinder()
 
             # NOTE: Level number to size
-            blinder.size = int(math.sqrt(maze_width))
+            blinder.setSize(int(math.sqrt(maze_width)))
 
-            x = random.randint(0, maze_width - blinder.size)
-            y = random.randint(0, maze_width - blinder.size)
+            blinder_size = blinder.getSize()
+
+            x = random.randint(0, maze_width - blinder_size)
+            y = random.randint(0, maze_width - blinder_size)
 
             blinder.setPosition((x, y))
             self.__blinders.append(blinder)
