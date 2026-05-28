@@ -22,9 +22,10 @@ class MapsManager:
 
         # NOTE: If there was no previous graph provided, use prim's algorithm to generate one
         if (saved_mst == None):
-            self.__graph.adj_matrix = prims_algorithm(self.__graph)
+            mst = prims_algorithm(self.__graph)
+            self.__graph.setAdjMatrix(mst)
         else:
-            self.__graph.adj_matrix = saved_mst
+            self.__graph.setAdjMatrix(saved_mst)
 
     def initialize(self):
 
@@ -63,6 +64,12 @@ class MapsManager:
         for blinder in self.__blinders:
             pos = blinder.getPosition()
             size = blinder.getSize()
+
+            # FIXME: This section is ran sometimes when 
+            #        reveal powerup is taken and blinders have not spawned
+            print(f"DEBUGGING - position: {pos}")
+            print(f"DEBUGGING - size: {size}")
+            print(f"DEBUGGING - map: {self.__blinders_map}")
 
             for j in range(pos[1], pos[1] + size):
                 for i in range(pos[0], pos[0] + size):
@@ -134,8 +141,8 @@ class MapsManager:
 
     def __generate_grid_map(self):
         # NOTE: Nodes + Edges
-        nodes_amount_1D = self.__graph.width
-        edges_amount_1D = self.__graph.width - 1
+        nodes_amount_1D = self.__graph.getWidth()
+        edges_amount_1D = nodes_amount_1D - 1
         padding = 1 + 1
         grid_width = nodes_amount_1D + edges_amount_1D + padding
 
@@ -157,15 +164,19 @@ class MapsManager:
 
         offsets = (1, 1)
 
+        nodes_count = self.__graph.getNodesCount()
+        matrix = self.__graph.getAdjMatrix()
+        graph_width = self.__graph.getWidth()
+
         # NOTE: Goes through each vertex
-        for node_index in range(0, self.__graph.total_nodes):
+        for node_index in range(0, nodes_count):
 
             (x, y) = self.__graph.index_to_coordinates(node_index)
 
-            up_allowed    = y - 1 >= 0                 and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x, y - 1)] != 0
-            down_allowed  = y + 1 < self.__graph.width and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x, y + 1)] != 0
-            right_allowed = x + 1 < self.__graph.width and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x + 1, y)] != 0
-            left_allowed  = x - 1 >= 0                 and self.__graph.adj_matrix[node_index][self.__graph.coordinates_to_index(x - 1, y)] != 0
+            up_allowed    = y - 1 >= 0          and matrix[node_index][self.__graph.coordinates_to_index(x, y - 1)] != 0
+            down_allowed  = y + 1 < graph_width and matrix[node_index][self.__graph.coordinates_to_index(x, y + 1)] != 0
+            right_allowed = x + 1 < graph_width and matrix[node_index][self.__graph.coordinates_to_index(x + 1, y)] != 0
+            left_allowed  = x - 1 >= 0          and matrix[node_index][self.__graph.coordinates_to_index(x - 1, y)] != 0
 
             if (up_allowed):    map[(y * 2) - 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
             if (down_allowed):  map[(y * 2) + 1 + offsets[1]][x * 2 + offsets[0]] = CellTypes.PATH["value"]
@@ -248,7 +259,7 @@ class MapsManager:
                 self.updateFrameCell((i, j))
 
     def getMST(self):
-        return self.__graph.adj_matrix
+        return self.__graph.getAdjMatrix()
 
     def getSpecialsMap(self):
         return self.__specials_map
