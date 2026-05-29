@@ -219,7 +219,7 @@ class Engine:
     def __handleMenuTransitions(self):
 
         # NOTE: Reset the active button tracker
-        self.__current_menu.active_btn_id = 0
+        self.__current_menu.setActiveBtnID(0)
 
         next_state = self.__stateMachine.getNextState()
 
@@ -355,7 +355,7 @@ class Engine:
                 self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         elif state == GameStates.DIFFICULTY_SELECTION:
-            for button in self.__current_menu.buttons:
+            for button in self.__current_menu.getButtons():
                 if not button.isActive():
                     continue
 
@@ -372,7 +372,7 @@ class Engine:
                 self.__event_listener.createEvent(SystemEvents.STATE_TRANSITION)
 
         elif state == GameStates.PAUSE:
-            for button in self.__current_menu.buttons:
+            for button in self.__current_menu.getButtons():
                 if not button.isActive():
                     continue
 
@@ -388,7 +388,7 @@ class Engine:
 
 
         elif state == GameStates.RESULTS:
-            for button in self.__current_menu.buttons:
+            for button in self.__current_menu.getButtons():
                 if not button.isActive():
                     continue
 
@@ -400,7 +400,7 @@ class Engine:
 
         # NOTE: Any generic menu
         else:
-            for button in self.__current_menu.buttons:
+            for button in self.__current_menu.getButtons():
                 if not button.isActive():
                     continue
 
@@ -453,14 +453,14 @@ class Engine:
 
         if (current_ai == goal):
             self.__result_menu.winner_info.setText("AI Win!")
-            self.__result_menu.buttons[0].text.setText("Restart")
-            self.__result_menu.buttons[0].setInput(StateInputs.RESTART)
+            self.__result_menu.__buttons[0].text.setText("Restart")
+            self.__result_menu.__buttons[0].setInput(StateInputs.RESTART)
             self.__session_data["loses"] += 1
 
         if (current_player == goal):
             self.__result_menu.winner_info.setText("Player Win!")
-            self.__result_menu.buttons[0].text.setText("Next")
-            self.__result_menu.buttons[0].setInput(StateInputs.NEXT)
+            self.__result_menu.__buttons[0].text.setText("Next")
+            self.__result_menu.__buttons[0].setInput(StateInputs.NEXT)
             self.__event_listener.createEvent(SystemEvents.PLAYER_WIN)
             self.__session_data["wins"] += 1
 

@@ -8,14 +8,14 @@ class DifficultyMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        self.text.setText("Difficulty Menu")
-        self.text.setPosition(Global.MENU_TITLE_POS)
+        self._text.setText("Difficulty Menu")
+        self._text.setPosition(Global.MENU_TITLE_POS)
 
-        self.buttons.append(Button("Easy",   StateInputs.DIFFICULTY_EASY))
-        self.buttons.append(Button("Medium", StateInputs.DIFFICULTY_MEDIUM))
-        self.buttons.append(Button("Hard",   StateInputs.DIFFICULTY_HARD))
+        self._buttons.append(Button("Easy",   StateInputs.DIFFICULTY_EASY))
+        self._buttons.append(Button("Medium", StateInputs.DIFFICULTY_MEDIUM))
+        self._buttons.append(Button("Hard",   StateInputs.DIFFICULTY_HARD))
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.setType(ButtonType.TEXTUAL)
 
         self.stackButtons()

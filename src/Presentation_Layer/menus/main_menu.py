@@ -8,16 +8,16 @@ class MainMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        self.text.setText("Memory Maze - Human vs AI Pathfinding Game")
-        self.text.setPosition(Global.MENU_TITLE_POS)
+        self._text.setText("Memory Maze - Human vs AI Pathfinding Game")
+        self._text.setPosition(Global.MENU_TITLE_POS)
 
         # Buttons
-        self.buttons.append(Button("Play",              StateInputs.PLAY))
-        self.buttons.append(Button("Select Difficulty", StateInputs.DIFFICULTY_SELECTION))
-        self.buttons.append(Button("Scoreboard",        StateInputs.SCORE_BOARD))
-        self.buttons.append(Button("Quit",              StateInputs.EXIT))
+        self._buttons.append(Button("Play",              StateInputs.PLAY))
+        self._buttons.append(Button("Select Difficulty", StateInputs.DIFFICULTY_SELECTION))
+        self._buttons.append(Button("Scoreboard",        StateInputs.SCORE_BOARD))
+        self._buttons.append(Button("Quit",              StateInputs.EXIT))
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.setType(ButtonType.TEXTUAL)
 
         self.stackButtons()

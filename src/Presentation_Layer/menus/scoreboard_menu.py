@@ -9,14 +9,14 @@ class ScoreBoardMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        self.text.setText("Score Board Menu")
-        self.text.setPosition(Global.MENU_TITLE_POS)
+        self._text.setText("Score Board Menu")
+        self._text.setPosition(Global.MENU_TITLE_POS)
 
-        self.buttons.append(Button("Home", StateInputs.EXIT, (80, 80)))
+        self._buttons.append(Button("Home", StateInputs.EXIT, (80, 80)))
 
-        self.buttons[0].loadIcon("assets/home_button.png")
+        self._buttons[0].loadIcon("assets/home_button.png")
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.setType(ButtonType.VISUAL)
 
         self.scores = []
@@ -34,11 +34,11 @@ class ScoreBoardMenu(Menu):
 
     def render(self, display):
 
-        self.text.render(display)
+        self._text.render(display)
         self.num_of_wins.render(display)
         self.num_of_loses.render(display)
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.render(display)
 
         for score in self.scores:

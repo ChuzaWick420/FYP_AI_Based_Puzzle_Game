@@ -12,8 +12,8 @@ class PlayingScreen:
         self.__timer = TextElement("Timer: 00:00", color, (100, 50))
         self.__level_num = TextElement("Level: 1", color, (100, 100))
 
-        self.__pause_button = Button("Pause", StateInputs.PAUSE, (Global.WINDOW_RESOLUTION[0] - 150, 100))
-        self.__pause_button.loadIcon("assets/pause_button.png")
+        self.pause_button = Button("Pause", StateInputs.PAUSE, (Global.WINDOW_RESOLUTION[0] - 150, 100))
+        self.pause_button.loadIcon("assets/pause_button.png")
 
         self.__visual = pygame.sprite.Group()
 
@@ -30,7 +30,7 @@ class PlayingScreen:
         self.__timer.render(display)
         self.__level_num.render(display)
 
-        self.__pause_button.render(display)
+        self.pause_button.render(display)
 
         # NOTE: Updates the visual and renders it
         self.__visual.draw(display)

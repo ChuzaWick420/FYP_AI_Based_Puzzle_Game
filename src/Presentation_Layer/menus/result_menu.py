@@ -12,29 +12,29 @@ class ResultMenu(Menu):
         pos = Global.MENU_TITLE_POS
         gap = 50
 
-        self.text.setText("Result Menu")
-        self.text.setPosition(pos)
+        self._text.setText("Result Menu")
+        self._text.setPosition(pos)
 
         # Extras
         color = (64, 138, 113)
         self.winner_info = TextElement("You Win!", color, (pos[0], pos[1] + 1 * gap))
         self.completion_time = TextElement("Timer:", color, (pos[0], pos[1] + 2 * gap))
 
-        self.buttons.append(Button("Restart",    StateInputs.RESTART))
-        self.buttons.append(Button("Scoreboard", StateInputs.SCORE_BOARD))
-        self.buttons.append(Button("Home",       StateInputs.EXIT))
+        self._buttons.append(Button("Restart",    StateInputs.RESTART))
+        self._buttons.append(Button("Scoreboard", StateInputs.SCORE_BOARD))
+        self._buttons.append(Button("Home",       StateInputs.EXIT))
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.setType(ButtonType.TEXTUAL)
 
         self.stackButtons()
 
     def render(self, display):
-        self.text.render(display)
+        self._text.render(display)
         self.winner_info.render(display)
         self.completion_time.render(display)
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.render(display)
 
     def setTimer(self, minutes, seconds):

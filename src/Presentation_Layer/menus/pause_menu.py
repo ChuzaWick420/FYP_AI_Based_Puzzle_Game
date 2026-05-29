@@ -8,14 +8,14 @@ class PauseMenu(Menu):
     def __init__(self):
         Menu.__init__(self)
 
-        self.text.setText("Pause Menu")
-        self.text.setPosition(Global.MENU_TITLE_POS)
+        self._text.setText("Pause Menu")
+        self._text.setPosition(Global.MENU_TITLE_POS)
 
-        self.buttons.append(Button("Resume",  StateInputs.RESUME))
-        self.buttons.append(Button("Restart", StateInputs.RESTART))
-        self.buttons.append(Button("Home",    StateInputs.EXIT))
+        self._buttons.append(Button("Resume",  StateInputs.RESUME))
+        self._buttons.append(Button("Restart", StateInputs.RESTART))
+        self._buttons.append(Button("Home",    StateInputs.EXIT))
 
-        for button in self.buttons:
+        for button in self._buttons:
             button.setType(ButtonType.TEXTUAL)
 
         self.stackButtons()
