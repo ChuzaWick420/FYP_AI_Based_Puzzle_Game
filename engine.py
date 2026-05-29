@@ -452,15 +452,11 @@ class Engine:
             self.__event_listener.createEvent(SystemEvents.LEVEL_FINISHED)
 
         if (current_ai == goal):
-            self.__result_menu.winner_info.setText("AI Win!")
-            self.__result_menu._buttons[0].text.setText("Restart")
-            self.__result_menu._buttons[0].setInput(StateInputs.RESTART)
+            self.__result_menu.setWinner("AI")
             self.__session_data["loses"] += 1
 
         if (current_player == goal):
-            self.__result_menu.winner_info.setText("Player Win!")
-            self.__result_menu._buttons[0].text.setText("Next")
-            self.__result_menu._buttons[0].setInput(StateInputs.NEXT)
+            self.__result_menu.setWinner("Player")
             self.__event_listener.createEvent(SystemEvents.PLAYER_WIN)
             self.__session_data["wins"] += 1
 
