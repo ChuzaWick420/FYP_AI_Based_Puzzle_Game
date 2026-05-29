@@ -131,7 +131,7 @@ class Engine:
             self.__playing_screen.render(self.screen) # NOTE: Playing screen doesn't need button hovering
         else:
             self.__current_menu.render(self.screen)
-            self.__current_menu.handle_hover()
+            self.__current_menu.handleHover()
 
         pygame.display.flip()
 
@@ -345,7 +345,7 @@ class Engine:
 
     def __handleButtons(self):
 
-        self.__current_menu.handle_trigger()
+        self.__current_menu.handleTrigger()
 
         state = self.__stateMachine.getCurrentState()
 
@@ -453,14 +453,14 @@ class Engine:
 
         if (current_ai == goal):
             self.__result_menu.winner_info.setText("AI Win!")
-            self.__result_menu.__buttons[0].text.setText("Restart")
-            self.__result_menu.__buttons[0].setInput(StateInputs.RESTART)
+            self.__result_menu._buttons[0].text.setText("Restart")
+            self.__result_menu._buttons[0].setInput(StateInputs.RESTART)
             self.__session_data["loses"] += 1
 
         if (current_player == goal):
             self.__result_menu.winner_info.setText("Player Win!")
-            self.__result_menu.__buttons[0].text.setText("Next")
-            self.__result_menu.__buttons[0].setInput(StateInputs.NEXT)
+            self.__result_menu._buttons[0].text.setText("Next")
+            self.__result_menu._buttons[0].setInput(StateInputs.NEXT)
             self.__event_listener.createEvent(SystemEvents.PLAYER_WIN)
             self.__session_data["wins"] += 1
 
