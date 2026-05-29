@@ -125,7 +125,8 @@ class MapsManager:
 
         for powerup in powerups:
             (x, y) = powerup.getPosition()
-            self.__specials_map[y][x] = powerup.type
+            powerup_type = powerup.getType()
+            self.__specials_map[y][x] = powerup_type
 
         self.__initializeFrameBuffer()
 
