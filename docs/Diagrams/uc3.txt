@@ -1,0 +1,32 @@
+```plantuml
+@startuml
+title UseCase3 - Navigate Maze
+
+actor Player
+
+participant Engine
+participant PlayerEntity as "Player"
+participant EventListener
+participant MapsManager
+participant PlayingScreen
+
+loop Movement
+    Player -> Engine : Press Arrow Key
+
+    alt Up
+        Engine -> PlayerEntity : move_up()
+    else Down
+        Engine -> PlayerEntity : move_down()
+    else Left
+        Engine -> PlayerEntity : move_left()
+    else Right
+        Engine -> PlayerEntity : move_right()
+    end
+
+    Engine -> EventListener : createEvent(MAZE_UPDATE)
+    Engine -> MapsManager : update maze cells
+    Engine -> PlayingScreen : update_maze()
+end
+
+@enduml
+```

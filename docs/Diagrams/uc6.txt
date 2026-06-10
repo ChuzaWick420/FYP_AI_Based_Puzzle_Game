@@ -1,0 +1,25 @@
+```plantuml
+@startuml
+title UseCase6 - Restart Game
+
+actor Player
+
+participant PauseMenu
+participant Engine
+participant EventListener
+participant MapsManager
+participant PlayingScreen
+
+Player -> PauseMenu : Click "Restart"
+
+PauseMenu -> Engine : handleTrigger()
+
+Engine -> EventListener : createEvent(LEVEL_RESET)
+
+Engine -> MapsManager : initialize()
+Engine -> EventListener : createEvent(MAZE_UPDATE)
+
+Engine -> PlayingScreen : render reset maze
+
+@enduml
+```

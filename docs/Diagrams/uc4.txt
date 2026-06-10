@@ -1,0 +1,21 @@
+```plantuml
+@startuml
+title UseCase4 - Pause Game
+
+actor Player
+
+participant Engine
+participant StateMachine
+participant EventListener
+participant PauseMenu
+
+Player -> Engine : Press Escape Key
+
+Engine -> StateMachine : stepState(PAUSE)
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+
+Engine -> Engine : handleMenuTransitions()
+Engine -> PauseMenu : set current menu
+
+@enduml
+```

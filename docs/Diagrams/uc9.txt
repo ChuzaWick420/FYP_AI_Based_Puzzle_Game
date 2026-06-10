@@ -1,0 +1,31 @@
+```plantuml
+@startuml
+title UseCase9 - Quit
+
+actor Player
+
+participant PauseMenu
+participant ScoreboardMenu
+participant Engine
+participant StateMachine
+participant EventListener
+participant MainMenu
+
+alt From Pause Menu
+    Player -> PauseMenu : Click "Quit"
+    PauseMenu -> Engine : handleTrigger()
+
+else From Scoreboard
+    Player -> ScoreboardMenu : Click "Quit"
+    ScoreboardMenu -> Engine : handleTrigger()
+end
+
+Engine -> StateMachine : stepState(MAINMENU)
+
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+
+Engine -> Engine : handleMenuTransitions()
+Engine -> MainMenu : set current menu
+
+@enduml
+```
