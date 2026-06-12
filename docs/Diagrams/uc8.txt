@@ -1,0 +1,28 @@
+```plantuml
+@startuml
+title UseCase8 - Advance to Next Level
+
+actor Player
+
+participant ResultMenu
+participant Engine
+participant EventListener
+participant MapsManager
+participant PlayingScreen
+
+Player -> ResultMenu : Click "Next Level"
+
+ResultMenu -> Engine : handleTrigger()
+
+Engine -> EventListener : createEvent(LEVEL_NEXT)
+
+Engine -> Engine : update current level
+Engine -> EventListener : createEvent(REQUEST_LEVEL_GENERATE)
+
+Engine -> MapsManager : initialize level
+Engine -> EventListener : createEvent(LEVEL_RESET)
+
+Engine -> PlayingScreen : render next level
+
+@enduml
+```

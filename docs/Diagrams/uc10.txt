@@ -1,0 +1,24 @@
+```plantuml
+@startuml
+title UseCase10 - Exit
+
+actor Player
+
+participant MainMenu
+participant Engine
+participant StateMachine
+participant EventListener
+
+Player -> MainMenu : Click "Exit"
+
+MainMenu -> Engine : handleTrigger()
+
+Engine -> StateMachine : stepState(EXIT)
+
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+Engine -> EventListener : createEvent(TERMINATE_GAME)
+
+Engine -> Engine : terminate()
+
+@enduml
+```

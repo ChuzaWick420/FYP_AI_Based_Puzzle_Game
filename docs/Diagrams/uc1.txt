@@ -1,0 +1,42 @@
+```plantuml
+@startuml
+
+title UseCase1 - Select Difficulty
+
+actor Player
+
+participant MainMenu
+participant Engine
+participant StateMachine
+participant EventListener
+participant DifficultyMenu
+
+Player -> MainMenu : Click "Select Difficulty"
+
+MainMenu -> Engine : handleTrigger()
+Engine -> StateMachine : stepState(SELECT_DIFFICULTY)
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+
+Engine -> Engine : handleMenuTransitions()
+Engine -> DifficultyMenu : set current menu
+
+Player -> DifficultyMenu : Click Difficulty (Easy/Medium/Hard)
+
+DifficultyMenu -> Engine : handleTrigger()
+
+alt Easy selected
+    Engine -> EventListener : createEvent(DIFFICULTY_EASY)
+else Medium selected
+    Engine -> EventListener : createEvent(DIFFICULTY_MEDIUM)
+else Hard selected
+    Engine -> EventListener : createEvent(DIFFICULTY_HARD)
+end
+
+Engine -> StateMachine : stepState(difficulty)
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+
+Engine -> Engine : handleMenuTransitions()
+Engine -> MainMenu : set current menu
+
+@enduml
+plantuml

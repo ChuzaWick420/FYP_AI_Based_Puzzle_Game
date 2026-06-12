@@ -1,0 +1,24 @@
+```plantuml
+@startuml
+title UseCase2 - Start Game
+
+actor Player
+
+participant MainMenu
+participant Engine
+participant StateMachine
+participant EventListener
+participant PlayingScreen
+
+Player -> MainMenu : Click "Play"
+
+MainMenu -> Engine : handleTrigger()
+Engine -> StateMachine : stepState(PLAY)
+
+Engine -> EventListener : createEvent(STATE_TRANSITION)
+
+Engine -> Engine : handleMenuTransitions()
+Engine -> PlayingScreen : render maze
+
+@enduml
+```
