@@ -1,21 +1,45 @@
 ```plantuml
-@startuml
-title UseCase4 - Pause Game
+@startuml UC04_PauseGame
+title UseCase04 - Pause Game
 
 actor Player
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":PauseMenu" as PM
 
-participant Engine
-participant StateMachine
-participant EventListener
-participant PauseMenu
+Player -> IH : press Escape key
+IH --> E : processEvents() = PAUSE_PRESSED
+E -> EL : createEvent(PAUSE_PRESSED)
 
-Player -> Engine : Press Escape Key
+E -> E : handleEvents()
 
-Engine -> StateMachine : stepState(PAUSE)
-Engine -> EventListener : createEvent(STATE_TRANSITION)
+E -> EL : getEvents()
+EL --> E : [PAUSE_PRESSED]
+E -> E : __handleInputEvents(PAUSE_PRESSED)
+E -> E : __handleEventKeyboard(PAUSE_PRESSED)
+note right of E : Only acted on while __isKeyUp == True
 
-Engine -> Engine : handleMenuTransitions()
-Engine -> PauseMenu : set current menu
+E -> SM : getCurrentState()
+SM --> E : GameStates.PLAY
+E -> E : isPlaying = True
 
+alt PAUSE_PRESSED and isPlaying
+  E -> SM : stepState(StateInputs.PAUSE)
+  E -> EL : createEvent(STATE_TRANSITION)
+end
+
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> PM : setActiveBtnID(0)
+E -> SM : getNextState()
+SM --> E : GameStates.PAUSE
+E -> E : __current_menu = __pause_menu
+
+note over E : Render loop: currentState != PLAY,\nso PauseMenu.render() + handleHover()\nrun instead of PlayingScreen
+
+note over E : The playing screen also exposes a\nclickable pause button - clicking it while\nplaying reaches the same stepState(PAUSE)\ncall via __handleButtons() (mouse path),\nnot pictured since the documented Normal\nCourse of Events is the Escape key.
 @enduml
 ```

@@ -1,28 +1,79 @@
 ```plantuml
-@startuml
-title UseCase8 - Advance to Next Level
+@startuml UC08_AdvanceToNextLevel
+title UseCase08 - Advance to Next Level
 
 actor Player
+participant ":ResultMenu" as RM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":MapsManager" as MM
+participant ":Player Entity" as PE
+participant ":Ai" as AI
+participant ":PlayingScreen" as PS
 
-participant ResultMenu
-participant Engine
-participant EventListener
-participant MapsManager
-participant PlayingScreen
+note over E, PS
+  Background: the level increment actually happens
+  automatically the moment the player reaches the goal
+  (PLAYER_WIN cascade below), before ResultMenu is
+  ever shown to the player.
+end note
 
-Player -> ResultMenu : Click "Next Level"
+E -> E : __handleGameEvents(PLAYER_WIN)
+E -> EL : createEvent(LEVEL_NEXT)
+E -> E : __updateDB()
+E -> E : __updateCompletionTimes()
 
-ResultMenu -> Engine : handleTrigger()
+E -> E : __handleGameEvents(LEVEL_NEXT)
+E -> E : session_data["current_level"] += 1\n(wraps to 1 past MAX_LEVELS)
+E -> E : session_data["saved_mst"] = []
+E -> EL : createEvent(REQUEST_LEVEL_GENERATE)
 
-Engine -> EventListener : createEvent(LEVEL_NEXT)
+E -> E : __handleGameEvents(REQUEST_LEVEL_GENERATE)
+E -> E : __initialize()
+E -> MM : createGraph(new current_level)
+E -> EL : createEvent(LEVEL_RESET)
 
-Engine -> Engine : update current level
-Engine -> EventListener : createEvent(REQUEST_LEVEL_GENERATE)
+E -> E : __handleGameEvents(LEVEL_RESET)
+E -> MM : initialize()
+E -> PE : init(mapsManager.getMazeMap())
+E -> AI : init(mapsManager.path)
+E -> PS : setLevel(new current_level)
+E -> EL : createEvent(MAZE_UPDATE)
+E -> PS : update_maze(mapsManager.getFrameBuffer())
+note right of PS : Next level's maze is already cached in\nPlayingScreen, ready to display, while\nResultMenu is still what's on screen.
 
-Engine -> MapsManager : initialize level
-Engine -> EventListener : createEvent(LEVEL_RESET)
+== Player is looking at the Result Menu ==
 
-Engine -> PlayingScreen : render next level
+Player -> IH : click "Next Level"
+IH --> E : processEvents() = MOUSE_CLICK
+E -> EL : createEvent(MOUSE_CLICK)
 
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
+E -> E : __handleButtons()
+note right of E : currentState == RESULTS - every\nbutton here also fires LEVEL_RESET
+E -> RM : getButtons()
+RM --> E : [Next Level button]
+E -> RM : button.getInput()
+E -> EL : createEvent(LEVEL_RESET)
+E -> SM : stepState(input)
+E -> EL : createEvent(STATE_TRANSITION)
+
+E -> EL : getEvents()
+EL --> E : [LEVEL_RESET]
+E -> E : __handleGameEvents(LEVEL_RESET)
+note right of E : Re-syncs Player/Ai/MapsManager to the\nalready-selected next level (redundant\nbut harmless)
+
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.PLAY
+note right of E : No branch matches PLAY -\ncurrentState flips to PLAY.
+
+E -> PS : render(screen)
+note over PS : The next level's maze - generated back\nwhen the player originally won - is displayed
 @enduml
 ```

@@ -1,24 +1,66 @@
 ```plantuml
-@startuml
+@startuml UC10_Exit_Sequence
 title UseCase10 - Exit
 
 actor Player
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":MainMenu" as MM
+participant ":StateMachine" as SM
+participant ":DBManager" as DB
 
-participant MainMenu
-participant Engine
-participant StateMachine
-participant EventListener
+Player -> IH : clicks Exit button
 
-Player -> MainMenu : Click "Exit"
+IH --> E : processEvents() returns MOUSE_CLICK
 
-MainMenu -> Engine : handleTrigger()
+E -> EL : createEvent(MOUSE_CLICK)
 
-Engine -> StateMachine : stepState(EXIT)
+E -> E : __handleEvents()
 
-Engine -> EventListener : createEvent(STATE_TRANSITION)
-Engine -> EventListener : createEvent(TERMINATE_GAME)
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
 
-Engine -> Engine : terminate()
+E -> E : __handleInputEvents(MOUSE_CLICK)
+E -> E : __handleEventMouse()
+E -> E : __handleButtons()
+
+E -> MM : handleTrigger()
+
+E -> SM : getCurrentState()
+SM --> E : [MAINMENU]
+
+E -> MM : getButtons()
+MM --> E : [Exit button]
+E -> MM : button.getInput()
+MM --> E : StateInputs.EXIT
+
+E -> SM : stepState(StateInputs.EXIT)
+E -> EL : createEvent(STATE_TRANSITION)
+
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+
+E -> E : __handleGameEvents(STATE_TRANSITION)
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.EXIT
+E -> EL : createEvent(TERMINATE_GAME)
+
+E -> EL : getEvents()
+EL --> E : [TERMINATE_GAME]
+
+E -> E : __handleWindowEvents(TERMINATE_GAME)
+E -> E : __isRunning = False
+
+note over E
+  Main loop condition in __execute()
+  now false — while loop exits
+end note
+
+E -> DB : setJSONData(session_data)
+E -> DB : flush()
+E -> E : pygame.quit()
 
 @enduml
 ```

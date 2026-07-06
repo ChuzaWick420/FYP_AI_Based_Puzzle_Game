@@ -1,29 +1,51 @@
 ```plantuml
-@startuml
-title UseCase5 - Resume Game
+@startuml UC05_Resume_Game
+title UseCase05 - Resume Game
 
 actor Player
+participant ":PauseMenu" as PM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":PlayingScreen" as PS
 
-participant PauseMenu
-participant Engine
-participant StateMachine
-participant EventListener
-participant PlayingScreen
-
-alt Resume Button
-    Player -> PauseMenu : Click "Resume"
-
-    PauseMenu -> Engine : handleTrigger()
-    Engine -> StateMachine : stepState(PLAY)
-
-else Escape Key
-    Player -> Engine : Press Escape Key
-    Engine -> StateMachine : stepState(PLAY)
+alt Resume button clicked
+  Player -> IH : click "Resume"
+  IH --> E : processEvents() = MOUSE_CLICK
+  E -> EL : createEvent(MOUSE_CLICK)
+  E -> E : __handleEvents()
+  E -> EL : getEvents()
+  EL --> E : [MOUSE_CLICK]
+  E -> E : __handleInputEvents()
+  E -> E : __handleEventMouse()
+  E -> E : __handleButtons()
+  note right of E : currentState == PAUSE
+  E -> PM : getButtons()
+  PM --> E : [Resume button]
+  E -> PM : button.getInput()
+  PM --> E : StateInputs.PLAY
+  note right of E : Only RESTART / EXIT inputs trigger an\nextra LEVEL_RESET in this branch -\nResume passes straight through.
+  E -> SM : stepState(PLAY)
+  E -> EL : createEvent(STATE_TRANSITION)
+else Escape key pressed
+  Player -> IH : press Escape key
+  IH --> E : processEvents() = PAUSE_PRESSED
+  E -> EL : createEvent(PAUSE_PRESSED)
+  note right of E : Per __handleEventKeyboard(), the\nPAUSE_PRESSED branch only fires while\nisPlaying == True, so resuming this way\nrelies on that same guard covering the\npaused state.
+  E -> SM : stepState(PLAY)
+  E -> EL : createEvent(STATE_TRANSITION)
 end
 
-Engine -> EventListener : createEvent(STATE_TRANSITION)
-Engine -> Engine : handleMenuTransitions()
-Engine -> PlayingScreen : show maze
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> PM : setActiveBtnID(0)
+E -> SM : getNextState()
+SM --> E : GameStates.PLAY
+note right of E : No branch matches PLAY, so\n__current_menu is left as-is - only the\nstate machine's current state flips back.
 
+E -> PS : render(screen)
+note over PS : Maze resumes exactly where it was left
 @enduml
 ```

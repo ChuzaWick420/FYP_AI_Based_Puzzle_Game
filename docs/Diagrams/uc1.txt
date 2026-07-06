@@ -1,42 +1,84 @@
 ```plantuml
-@startuml
-
-title UseCase1 - Select Difficulty
+@startuml UC01_SelectDifficulty
+title UseCase01 - Select Difficulty
 
 actor Player
+participant ":MainMenu" as MM
+participant ":DifficultyMenu" as DM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
 
-participant MainMenu
-participant Engine
-participant StateMachine
-participant EventListener
-participant DifficultyMenu
+Player -> IH : click "Select Difficulty"
+IH --> E : processEvents() = MOUSE_CLICK
+E -> EL : createEvent(MOUSE_CLICK)
 
-Player -> MainMenu : Click "Select Difficulty"
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
+E -> E : __handleEventMouse()
+E -> E : __handleButtons()
+note right of E : currentState == MAINMENU\n(generic menu branch)
+E -> MM : getButtons()
+MM --> E : [Select Difficulty button]
+E -> MM : button.getInput()
+MM --> E : StateInputs.DIFFICULTY_SELECTION
+E -> SM : stepState(DIFFICULTY_SELECTION)
+E -> EL : createEvent(STATE_TRANSITION)
 
-MainMenu -> Engine : handleTrigger()
-Engine -> StateMachine : stepState(SELECT_DIFFICULTY)
-Engine -> EventListener : createEvent(STATE_TRANSITION)
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> MM : setActiveBtnID(0)
+E -> SM : getNextState()
+SM --> E : GameStates.DIFFICULTY_SELECTION
+E -> E : __current_menu = __difficulty_menu
 
-Engine -> Engine : handleMenuTransitions()
-Engine -> DifficultyMenu : set current menu
+note over E : Render loop now draws DifficultyMenu
 
-Player -> DifficultyMenu : Click Difficulty (Easy/Medium/Hard)
-
-DifficultyMenu -> Engine : handleTrigger()
+Player -> IH : click "Easy" / "Medium" / "Hard"
+IH --> E : processEvents() = MOUSE_CLICK
+E -> EL : createEvent(MOUSE_CLICK)
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
+E -> E : __handleButtons()
+note right of E : currentState == DIFFICULTY_SELECTION
+E -> DM : getButtons()
+DM --> E : [active difficulty button]
+E -> DM : button.getInput()
+DM --> E : StateInputs.DIFFICULTY_EASY / MEDIUM / HARD
 
 alt Easy selected
-    Engine -> EventListener : createEvent(DIFFICULTY_EASY)
+  E -> EL : createEvent(DIFFICULTY_EASY)
 else Medium selected
-    Engine -> EventListener : createEvent(DIFFICULTY_MEDIUM)
+  E -> EL : createEvent(DIFFICULTY_MEDIUM)
 else Hard selected
-    Engine -> EventListener : createEvent(DIFFICULTY_HARD)
+  E -> EL : createEvent(DIFFICULTY_HARD)
 end
 
-Engine -> StateMachine : stepState(difficulty)
-Engine -> EventListener : createEvent(STATE_TRANSITION)
+E -> SM : stepState(difficulty_input)
+E -> EL : createEvent(STATE_TRANSITION)
 
-Engine -> Engine : handleMenuTransitions()
-Engine -> MainMenu : set current menu
+E -> EL : getEvents()
+EL --> E : [DIFFICULTY_EASY|MEDIUM|HARD]
+E -> E : __handleGameEvents(event)
+E -> E : __level_category_index = 0 / 1 / 2
+E -> E : session_data["current_level"] =\nindex * levels_per_category + 1
+E -> E : session_data["saved_mst"] = []
+E -> EL : createEvent(REQUEST_LEVEL_GENERATE)
 
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.MAINMENU
+E -> E : __current_menu = __main_menu
+
+E -> EL : getEvents()
+EL --> E : [REQUEST_LEVEL_GENERATE]
+E -> E : __initialize()
+note right of E : MapsManager builds a fresh graph\nsized for the newly selected difficulty
+
+note over E : Render loop now draws MainMenu again
 @enduml
-plantuml
+```

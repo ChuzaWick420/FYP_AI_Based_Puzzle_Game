@@ -1,25 +1,58 @@
 ```plantuml
-@startuml
-title UseCase6 - Restart Game
+@startuml UC06_RestartGame
+title UseCase06 - Restart Game
 
 actor Player
+participant ":PauseMenu" as PM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":MapsManager" as MM
+participant ":Player" as PE
+participant ":Ai" as AI
+participant ":PlayingScreen" as PS
 
-participant PauseMenu
-participant Engine
-participant EventListener
-participant MapsManager
-participant PlayingScreen
+Player -> IH : click "Restart"
+IH --> E : processEvents() = MOUSE_CLICK
+E -> EL : createEvent(MOUSE_CLICK)
 
-Player -> PauseMenu : Click "Restart"
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
+E -> E : __handleButtons()
+note right of E : currentState == PAUSE
+E -> PM : getButtons()
+PM --> E : [Restart button]
+E -> PM : button.getInput()
+PM --> E : StateInputs.RESTART
+E -> EL : createEvent(LEVEL_RESET)
+E -> SM : stepState(RESTART)
+E -> EL : createEvent(STATE_TRANSITION)
 
-PauseMenu -> Engine : handleTrigger()
+E -> EL : getEvents()
+EL --> E : [LEVEL_RESET]
+E -> E : __handleGameEvents(LEVEL_RESET)
+E -> MM : initialize()
+E -> PE : init(mapsManager.getMazeMap())
+E -> AI : init(mapsManager.path)
+E -> E : recompute __ai_speed_ideal / current\nfrom session_data["current_level"]
+E -> E : __elapsed_play_time = 0
+E -> E : __flag_blinders = False
+E -> PS : setLevel(current_level)
+E -> EL : createEvent(MAZE_UPDATE)
 
-Engine -> EventListener : createEvent(LEVEL_RESET)
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.PLAY
+note right of E : No branch matches PLAY -\ncurrentState flips to PLAY directly.
 
-Engine -> MapsManager : initialize()
-Engine -> EventListener : createEvent(MAZE_UPDATE)
+E -> EL : getEvents()
+EL --> E : [MAZE_UPDATE]
+E -> E : __handleEventMaze()
+E -> PS : update_maze(mapsManager.getFrameBuffer())
 
-Engine -> PlayingScreen : render reset maze
-
+note over PS : Render loop now shows the freshly-reset maze
 @enduml
 ```

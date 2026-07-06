@@ -1,31 +1,55 @@
 ```plantuml
-@startuml
-title UseCase9 - Quit
+@startuml UC09_Quit
+title UseCase09 - Quit
 
 actor Player
-
-participant PauseMenu
-participant ScoreboardMenu
-participant Engine
-participant StateMachine
-participant EventListener
-participant MainMenu
+participant ":PauseMenu" as PM
+participant ":ScoreboardMenu" as SBM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":MainMenu" as MM
 
 alt From Pause Menu
-    Player -> PauseMenu : Click "Quit"
-    PauseMenu -> Engine : handleTrigger()
-
-else From Scoreboard
-    Player -> ScoreboardMenu : Click "Quit"
-    ScoreboardMenu -> Engine : handleTrigger()
+  Player -> IH : click "Home"
+  IH --> E : processEvents() = MOUSE_CLICK
+  E -> EL : createEvent(MOUSE_CLICK)
+  E -> EL : getEvents()
+  EL --> E : [MOUSE_CLICK]
+  E -> E : __handleButtons()
+  note right of E : currentState == PAUSE
+  E -> PM : getButtons()
+  PM --> E : [Home button]
+  E -> PM : button.getInput()
+  PM --> E : StateInputs.EXIT
+  E -> EL : createEvent(LEVEL_RESET)
+  note right of E : Quitting from Pause also resets the\nin-progress level (extends Pause Game)
+  E -> SM : stepState(EXIT)
+  E -> EL : createEvent(STATE_TRANSITION)
+else From Scoreboard Menu
+  Player -> IH : click "Home" icon button
+  IH --> E : processEvents() = MOUSE_CLICK
+  E -> EL : createEvent(MOUSE_CLICK)
+  E -> EL : getEvents()
+  EL --> E : [MOUSE_CLICK]
+  E -> E : __handleButtons()
+  note right of E : currentState == SCORE_BOARD\n(generic branch - no LEVEL_RESET)
+  E -> SBM : getButtons()
+  SBM --> E : [Home button]
+  E -> SBM : button.getInput()
+  E -> SM : stepState(input)
+  E -> EL : createEvent(STATE_TRANSITION)
 end
 
-Engine -> StateMachine : stepState(MAINMENU)
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.MAINMENU
+E -> E : __current_menu = __main_menu
 
-Engine -> EventListener : createEvent(STATE_TRANSITION)
-
-Engine -> Engine : handleMenuTransitions()
-Engine -> MainMenu : set current menu
-
+E -> MM : render(screen)
+E -> MM : handleHover()
 @enduml
 ```

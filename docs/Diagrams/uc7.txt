@@ -1,30 +1,57 @@
 ```plantuml
-@startuml
-title UseCase7 - View Scores
+@startuml UC07_ViewScores
+title UseCase07 - View Scores
 
 actor Player
+participant ":ResultMenu" as RM
+participant ":MainMenu" as MM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":ScoreboardMenu" as SBM
 
-participant MainMenu
-participant ResultMenu
-participant Engine
-participant StateMachine
-participant EventListener
-participant ScoreboardMenu
-
-alt From Main Menu
-    Player -> MainMenu : Click "Scoreboard"
-    MainMenu -> Engine : handleTrigger()
-
-else From Result Menu
-    Player -> ResultMenu : Click "Scoreboard"
-    ResultMenu -> Engine : handleTrigger()
+alt From Result Menu
+  Player -> IH : click "Scoreboard"
+  IH --> E : processEvents() = MOUSE_CLICK
+  E -> EL : createEvent(MOUSE_CLICK)
+  E -> EL : getEvents()
+  EL --> E : [MOUSE_CLICK]
+  E -> E : __handleButtons()
+  note right of E : currentState == RESULTS - every\nbutton on this menu also fires\nLEVEL_RESET, regardless of which\none is pressed.
+  E -> RM : getButtons()
+  RM --> E : [Scoreboard button]
+  E -> RM : button.getInput()
+  RM --> E : StateInputs.SCORE_BOARD
+  E -> EL : createEvent(LEVEL_RESET)
+  E -> SM : stepState(SCORE_BOARD)
+  E -> EL : createEvent(STATE_TRANSITION)
+else From Main Menu
+  Player -> IH : click "Scoreboard"
+  IH --> E : processEvents() = MOUSE_CLICK
+  E -> EL : createEvent(MOUSE_CLICK)
+  E -> EL : getEvents()
+  EL --> E : [MOUSE_CLICK]
+  E -> E : __handleButtons()
+  note right of E : currentState == MAINMENU\n(generic branch - no LEVEL_RESET)
+  E -> MM : getButtons()
+  MM --> E : [Scoreboard button]
+  E -> MM : button.getInput()
+  MM --> E : StateInputs.SCORE_BOARD
+  E -> SM : stepState(SCORE_BOARD)
+  E -> EL : createEvent(STATE_TRANSITION)
 end
 
-Engine -> StateMachine : stepState(SCORE_BOARD)
-Engine -> EventListener : createEvent(STATE_TRANSITION)
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> SM : getNextState()
+SM --> E : GameStates.SCORE_BOARD
+E -> E : __current_menu = __scoreboard_menu
 
-Engine -> Engine : handleMenuTransitions()
-Engine -> ScoreboardMenu : set current menu
+note over E : ScoreboardMenu was already populated with\nthe latest wins/loses and completion times\nvia __updateCompletionTimes() and the\nscoreboard updates inside __handleGameEvents()
 
+E -> SBM : render(screen)
+E -> SBM : handleHover()
 @enduml
 ```

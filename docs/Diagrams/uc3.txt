@@ -1,32 +1,76 @@
 ```plantuml
-@startuml
-title UseCase3 - Navigate Maze
+@startuml UC03_NavigateMaze
+title UseCase03 - Navigate Maze
 
 actor Player
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":Player" as PE
+participant ":Ai" as AI
+participant ":MapsManager" as MM
+participant ":PlayingScreen" as PS
 
-participant Engine
-participant PlayerEntity as "Player"
-participant EventListener
-participant MapsManager
-participant PlayingScreen
+loop every frame (__handleProcesses background loop)
+  Player -> IH : press Arrow Key
+  IH --> E : processEvents() = UP/DOWN/LEFT/RIGHT_PRESSED
+  E -> EL : createEvent(direction_event)
 
-loop Movement
-    Player -> Engine : Press Arrow Key
+  E -> E : __handleEvents()
 
-    alt Up
-        Engine -> PlayerEntity : move_up()
-    else Down
-        Engine -> PlayerEntity : move_down()
-    else Left
-        Engine -> PlayerEntity : move_left()
-    else Right
-        Engine -> PlayerEntity : move_right()
-    end
+  E -> EL : getEvents()
+  EL --> E : [direction_event]
+  E -> E : __handleInputEvents(event)
+  E -> E : __handleEventKeyboard(event)
+  note right of E : Only acted on while __isKeyUp == True\n(guards against repeat-fire while the\nkey stays held down)
+  E -> E : isPlaying = (getCurrentState() == PLAY)
 
-    Engine -> EventListener : createEvent(MAZE_UPDATE)
-    Engine -> MapsManager : update maze cells
-    Engine -> PlayingScreen : update_maze()
+  alt Up pressed
+    E -> PE : move_up()
+  else Down pressed
+    E -> PE : move_down()
+  else Left pressed
+    E -> PE : move_left()
+  else Right pressed
+    E -> PE : move_right()
+  end
+
+  E -> E : __isKeyUp = False
+  E -> EL : createEvent(MAZE_UPDATE)
 end
 
+E -> EL : getEvents()
+EL --> E : [MAZE_UPDATE]
+E -> E : __handleEventMaze()
+E -> PE : getPrevPosition() / getPosition()
+E -> AI : getPrevPosition() / getPosition()
+E -> MM : setEntitiesCell(prev_player, INVALID)
+E -> MM : setEntitiesCell(prev_ai, INVALID)
+E -> MM : setEntitiesCell(current_ai, AI)
+E -> MM : setEntitiesCell(current_player, PLAYER)
+
+opt player and AI share a cell
+  E -> MM : setEntitiesCell(current_player, PLAYER_AND_AI)
+end
+
+E -> MM : getSpecialsMap()
+MM --> E : specials grid
+
+opt player is standing on a power-up cell
+  E -> E : apply POWERUP_SLOW / POWERUP_REVEAL effect
+  E -> MM : setSpecialCell(current_player, INVALID)
+end
+
+E -> MM : getFrameBuffer()
+MM --> E : frame buffer
+E -> PS : update_maze(frame buffer)
+
+opt player or AI reached the goal cell
+  note right of E : Win/lose handling is covered\nby UseCase7/UseCase8
+end
+
+Player -> IH : release Arrow Key
+IH --> E : processEvents() = KEY_RELEASE
+E -> E : __isKeyUp = True
 @enduml
 ```

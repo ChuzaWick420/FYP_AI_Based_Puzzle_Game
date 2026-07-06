@@ -1,24 +1,51 @@
 ```plantuml
-@startuml
-title UseCase2 - Start Game
+@startuml UC02_StartGame
+title UseCase02 - Start Game
 
 actor Player
+participant ":MainMenu" as MM
+participant ":InputHandler" as IH
+participant ":Engine" as E
+participant ":EventListener" as EL
+participant ":StateMachine" as SM
+participant ":PlayingScreen" as PS
 
-participant MainMenu
-participant Engine
-participant StateMachine
-participant EventListener
-participant PlayingScreen
+opt Alternative Path: difficulty not yet chosen
+  note over Player, SM : Player first runs through\nUseCase1 - Select Difficulty
+end
 
-Player -> MainMenu : Click "Play"
+Player -> IH : click "Play"
+IH --> E : processEvents() = MOUSE_CLICK
+E -> EL : createEvent(MOUSE_CLICK)
 
-MainMenu -> Engine : handleTrigger()
-Engine -> StateMachine : stepState(PLAY)
+E -> E : __handleEvents()
 
-Engine -> EventListener : createEvent(STATE_TRANSITION)
+E -> EL : getEvents()
+EL --> E : [MOUSE_CLICK]
+E -> E : __handleEventMouse()
+E -> E : __handleButtons()
+note right of E : currentState == MAINMENU\n(generic menu branch)
+E -> MM : getButtons()
+MM --> E : [Play button]
+E -> MM : button.getInput()
+MM --> E : StateInputs.PLAY
+E -> SM : stepState(PLAY)
+E -> EL : createEvent(STATE_TRANSITION)
 
-Engine -> Engine : handleMenuTransitions()
-Engine -> PlayingScreen : render maze
+E -> EL : processed(event)
 
+E -> EL : getEvents()
+EL --> E : [STATE_TRANSITION]
+E -> E : __handleMenuTransitions()
+E -> MM : setActiveBtnID(0)
+E -> SM : getNextState()
+SM --> E : GameStates.PLAY
+note right of E : No branch in __handleMenuTransitions()\nmatches PLAY, so __current_menu is left\nuntouched - only the state machine's\ncurrent state actually changes.
+
+E -> E : __render()
+E -> SM : getCurrentState()
+SM --> E : GameStates.PLAY
+E -> PS : render(screen)
+note over PS : Maze was already generated during\nEngine startup (__initialize()) or during\na prior Select Difficulty flow, so it's\nready to display immediately.
 @enduml
 ```
